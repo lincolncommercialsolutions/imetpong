@@ -102,6 +102,24 @@
     z-index: 5;
     font-family: 'Courier New', monospace;
   }
+  #lives {
+    position: absolute;
+    top: 80px;
+    left: 20px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 15px;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    z-index: 5;
+    font-family: 'Courier New', monospace;
+  }
+  .heart {
+    color: #ff0066;
+    font-size: 20px;
+  }
   canvas {
     display: block;
     background: linear-gradient(to bottom, #ffffff 0%, #f8f8f8 100%);
@@ -325,6 +343,15 @@
       top: 55px;
       right: 10px;
     }
+    #lives {
+      font-size: 12px;
+      padding: 5px 10px;
+      top: 55px;
+      left: 10px;
+    }
+    .heart {
+      font-size: 14px;
+    }
     #scoreBoard {
       font-size: 14px;
       padding: 0 10px;
@@ -402,6 +429,8 @@
   
   <div id="timer">00:00</div>
   
+  <div id="lives">Lives: <span class="heart">🪽🪽🪽</span></div>
+  
   <div id="winner"></div>
   <div id="instructions">
     <strong>Desktop:</strong> A & D to move, Space or Click to start | 
@@ -437,10 +466,12 @@ const winnerEl = document.getElementById('winner');
 const startOverlay = document.getElementById('startOverlay');
 const timerEl = document.getElementById('timer');
 const layoutSelect = document.getElementById('layoutSelect');
+const livesEl = document.getElementById('lives');
 
 let startTime = null;
 let timerInterval = null;
 let selectedLayout = null;
+let playerLives = 3;
 
 function selectLayout(layout) {
   selectedLayout = layout;
@@ -491,6 +522,11 @@ function updateTimer() {
   const minutes = Math.floor(elapsed / 60000);
   const seconds = Math.floor((elapsed % 60000) / 1000);
   timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function updateLivesDisplay() {
+  const angels = '🪽'.repeat(playerLives);
+  livesEl.innerHTML = `Lives: <span class="heart">${angels}</span>`;
 }
 
 // Responsive canvas sizing
@@ -612,6 +648,7 @@ function startGame() {
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(updateTimer, 100);
   timerEl.textContent = "00:00";
+  updateLivesDisplay();
   resetBall();
 }
 
@@ -707,31 +744,68 @@ function update() {
 
 function checkWin() {
   if (playerScore >= winningScore || jarvisScore >= winningScore) {
-    gameRunning = false;
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-    winnerEl.textContent = playerScore >= winningScore 
-      ? `PLAYER WINS!\nBEAT J4RV1S` 
-      : `J4RV1S WINS!`;
-    winnerEl.style.opacity = 1;
-    winnerEl.style.textShadow = playerScore >= winningScore 
-      ? "0 0 40px #00ddff, 0 0 80px #00ddff" 
-      : "0 0 40px #ff0066, 0 0 80px #ff0066";
+    if (jarvisScore >= winningScore) {
+      // J4RV1S won this round - player loses a life
+      playerLives--;
+      updateLivesDisplay();
+      
+      if (playerLives <= 0) {
+        // Player is out of lives - game over
+        gameRunning = false;
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+        winnerEl.textContent = `J4RV1S WINS!\nGAME OVER`;
+        winnerEl.style.opacity = 1;
+        winnerEl.style.textShadow = "0 0 40px #ff0066, 0 0 80px #ff0066";
 
-    setTimeout(() => {
-      playerScore = 0;
-      jarvisScore = 0;
-      playerScoreEl.textContent = "0";
-      jarvisScoreEl.textContent = "0";
-      winnerEl.style.opacity = 0;
-      startOverlay.classList.remove('hidden');
-      isTouching = false;
-      startTime = null;
-      timerEl.textContent = "00:00";
-      // Don't reset layout - keep the same layout for next game
-    }, 4000);
+        setTimeout(() => {
+          playerScore = 0;
+          jarvisScore = 0;
+          playerLives = 3;
+          playerScoreEl.textContent = "0";
+          jarvisScoreEl.textContent = "0";
+          winnerEl.style.opacity = 0;
+          startOverlay.classList.remove('hidden');
+          isTouching = false;
+          startTime = null;
+          timerEl.textContent = "00:00";
+          updateLivesDisplay();
+        }, 4000);
+      } else {
+        // Player still has lives - reset round
+        playerScore = 0;
+        jarvisScore = 0;
+        playerScoreEl.textContent = "0";
+        jarvisScoreEl.textContent = "0";
+        resetBall();
+      }
+    } else {
+      // Player won! Game over - player victory
+      gameRunning = false;
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      winnerEl.textContent = `PLAYER WINS!\nBEAT J4RV1S`;
+      winnerEl.style.opacity = 1;
+      winnerEl.style.textShadow = "0 0 40px #00ddff, 0 0 80px #00ddff";
+
+      setTimeout(() => {
+        playerScore = 0;
+        jarvisScore = 0;
+        playerLives = 3;
+        playerScoreEl.textContent = "0";
+        jarvisScoreEl.textContent = "0";
+        winnerEl.style.opacity = 0;
+        startOverlay.classList.remove('hidden');
+        isTouching = false;
+        startTime = null;
+        timerEl.textContent = "00:00";
+        updateLivesDisplay();
+      }, 4000);
+    }
   }
 }
 
