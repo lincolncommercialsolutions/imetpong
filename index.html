@@ -232,6 +232,65 @@
   #startOverlay button:active {
     transform: scale(0.98);
   }
+  #layoutSelect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 200;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #layoutSelect h2 {
+    font-size: 42px;
+    margin-bottom: 40px;
+    text-shadow: 0 0 20px #00ddff;
+  }
+  .layout-buttons {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .layout-btn {
+    background: linear-gradient(135deg, #00ddff, #0088ff);
+    border: none;
+    color: white;
+    font-size: 28px;
+    padding: 20px 60px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(0,136,255,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-width: 200px;
+  }
+  .layout-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0,136,255,0.6);
+  }
+  .layout-btn:active {
+    transform: scale(0.98);
+  }
+  .mobile-layout #gameContainer {
+    height: 50vh !important;
+  }
+  .mobile-layout #gameTitle {
+    font-size: 32px !important;
+    margin-bottom: 8px !important;
+  }
+  .mobile-layout #asciiCode {
+    font-size: 8px !important;
+    margin-top: 8px !important;
+  }
   @media (max-width: 768px) {
     body {
       justify-content: flex-start;
@@ -306,6 +365,15 @@
       font-size: 18px;
       padding: 12px 35px;
     }
+    #layoutSelect h2 {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+    .layout-btn {
+      font-size: 20px;
+      padding: 15px 40px;
+      min-width: 150px;
+    }
   }
   .hidden {
     display: none !important;
@@ -313,6 +381,14 @@
 </style>
 </head>
 <body>
+
+<div id="layoutSelect">
+  <h2>Choose Your Layout</h2>
+  <div class="layout-buttons">
+    <button class="layout-btn" onclick="selectLayout('desktop')">🖥️ Desktop</button>
+    <button class="layout-btn" onclick="selectLayout('mobile')">📱 Mobile</button>
+  </div>
+</div>
 
 <div id="gameTitle">IMETPONG</div>
 
@@ -361,9 +437,54 @@ const jarvisScoreEl = document.getElementById('jarvisScore');
 const winnerEl = document.getElementById('winner');
 const startOverlay = document.getElementById('startOverlay');
 const timerEl = document.getElementById('timer');
+const layoutSelect = document.getElementById('layoutSelect');
 
 let startTime = null;
 let timerInterval = null;
+let selectedLayout = null;
+
+function selectLayout(layout) {
+  selectedLayout = layout;
+  layoutSelect.classList.add('hidden');
+  
+  if (layout === 'mobile') {
+    document.body.classList.add('mobile-layout');
+    // Square canvas for mobile
+    canvas.width = 500;
+    canvas.height = 500;
+    
+    // Scale game elements for mobile
+    scaledPaddleWidth = 12;
+    scaledPaddleHeight = 80;
+    scaledBallRadius = 10;
+    scaledBallSpeedX = 10;
+    scaledBallSpeedY = 6;
+    paddleOffset = 35;
+  } else {
+    document.body.classList.remove('mobile-layout');
+    // Rectangle canvas for desktop
+    canvas.width = 900;
+    canvas.height = 600;
+    
+    // Full size elements for desktop
+    scaledPaddleWidth = 16;
+    scaledPaddleHeight = 120;
+    scaledBallRadius = 14;
+    scaledBallSpeedX = 15;
+    scaledBallSpeedY = 9;
+    paddleOffset = 50;
+  }
+  
+  // Reset game elements positions
+  ballX = canvas.width / 2;
+  ballY = canvas.height / 2;
+  playerY = canvas.height / 2 - scaledPaddleHeight / 2;
+  jarvisY = canvas.height / 2 - scaledPaddleHeight / 2;
+  
+  // Reset ball speed with scaled values
+  ballSpeedX = scaledBallSpeedX;
+  ballSpeedY = scaledBallSpeedY;
+}
 
 function updateTimer() {
   if (!startTime) return;
@@ -406,6 +527,14 @@ let jarvisY = canvas.height / 2 - paddleHeight / 2;
 let playerScore = 0;
 let jarvisScore = 0;
 const winningScore = 54;
+
+// Scaled values for mobile
+let scaledPaddleWidth = 16;
+let scaledPaddleHeight = 120;
+let scaledBallRadius = 14;
+let scaledBallSpeedX = 15;
+let scaledBallSpeedY = 9;
+let paddleOffset = 50;
 
 const keys = {};
 let gameRunning = false;
@@ -474,6 +603,10 @@ function handleMouseMove(e) {
 }
 
 function startGame() {
+  if (!selectedLayout) {
+    layoutSelect.classList.remove('hidden');
+    return;
+  }
   startOverlay.classList.add('hidden');
   gameRunning = true;
   startTime = Date.now();
@@ -486,9 +619,8 @@ function startGame() {
 function resetBall() {
   ballX = canvas.width / 2;
   ballY = canvas.height / 2;
-  ballSpeedX = (Math.random() > 0.5 ? 15 : -15) * (Math.random() > 0.5 ? 1 : -1);
-  ballSpeedY = (Math.random() * 18 - 9);
-  ballSpeedX *= 1; // can increase over time if you want
+  ballSpeedX = (Math.random() > 0.5 ? scaledBallSpeedX : -scaledBallSpeedX) * (Math.random() > 0.5 ? 1 : -1);
+  ballSpeedY = (Math.random() * scaledBallSpeedY * 2 - scaledBallSpeedY);
 }
 
 function update() {
@@ -496,16 +628,16 @@ function update() {
 
   // Player controls - keyboard
   if (keys['a'] && playerY > 0) playerY -= 9;
-  if (keys['d'] && playerY < canvas.height - paddleHeight) playerY += 9;
+  if (keys['d'] && playerY < canvas.height - scaledPaddleHeight) playerY += 9;
   
   // Player controls - touch/mouse
   if (isTouching) {
-    const targetY = touchY - paddleHeight / 2;
-    playerY = Math.max(0, Math.min(canvas.height - paddleHeight, targetY));
+    const targetY = touchY - scaledPaddleHeight / 2;
+    playerY = Math.max(0, Math.min(canvas.height - scaledPaddleHeight, targetY));
   }
 
   // J4RV1S AI - nearly unbeatable
-  const targetY = ballY - paddleHeight / 2;
+  const targetY = ballY - scaledPaddleHeight / 2;
   const diff = targetY - jarvisY;
   const jarvisSpeed = 9; // consistent fast speed
   
@@ -515,35 +647,35 @@ function update() {
   }
   
   // Keep J4RV1S within bounds
-  jarvisY = Math.max(0, Math.min(canvas.height - paddleHeight, jarvisY));
+  jarvisY = Math.max(0, Math.min(canvas.height - scaledPaddleHeight, jarvisY));
 
   // Ball movement
   ballX += ballSpeedX;
   ballY += ballSpeedY;
 
   // Top/bottom bounce
-  if (ballY - ballRadius <= 0 || ballY + ballRadius >= canvas.height) {
+  if (ballY - scaledBallRadius <= 0 || ballY + scaledBallRadius >= canvas.height) {
     ballSpeedY = -ballSpeedY;
   }
 
   // Paddle hit detection
   // Player (left)
   if (ballSpeedX < 0 &&
-      ballX - ballRadius < 50 + paddleWidth &&
-      ballX + ballRadius > 50 &&
-      ballY > playerY && ballY < playerY + paddleHeight) {
+      ballX - scaledBallRadius < paddleOffset + scaledPaddleWidth &&
+      ballX + scaledBallRadius > paddleOffset &&
+      ballY > playerY && ballY < playerY + scaledPaddleHeight) {
     ballSpeedX = -ballSpeedX * 1.06;
-    let deltaY = (ballY - (playerY + paddleHeight / 2)) / (paddleHeight / 2);
+    let deltaY = (ballY - (playerY + scaledPaddleHeight / 2)) / (scaledPaddleHeight / 2);
     ballSpeedY = deltaY * 8;
   }
 
-  // Jarvis (right)
+  // J4RV1S (right)
   if (ballSpeedX > 0 &&
-      ballX + ballRadius > canvas.width - 50 - paddleWidth &&
-      ballX - ballRadius < canvas.width - 50 &&
-      ballY > jarvisY && ballY < jarvisY + paddleHeight) {
+      ballX + scaledBallRadius > canvas.width - paddleOffset - scaledPaddleWidth &&
+      ballX - scaledBallRadius < canvas.width - paddleOffset &&
+      ballY > jarvisY && ballY < jarvisY + scaledPaddleHeight) {
     ballSpeedX = -ballSpeedX * 1.06;
-    let deltaY = (ballY - (jarvisY + paddleHeight / 2)) / (paddleHeight / 2);
+    let deltaY = (ballY - (jarvisY + scaledPaddleHeight / 2)) / (scaledPaddleHeight / 2);
     ballSpeedY = deltaY * 8;
   }
 
@@ -588,6 +720,9 @@ function checkWin() {
       isTouching = false;
       startTime = null;
       timerEl.textContent = "00:00";
+      selectedLayout = null;
+      layoutSelect.classList.remove('hidden');
+      document.body.classList.remove('mobile-layout');
     }, 4000);
   }
 }
@@ -614,30 +749,30 @@ function draw() {
   // Player paddle
   ctx.fillStyle = 'black';
   ctx.shadowColor = '#00ddff';
-  ctx.fillRect(50, playerY, paddleWidth, paddleHeight);
+  ctx.fillRect(paddleOffset, playerY, scaledPaddleWidth, scaledPaddleHeight);
 
-  // Jarvis paddle
+  // J4RV1S paddle
   ctx.shadowColor = '#ff0066';
-  ctx.fillRect(canvas.width - 50 - paddleWidth, jarvisY, paddleWidth, paddleHeight);
+  ctx.fillRect(canvas.width - paddleOffset - scaledPaddleWidth, jarvisY, scaledPaddleWidth, scaledPaddleHeight);
 
   ctx.shadowBlur = 0;
 
   // Real round ball with gradient and glow
-  const gradient = ctx.createRadialGradient(ballX-4, ballY-4, 0, ballX, ballY, ballRadius);
+  const gradient = ctx.createRadialGradient(ballX-4, ballY-4, 0, ballX, ballY, scaledBallRadius);
   gradient.addColorStop(0, '#66bbff');
   gradient.addColorStop(0.7, '#0088ff');
   gradient.addColorStop(1, '#0044aa');
 
   ctx.fillStyle = gradient;
   ctx.beginPath();
-  ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+  ctx.arc(ballX, ballY, scaledBallRadius, 0, Math.PI * 2);
   ctx.fill();
 
   // Ball glow
   ctx.shadowBlur = 30;
   ctx.shadowColor = '#0088ff';
   ctx.beginPath();
-  ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+  ctx.arc(ballX, ballY, scaledBallRadius, 0, Math.PI * 2);
   ctx.fill();
   ctx.shadowBlur = 0;
 }
