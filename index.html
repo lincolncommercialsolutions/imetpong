@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Pong vs Jarvis</title>
 <style>
   body {
@@ -14,16 +15,21 @@
     align-items: center;
     font-family: 'Segoe UI', sans-serif;
     overflow: hidden;
+    touch-action: none;
   }
   #gameContainer {
     position: relative;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    max-width: 95vw;
+    max-height: 95vh;
   }
   canvas {
     display: block;
     background: #ffffff;
+    max-width: 100%;
+    max-height: 100%;
   }
   #scoreBoard {
     position: absolute;
@@ -74,7 +80,99 @@
     width: 100%;
     text-align: center;
     color: rgba(255,255,255,0.6);
+    font-size: 16px;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+  #startOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 100;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #startOverlay h2 {
+    font-size: 48px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px #00ddff;
+  }
+  #startOverlay .instructions-box {
+    background: rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+    max-width: 500px;
+  }
+  #startOverlay .control-section {
+    margin: 15px 0;
     font-size: 18px;
+    line-height: 1.6;
+  }
+  #startOverlay .control-title {
+    color: #00ddff;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  #startOverlay button {
+    background: linear-gradient(135deg, #00ddff, #0088ff);
+    border: none;
+    color: white;
+    font-size: 24px;
+    padding: 15px 50px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(0,136,255,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  #startOverlay button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0,136,255,0.6);
+  }
+  #startOverlay button:active {
+    transform: scale(0.98);
+  }
+  @media (max-width: 768px) {
+    #scoreBoard {
+      font-size: 20px;
+      padding: 0 15px;
+      height: 50px;
+    }
+    #winner {
+      font-size: 50px;
+    }
+    #instructions {
+      font-size: 13px;
+      bottom: 5px;
+    }
+    #startOverlay h2 {
+      font-size: 32px;
+    }
+    #startOverlay .control-section {
+      font-size: 15px;
+    }
+    #startOverlay .control-title {
+      font-size: 17px;
+    }
+    #startOverlay button {
+      font-size: 20px;
+      padding: 12px 40px;
+    }
+  }
+  .hidden {
+    display: none !important;
   }
 </style>
 </head>
@@ -90,7 +188,27 @@
   </div>
   
   <div id="winner"></div>
-  <div id="instructions">Use <strong>A</strong> and <strong>D</strong> to move</div>
+  <div id="instructions">
+    <strong>Desktop:</strong> A & D to move, Space or Click to start | 
+    <strong>Mobile:</strong> Tap to start, Drag paddle to move
+  </div>
+  
+  <div id="startOverlay">
+    <h2>PONG vs JARVIS</h2>
+    <div class="instructions-box">
+      <div class="control-section">
+        <div class="control-title">🖥️ DESKTOP CONTROLS</div>
+        <div>Press <strong>A</strong> and <strong>D</strong> to move your paddle</div>
+        <div>Press <strong>SPACE BAR</strong> or <strong>CLICK</strong> to start</div>
+      </div>
+      <div class="control-section">
+        <div class="control-title">📱 MOBILE CONTROLS</div>
+        <div><strong>TAP SCREEN</strong> to start the game</div>
+        <div><strong>DRAG</strong> your paddle up and down to move</div>
+      </div>
+    </div>
+    <button onclick="startGame()">START GAME</button>
+  </div>
 </div>
 
 <script>
@@ -99,6 +217,25 @@ const ctx = canvas.getContext('2d');
 const playerScoreEl = document.getElementById('playerScore');
 const jarvisScoreEl = document.getElementById('jarvisScore');
 const winnerEl = document.getElementById('winner');
+const startOverlay = document.getElementById('startOverlay');
+
+// Responsive canvas sizing
+function resizeCanvas() {
+  const maxWidth = Math.min(900, window.innerWidth * 0.95);
+  const maxHeight = Math.min(600, window.innerHeight * 0.95);
+  const aspectRatio = 900 / 600;
+  
+  if (maxWidth / maxHeight > aspectRatio) {
+    canvas.height = maxHeight;
+    canvas.width = maxHeight * aspectRatio;
+  } else {
+    canvas.width = maxWidth;
+    canvas.height = maxWidth / aspectRatio;
+  }
+}
+
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
 const paddleWidth = 16;
 const paddleHeight = 120;
@@ -106,8 +243,8 @@ const ballRadius = 14;
 
 let ballX = canvas.width / 2;
 let ballY = canvas.height / 2;
-let ballSpeedX = 7;
-let ballSpeedY = 4;
+let ballSpeedX = 10;
+let ballSpeedY = 6;
 
 let playerY = canvas.height / 2 - paddleHeight / 2;
 let jarvisY = canvas.height / 2 - paddleHeight / 2;
@@ -117,25 +254,97 @@ let jarvisScore = 0;
 const winningScore = 54;
 
 const keys = {};
-let gameRunning = true;
+let gameRunning = false;
+let isTouching = false;
+let touchY = 0;
 
-window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+// Keyboard controls
+window.addEventListener('keydown', e => {
+  keys[e.key.toLowerCase()] = true;
+  if (e.key === ' ' && !gameRunning && startOverlay.classList.contains('hidden')) {
+    e.preventDefault();
+  }
+});
 window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+// Mobile touch controls
+canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+canvas.addEventListener('touchend', () => { isTouching = false; });
+
+// Mouse controls for desktop
+canvas.addEventListener('mousedown', handleMouseDown);
+canvas.addEventListener('mousemove', handleMouseMove);
+canvas.addEventListener('mouseup', () => { isTouching = false; });
+
+function handleTouchStart(e) {
+  e.preventDefault();
+  if (!gameRunning && startOverlay.classList.contains('hidden')) {
+    startGame();
+    return;
+  }
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  const x = ((touch.clientX - rect.left) / rect.width) * canvas.width;
+  
+  // Only control left side (player paddle)
+  if (x < canvas.width / 2) {
+    isTouching = true;
+    touchY = ((touch.clientY - rect.top) / rect.height) * canvas.height;
+  }
+}
+
+function handleTouchMove(e) {
+  e.preventDefault();
+  if (!isTouching) return;
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  touchY = ((touch.clientY - rect.top) / rect.height) * canvas.height;
+}
+
+function handleMouseDown(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * canvas.width;
+  
+  // Only control left side (player paddle)
+  if (x < canvas.width / 2) {
+    isTouching = true;
+    touchY = ((e.clientY - rect.top) / rect.height) * canvas.height;
+  }
+}
+
+function handleMouseMove(e) {
+  if (!isTouching) return;
+  const rect = canvas.getBoundingClientRect();
+  touchY = ((e.clientY - rect.top) / rect.height) * canvas.height;
+}
+
+function startGame() {
+  startOverlay.classList.add('hidden');
+  gameRunning = true;
+  resetBall();
+}
 
 function resetBall() {
   ballX = canvas.width / 2;
   ballY = canvas.height / 2;
-  ballSpeedX = (Math.random() > 0.5 ? 7 : -7) * (Math.random() > 0.5 ? 1 : -1);
-  ballSpeedY = (Math.random() * 8 - 4);
+  ballSpeedX = (Math.random() > 0.5 ? 10 : -10) * (Math.random() > 0.5 ? 1 : -1);
+  ballSpeedY = (Math.random() * 12 - 6);
   ballSpeedX *= 1; // can increase over time if you want
 }
 
 function update() {
   if (!gameRunning) return;
 
-  // Player controls
+  // Player controls - keyboard
   if (keys['a'] && playerY > 0) playerY -= 9;
   if (keys['d'] && playerY < canvas.height - paddleHeight) playerY += 9;
+  
+  // Player controls - touch/mouse
+  if (isTouching) {
+    const targetY = touchY - paddleHeight / 2;
+    playerY = Math.max(0, Math.min(canvas.height - paddleHeight, targetY));
+  }
 
   // Jarvis AI - smart but not perfect
   const targetY = ballY - paddleHeight / 2;
@@ -205,8 +414,8 @@ function checkWin() {
       playerScoreEl.textContent = "0";
       jarvisScoreEl.textContent = "0";
       winnerEl.style.opacity = 0;
-      gameRunning = true;
-      resetBall();
+      startOverlay.classList.remove('hidden');
+      isTouching = false;
     }, 4000);
   }
 }
@@ -267,7 +476,6 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-resetBall();
 gameLoop();
 </script>
 </body>
