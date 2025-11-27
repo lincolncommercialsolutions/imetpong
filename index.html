@@ -593,14 +593,52 @@ let gameRunning = false;
 let isTouching = false;
 let touchY = 0;
 
+// Secret cheat codes
+let cheatCodeBuffer = '';
+const cheatCodes = ['ball54', '27'];
+let cheatCodeTimeout = null;
+
 // Keyboard controls
 window.addEventListener('keydown', e => {
   keys[e.key.toLowerCase()] = true;
   if (e.key === ' ' && !gameRunning && startOverlay.classList.contains('hidden')) {
     e.preventDefault();
   }
+  
+  // Cheat code detection
+  if (gameRunning && e.key.length === 1) {
+    cheatCodeBuffer += e.key.toLowerCase();
+    
+    // Clear buffer after 3 seconds of inactivity
+    if (cheatCodeTimeout) clearTimeout(cheatCodeTimeout);
+    cheatCodeTimeout = setTimeout(() => {
+      cheatCodeBuffer = '';
+    }, 3000);
+    
+    // Check if any cheat code was entered
+    for (let code of cheatCodes) {
+      if (cheatCodeBuffer.includes(code)) {
+        activateCheatCode();
+        cheatCodeBuffer = '';
+        break;
+      }
+    }
+    
+    // Keep buffer from getting too long
+    if (cheatCodeBuffer.length > 10) {
+      cheatCodeBuffer = cheatCodeBuffer.slice(-10);
+    }
+  }
 });
 window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+function activateCheatCode() {
+  playerScore = 54;
+  jarvisScore = 27;
+  playerScoreEl.textContent = playerScore;
+  jarvisScoreEl.textContent = jarvisScore;
+  checkWin();
+}
 
 // Mobile touch controls
 canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
