@@ -593,9 +593,9 @@ let gameRunning = false;
 let isTouching = false;
 let touchY = 0;
 
-// Secret cheat codes
+// Super Secret cheat codes
 let cheatCodeBuffer = '';
-const cheatCodes = ['ball54', '27'];
+const cheatCodes = ['ball54', '27', 'cat', 'time'];
 let cheatCodeTimeout = null;
 
 // Keyboard controls
@@ -717,42 +717,42 @@ function resetBall() {
 function update() {
   if (!gameRunning) return;
 
-  // Calculate playable area boundaries (account for scoreboard and instructions)
-  const topBoundary = 70; // scoreboard height
-  const bottomBoundary = 40; // instruction bar height
+  
+  const topBoundary = 70; 
+  const bottomBoundary = 40; 
   const maxPlayerY = canvas.height - bottomBoundary - scaledPaddleHeight;
 
-  // Player controls - keyboard
+  
   if (keys['a'] && playerY > topBoundary) playerY -= 9;
   if (keys['d'] && playerY < maxPlayerY) playerY += 9;
   
-  // Player controls - touch/mouse
+
   if (isTouching) {
     const targetY = touchY - scaledPaddleHeight / 2;
     playerY = Math.max(topBoundary, Math.min(maxPlayerY, targetY));
   }
 
-  // J4RV1S AI - nearly unbeatable
+  
   const targetY = ballY - scaledPaddleHeight / 2;
   const diff = targetY - jarvisY;
-  const jarvisSpeed = 9; // consistent fast speed
+  const jarvisSpeed = 9; 
   
-  if (Math.abs(diff) > 3) { // precise but not jittery tracking
+  if (Math.abs(diff) > 3) { 
     const moveAmount = Math.min(Math.abs(diff), jarvisSpeed);
     jarvisY += diff > 0 ? moveAmount : -moveAmount;
   }
   
-  // Keep J4RV1S within bounds
+  
   jarvisY = Math.max(topBoundary, Math.min(maxPlayerY, jarvisY));
 
-  // Ball movement
+  
   ballX += ballSpeedX;
   ballY += ballSpeedY;
 
-  // Top/bottom bounce (account for boundaries)
+  
   if (ballY - scaledBallRadius <= topBoundary || ballY + scaledBallRadius >= canvas.height - bottomBoundary) {
     ballSpeedY = -ballSpeedY;
-    // Ensure ball stays in bounds
+    
     if (ballY - scaledBallRadius < topBoundary) {
       ballY = topBoundary + scaledBallRadius;
     }
@@ -761,8 +761,8 @@ function update() {
     }
   }
 
-  // Paddle hit detection
-  // Player (left)
+  
+ 
   if (ballSpeedX < 0 &&
       ballX - scaledBallRadius < paddleOffset + scaledPaddleWidth &&
       ballX + scaledBallRadius > paddleOffset &&
@@ -772,7 +772,7 @@ function update() {
     ballSpeedY = deltaY * 8;
   }
 
-  // J4RV1S (right)
+  
   if (ballSpeedX > 0 &&
       ballX + scaledBallRadius > canvas.width - paddleOffset - scaledPaddleWidth &&
       ballX - scaledBallRadius < canvas.width - paddleOffset &&
@@ -782,7 +782,7 @@ function update() {
     ballSpeedY = deltaY * 8;
   }
 
-  // Scoring
+  
   if (ballX < 0) {
     jarvisScore++;
     jarvisScoreEl.textContent = jarvisScore;
@@ -800,12 +800,12 @@ function update() {
 function checkWin() {
   if (playerScore >= winningScore || jarvisScore >= winningScore) {
     if (jarvisScore >= winningScore) {
-      // J4RV1S won this round - player loses a life
+      
       playerLives--;
       updateLivesDisplay();
       
       if (playerLives <= 0) {
-        // Player is out of lives - game over
+        
         gameRunning = false;
         if (timerInterval) {
           clearInterval(timerInterval);
@@ -829,13 +829,13 @@ function checkWin() {
           updateLivesDisplay();
         }, 4000);
       } else {
-        // Player still has lives - reset round
+        
         jarvisScore = 0;
         jarvisScoreEl.textContent = "0";
         resetBall();
       }
     } else {
-      // Player won! Game over - player victory
+      
       gameRunning = false;
       if (timerInterval) {
         clearInterval(timerInterval);
@@ -863,11 +863,11 @@ function checkWin() {
 }
 
 function draw() {
-  // Background
+  
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Dashed center line
+  
   ctx.setLineDash([15, 15]);
   ctx.strokeStyle = '#ddd';
   ctx.lineWidth = 6;
@@ -877,22 +877,22 @@ function draw() {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Paddles with glow
+  
   ctx.shadowBlur = 20;
   ctx.shadowColor = '#000';
 
-  // Player paddle
+  
   ctx.fillStyle = 'black';
   ctx.shadowColor = '#00ddff';
   ctx.fillRect(paddleOffset, playerY, scaledPaddleWidth, scaledPaddleHeight);
 
-  // J4RV1S paddle
+  
   ctx.shadowColor = '#ff0066';
   ctx.fillRect(canvas.width - paddleOffset - scaledPaddleWidth, jarvisY, scaledPaddleWidth, scaledPaddleHeight);
 
   ctx.shadowBlur = 0;
 
-  // Real round ball with gradient and glow
+  
   const gradient = ctx.createRadialGradient(ballX-4, ballY-4, 0, ballX, ballY, scaledBallRadius);
   gradient.addColorStop(0, '#66bbff');
   gradient.addColorStop(0.7, '#0088ff');
@@ -903,7 +903,7 @@ function draw() {
   ctx.arc(ballX, ballY, scaledBallRadius, 0, Math.PI * 2);
   ctx.fill();
 
-  // Ball glow
+  
   ctx.shadowBlur = 30;
   ctx.shadowColor = '#0088ff';
   ctx.beginPath();
@@ -920,5 +920,12 @@ function gameLoop() {
 
 gameLoop();
 </script>
+
+<!-- Vercel Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+
 </body>
 </html>
