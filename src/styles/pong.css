@@ -368,27 +368,28 @@ canvas {
 @media (max-width: 768px) {
   body {
     justify-content: flex-start;
-    padding-top: 5vh;
+    padding-top: 3vh;
   }
   
   #gameTitle {
-    font-size: 36px;
+    font-size: 32px;
     margin-bottom: 5px;
     letter-spacing: 4px;
-    margin-top: 10px;
+    margin-top: 50px;
   }
   
   #gameRules {
-    font-size: 10px;
+    font-size: 11px;
     max-width: 90vw;
-    margin-bottom: 8px;
-    padding: 0 10px;
+    margin-bottom: 10px;
+    padding: 0 15px;
+    line-height: 1.5;
   }
   
   #asciiCode {
     font-size: 9px;
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     letter-spacing: 1px;
     word-wrap: break-word;
     max-width: 90vw;
@@ -398,24 +399,28 @@ canvas {
   .cheat-input-container {
     flex-direction: column;
     gap: 8px;
+    margin-top: 8px;
+    margin-bottom: 10px;
   }
   
   .cheat-input-container input {
-    width: 80vw;
-    max-width: 300px;
-    font-size: 12px;
+    width: 85vw;
+    max-width: 320px;
+    font-size: 13px;
+    padding: 10px 15px;
   }
   
   .cheat-input-container button {
-    padding: 6px 15px;
-    font-size: 12px;
+    padding: 8px 20px;
+    font-size: 13px;
   }
   
   #gameContainer {
     width: 100vw;
-    height: 60vh;
+    height: 55vh;
     border-radius: 0;
     max-width: 100vw;
+    margin-bottom: 10px;
   }
   
   #timer {

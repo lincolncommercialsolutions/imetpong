@@ -155,6 +155,7 @@ body::before {
   font-weight: bold;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  font-size: 14px;
 }
 
 .nav-link:hover {
@@ -164,6 +165,21 @@ body::before {
 }
 
 @media (max-width: 768px) {
+  .game-nav {
+    top: 10px;
+    left: 10px;
+  }
+  
+  .nav-link {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+  
+  body {
+    justify-content: flex-start;
+    padding-top: 5vh;
+  }
+  
   .main-title {
     font-size: 48px;
     letter-spacing: 6px;
@@ -178,23 +194,35 @@ body::before {
   .game-grid {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding: 0 20px;
+    padding: 0 15px;
+    margin-bottom: 20px;
   }
   
   .game-card {
-    padding: 30px;
+    padding: 25px 20px;
   }
   
   .game-icon {
     font-size: 60px;
+    margin-bottom: 15px;
   }
   
   .game-card h2 {
     font-size: 24px;
+    margin-bottom: 8px;
+  }
+  
+  .game-card p {
+    font-size: 14px;
   }
   
   .ascii-footer {
     font-size: 10px;
     letter-spacing: 1px;
+    padding: 0 15px;
+  }
+  
+  .home-container {
+    padding: 20px 10px;
   }
 }
