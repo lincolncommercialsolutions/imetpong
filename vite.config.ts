@@ -3,12 +3,12 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   server: {
     port: 3000,
-    open: '/home.html'
+    open: '/index.html'
   },
   build: {
     rollupOptions: {
       input: {
-        home: './home.html',
+        main: './index.html',
         pong: './pong.html',
         comingSoon: './games/coming-soon.html'
       }
