@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kon Karne Keyboard - What is 108?</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Papyrus', 'Courier New', serif;
+            background: linear-gradient(135deg, #c79647 0%, #8b4513 50%, #d4af37 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 69, 19, 0.1) 2px,
+                    rgba(139, 69, 19, 0.1) 4px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 69, 19, 0.1) 2px,
+                    rgba(139, 69, 19, 0.1) 4px
+                );
+            pointer-events: none;
+        }
+
+        .game-nav {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .game-nav .nav-link {
+            font-size: 14px;
+            padding: 10px 20px;
+            background: rgba(0,0,0,0.7);
+            color: #ffd700;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 2px solid #ffd700;
+            display: inline-block;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .game-nav .nav-link:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .pyramids {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .pyramid {
+            width: 0;
+            height: 0;
+            border-left: 75px solid transparent;
+            border-right: 75px solid transparent;
+            border-bottom: 130px solid #8b4513;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: clamp(2rem, 6vw, 3rem);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 20px rgba(255, 215, 0, 0.3);
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            color: #f4e4c1;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-style: italic;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 25px;
+            background: linear-gradient(145deg, rgba(20, 20, 20, 0.8), rgba(40, 30, 20, 0.9));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.5),
+                inset 0 0 30px rgba(212, 175, 55, 0.1),
+                0 0 50px rgba(212, 175, 55, 0.2);
+            border: 3px solid #8b6914;
+            position: relative;
+        }
+
+        .keyboard::before,
+        .keyboard::after {
+            content: '𓂀';
+            position: absolute;
+            font-size: 2rem;
+            color: #d4af37;
+            opacity: 0.3;
+        }
+
+        .keyboard::before {
+            top: 10px;
+            left: 10px;
+        }
+
+        .keyboard::after {
+            bottom: 10px;
+            right: 10px;
+            content: '𓁿';
+        }
+
+        .key {
+            aspect-ratio: 1;
+            background: linear-gradient(145deg, #d4af37, #b8941e);
+            border: 2px solid #8b6914;
+            border-radius: 12px;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: bold;
+            color: #2c1810;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 
+                0 4px 15px rgba(0,0,0,0.4),
+                inset 0 2px 5px rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Papyrus', 'Courier New', serif;
+            position: relative;
+        }
+
+        .key::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            height: 30%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .key:active {
+            transform: scale(0.95);
+            box-shadow: 
+                0 2px 8px rgba(0,0,0,0.4),
+                inset 0 2px 10px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, #b8941e, #9a7a1a);
+        }
+
+        .key.playing {
+            background: linear-gradient(145deg, #ff6b35, #d4af37);
+            color: #fff;
+            transform: scale(0.95);
+            box-shadow: 
+                0 0 20px rgba(255, 107, 53, 0.6),
+                inset 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        @media (max-width: 400px) {
+            .keyboard {
+                gap: 8px;
+                padding: 20px;
+            }
+            
+            .pyramid {
+                border-left-width: 50px;
+                border-right-width: 50px;
+                border-bottom-width: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="game-nav">
+        <a href="/index.html" class="nav-link">← HOME</a>
+    </nav>
+
+    <div class="pyramids">
+        <div class="pyramid"></div>
+        <div class="pyramid"></div>
+        <div class="pyramid"></div>
+    </div>
+    
+    <div class="container">
+        <h1>𓋹 KON KARNE 𓋹</h1>
+        <div class="subtitle">Ancient Harmonic Portal</div>
+        <div class="keyboard">
+            <button class="key" data-chord="G">G</button>
+            <button class="key" data-chord="E">E</button>
+            <button class="key" data-chord="Gm">Gm</button>
+            <button class="key" data-chord="G#m">G#m</button>
+            <button class="key" data-chord="B">B</button>
+            <button class="key" data-chord="A">A</button>
+            <button class="key" data-chord="C#m">C#m</button>
+            <button class="key" data-chord="D">D</button>
+        </div>
+    </div>
+
+    <script>
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        const chordNotes = {
+            'G': [392.00, 493.88, 587.33],
+            'E': [329.63, 415.30, 493.88],
+            'Gm': [392.00, 466.16, 587.33],
+            'G#m': [415.30, 493.88, 622.25],
+            'B': [493.88, 622.25, 739.99],
+            'A': [440.00, 554.37, 659.25],
+            'C#m': [277.18, 329.63, 415.30],
+            'D': [293.66, 369.99, 440.00]
+        };
+
+        function playChord(chord) {
+            const notes = chordNotes[chord];
+            const now = audioContext.currentTime;
+            
+            notes.forEach((freq, i) => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                osc.frequency.value = freq;
+                osc.type = 'sine';
+                
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.2, now + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+                
+                osc.start(now);
+                osc.stop(now + 1.5);
+            });
+        }
+
+        document.querySelectorAll('.key').forEach(key => {
+            key.addEventListener('click', function() {
+                const chord = this.dataset.chord;
+                playChord(chord);
+                
+                this.classList.add('playing');
+                setTimeout(() => {
+                    this.classList.remove('playing');
+                }, 200);
+            });
+        });
+
+        // Initialize audio context on first interaction
+        document.addEventListener('click', () => {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }, { once: true });
+    </script>
+    <script type="module">
+        import { inject } from '@vercel/analytics';
+        inject();
+    </script>
+</body>
+</html>

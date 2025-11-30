@@ -11,6 +11,7 @@ export default defineConfig({
         main: './index.html',
         pong: './pong.html',
         bullsball: './bullsball.html',
+        konkarne: './konkarne.html',
         comingSoon: './games/coming-soon.html'
       }
     }
