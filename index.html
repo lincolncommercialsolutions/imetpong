@@ -2,94 +2,930 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>303 See Other</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IMETPONG</title>
 <style>
-  * {
+  body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    min-height: 100vh;
+    height: 100vh;
+    background: linear-gradient(135deg, #0a0a15 0%, #1a0a2e 25%, #0f0f1e 50%, #1a1a2e 75%, #0a0a15 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: white;
-    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+    touch-action: none;
+    position: relative;
   }
-  
-  .container {
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(0, 136, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 0, 102, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(0, 221, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  #gameTitle {
+    font-size: 72px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 
+      0 0 10px rgba(0, 221, 255, 0.8),
+      0 0 20px rgba(0, 221, 255, 0.6),
+      0 0 30px rgba(0, 221, 255, 0.4),
+      0 0 40px rgba(0, 136, 255, 0.3);
+    margin-bottom: 10px;
+    letter-spacing: 8px;
+    z-index: 10;
+    animation: titlePulse 3s ease-in-out infinite;
+  }
+  #gameRules {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
     text-align: center;
     max-width: 600px;
-  }
-  
-  h1 {
-    font-size: 120px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-shadow: 0 5px 20px rgba(0,0,0,0.3);
-  }
-  
-  h2 {
-    font-size: 32px;
     margin-bottom: 15px;
-    font-weight: 300;
+    z-index: 10;
+    line-height: 1.6;
   }
-  
-  p {
+  #asciiCode {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    text-shadow: none;
+    margin-top: 15px;
+    letter-spacing: 3px;
+    z-index: 10;
+    font-family: 'Courier New', monospace;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  #asciiCode * {
+    color: white !important;
+    text-decoration: none !important;
+  }
+  @keyframes titlePulse {
+    0%, 100% { text-shadow: 0 0 10px rgba(0, 221, 255, 0.8), 0 0 20px rgba(0, 221, 255, 0.6), 0 0 30px rgba(0, 221, 255, 0.4); }
+    50% { text-shadow: 0 0 20px rgba(0, 221, 255, 1), 0 0 30px rgba(0, 221, 255, 0.8), 0 0 50px rgba(0, 221, 255, 0.6); }
+  }
+  #gameContainer {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 
+      0 0 20px rgba(0, 221, 255, 0.3),
+      0 0 40px rgba(0, 136, 255, 0.2),
+      0 20px 60px rgba(0, 0, 0, 0.8);
+    width: 100vw;
+    height: 70vh;
+    max-width: 100vw;
+    border: 2px solid rgba(0, 221, 255, 0.3);
+    z-index: 10;
+  }
+  #timer {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 15px;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    z-index: 5;
+    font-family: 'Courier New', monospace;
+  }
+  #lives {
+    position: absolute;
+    top: 80px;
+    left: 20px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 15px;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    z-index: 5;
+    font-family: 'Courier New', monospace;
+  }
+  .heart {
+    color: #ff0066;
+    font-size: 20px;
+  }
+  canvas {
+    display: block;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f8f8 100%);
+    width: 100%;
+    height: 100%;
+  }
+  #scoreBoard {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    box-sizing: border-box;
+    font-size: 32px;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .player-name {
+    color: #00ddff;
+  }
+  .jarvis-name {
+    color: #ff0066;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+  }
+  .wit-text {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 20px;
+    letter-spacing: 6px;
+    font-weight: normal;
+  }
+  #winner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 90px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 
+      0 0 20px #00ddff,
+      0 0 40px #00ddff,
+      0 0 80px #00ddff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s;
+    text-align: center;
+    line-height: 1.2;
+  }
+  #instructions {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: black;
+    font-size: 16px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 10px;
+  }
+  #startOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 100;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #startOverlay h2 {
+    font-size: 48px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px #00ddff;
+  }
+  #startOverlay .instructions-box {
+    background: rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+    max-width: 500px;
+  }
+  #startOverlay .control-section {
+    margin: 15px 0;
     font-size: 18px;
     line-height: 1.6;
-    opacity: 0.9;
-    margin-bottom: 30px;
   }
-  
-  a {
-    display: inline-block;
-    padding: 15px 40px;
-    background: rgba(255,255,255,0.2);
+  #startOverlay .control-title {
+    color: #00ddff;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  #startOverlay button {
+    background: linear-gradient(135deg, #00ddff, #0088ff);
+    border: none;
     color: white;
-    text-decoration: none;
+    font-size: 24px;
+    padding: 15px 50px;
     border-radius: 50px;
-    border: 2px solid white;
-    font-size: 16px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(0,136,255,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-  
-  a:hover {
-    background: white;
-    color: #667eea;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  #startOverlay button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0,136,255,0.6);
   }
-  
+  #startOverlay button:active {
+    transform: scale(0.98);
+  }
+  #layoutSelect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 200;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #layoutSelect h2 {
+    font-size: 42px;
+    margin-bottom: 40px;
+    text-shadow: 0 0 20px #00ddff;
+  }
+  .layout-buttons {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .layout-btn {
+    background: linear-gradient(135deg, #00ddff, #0088ff);
+    border: none;
+    color: white;
+    font-size: 28px;
+    padding: 20px 60px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(0,136,255,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-width: 200px;
+  }
+  .layout-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0,136,255,0.6);
+  }
+  .layout-btn:active {
+    transform: scale(0.98);
+  }
+  .mobile-layout #gameContainer {
+    height: 50vh !important;
+  }
+  .mobile-layout #gameTitle {
+    font-size: 32px !important;
+    margin-bottom: 8px !important;
+  }
+  .mobile-layout #asciiCode {
+    font-size: 8px !important;
+    margin-top: 8px !important;
+  }
   @media (max-width: 768px) {
-    h1 {
-      font-size: 80px;
+    body {
+      justify-content: flex-start;
+      padding-top: 5vh;
     }
-    
-    h2 {
-      font-size: 24px;
+    #gameTitle {
+      font-size: 36px;
+      margin-bottom: 5px;
+      letter-spacing: 4px;
+      margin-top: 10px;
     }
-    
-    p {
-      font-size: 16px;
+    #gameRules {
+      font-size: 10px;
+      max-width: 90vw;
+      margin-bottom: 8px;
+      padding: 0 10px;
     }
+    #asciiCode {
+      font-size: 9px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+      word-wrap: break-word;
+      max-width: 90vw;
+      line-height: 1.4;
+      color: white !important;
+      text-decoration: none !important;
+    }
+    #gameContainer {
+      width: 100vw;
+      height: 60vh;
+      border-radius: 0;
+      max-width: 100vw;
+    }
+    #timer {
+      font-size: 12px;
+      padding: 5px 10px;
+      top: 55px;
+      right: 10px;
+    }
+    #lives {
+      font-size: 12px;
+      padding: 5px 10px;
+      top: 55px;
+      left: 10px;
+    }
+    .heart {
+      font-size: 14px;
+    }
+    #scoreBoard {
+      font-size: 14px;
+      padding: 0 10px;
+      height: 45px;
+    }
+    .wit-text {
+      font-size: 10px;
+      letter-spacing: 2px;
+    }
+    .player-name, .jarvis-name {
+      font-size: 14px;
+    }
+    #winner {
+      font-size: 36px;
+      padding: 0 20px;
+    }
+    #instructions {
+      font-size: 9px;
+      bottom: 2px;
+      padding: 5px 5px;
+    }
+    #startOverlay h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    #startOverlay .instructions-box {
+      padding: 20px;
+      max-width: 90vw;
+    }
+    #startOverlay .control-section {
+      font-size: 13px;
+      margin: 10px 0;
+    }
+    #startOverlay .control-title {
+      font-size: 15px;
+    }
+    #startOverlay button {
+      font-size: 18px;
+      padding: 12px 35px;
+    }
+    #layoutSelect h2 {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+    .layout-btn {
+      font-size: 20px;
+      padding: 15px 40px;
+      min-width: 150px;
+    }
+  }
+  .hidden {
+    display: none !important;
   }
 </style>
 </head>
 <body>
-  <div class="container">
-    <h1>303</h1>
-    <h2>See Other</h2>
-    <p>The response to this request can be found under a different URI.</p>
-    <a href="/">Go Home</a>
+
+<div id="layoutSelect">
+  <div class="layout-buttons">
+    <button class="layout-btn" onclick="selectLayout('desktop')">🖥️ Desktop</button>
+    <button class="layout-btn" onclick="selectLayout('mobile')">📱 Mobile</button>
   </div>
+</div>
+
+<div id="gameTitle">IMETPONG</div>
+
+<div id="gameRules">First to 54 wins the round. If J4RV1S reaches 54, you lose a life and scores reset. Your score carries over between rounds. Beat J4RV1S once to win!</div>
+
+<div id="gameContainer">
+  <canvas id="game" width="900" height="600"></canvas>
+  
+  <div id="scoreBoard">
+    <div><span class="player-name">PLAYER</span> <span id="playerScore">0</span></div>
+    <div><span class="wit-text">?</span></div>
+    <div><span id="jarvisScore">0</span> <span class="jarvis-name">J4RV1S</span></div>
+  </div>
+  
+  <div id="timer">00:00</div>
+  
+  <div id="lives">Lives: <span class="heart">🪽🪽🪽</span></div>
+  
+  <div id="winner"></div>
+  <div id="instructions">
+    <strong>Desktop:</strong> A & D to move, Space or Click to start | 
+    <strong>Mobile:</strong> Tap to start, Drag paddle to move
+  </div>
+  
+  <div id="startOverlay">
+    <h2>PLAYER vs J4RV1S</h2>
+    <div class="instructions-box">
+      <div class="control-section">
+        <div class="control-title">🖥️ DESKTOP CONTROLS</div>
+        <div>Press <strong>A</strong> and <strong>D</strong> to move your paddle</div>
+        <div>Press <strong>SPACE BAR</strong> or <strong>CLICK</strong> to start</div>
+      </div>
+      <div class="control-section">
+        <div class="control-title">📱 MOBILE CONTROLS</div>
+        <div><strong>TAP SCREEN</strong> to start the game</div>
+        <div><strong>DRAG</strong> your paddle up and down to move</div>
+      </div>
+    </div>
+    <button onclick="startGame()">START GAME</button>
+  </div>
+</div>
+
+<div id="asciiCode">116 119 101 110 116 121 32 115 101 118 101 110 32 105 115 32 116 105 109 101</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const playerScoreEl = document.getElementById('playerScore');
+const jarvisScoreEl = document.getElementById('jarvisScore');
+const winnerEl = document.getElementById('winner');
+const startOverlay = document.getElementById('startOverlay');
+const timerEl = document.getElementById('timer');
+const layoutSelect = document.getElementById('layoutSelect');
+const livesEl = document.getElementById('lives');
+
+let startTime = null;
+let timerInterval = null;
+let selectedLayout = null;
+let playerLives = 3;
+
+function selectLayout(layout) {
+  selectedLayout = layout;
+  layoutSelect.classList.add('hidden');
+  
+  if (layout === 'mobile') {
+    document.body.classList.add('mobile-layout');
+    // Square canvas for mobile
+    canvas.width = 500;
+    canvas.height = 500;
+    
+    // Scale game elements for mobile
+    scaledPaddleWidth = 12;
+    scaledPaddleHeight = 80;
+    scaledBallRadius = 10;
+    scaledBallSpeedX = 10;
+    scaledBallSpeedY = 6;
+    paddleOffset = 35;
+  } else {
+    document.body.classList.remove('mobile-layout');
+    // Rectangle canvas for desktop
+    canvas.width = 900;
+    canvas.height = 600;
+    
+    // Full size elements for desktop
+    scaledPaddleWidth = 16;
+    scaledPaddleHeight = 120;
+    scaledBallRadius = 14;
+    scaledBallSpeedX = 15;
+    scaledBallSpeedY = 9;
+    paddleOffset = 50;
+  }
+  
+  // Reset game elements positions
+  ballX = canvas.width / 2;
+  ballY = canvas.height / 2;
+  playerY = canvas.height / 2 - scaledPaddleHeight / 2;
+  jarvisY = canvas.height / 2 - scaledPaddleHeight / 2;
+  
+  // Reset ball speed with scaled values
+  ballSpeedX = scaledBallSpeedX;
+  ballSpeedY = scaledBallSpeedY;
+}
+
+function updateTimer() {
+  if (!startTime) return;
+  const elapsed = Date.now() - startTime;
+  const minutes = Math.floor(elapsed / 60000);
+  const seconds = Math.floor((elapsed % 60000) / 1000);
+  timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function updateLivesDisplay() {
+  const angels = '🪽'.repeat(playerLives);
+  livesEl.innerHTML = `Lives: <span class="heart">${angels}</span>`;
+}
+
+// Responsive canvas sizing
+function resizeCanvas() {
+  const maxWidth = Math.min(900, window.innerWidth * 0.95);
+  const maxHeight = Math.min(600, window.innerHeight * 0.95);
+  const aspectRatio = 900 / 600;
+  
+  if (maxWidth / maxHeight > aspectRatio) {
+    canvas.height = maxHeight;
+    canvas.width = maxHeight * aspectRatio;
+  } else {
+    canvas.width = maxWidth;
+    canvas.height = maxWidth / aspectRatio;
+  }
+}
+
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const paddleWidth = 16;
+const paddleHeight = 120;
+const ballRadius = 14;
+
+let ballX = canvas.width / 2;
+let ballY = canvas.height / 2;
+let ballSpeedX = 15;
+let ballSpeedY = 9;
+
+let playerY = canvas.height / 2 - paddleHeight / 2;
+let jarvisY = canvas.height / 2 - paddleHeight / 2;
+
+let playerScore = 0;
+let jarvisScore = 0;
+const winningScore = 54;
+
+// Scaled values for mobile
+let scaledPaddleWidth = 16;
+let scaledPaddleHeight = 120;
+let scaledBallRadius = 14;
+let scaledBallSpeedX = 15;
+let scaledBallSpeedY = 9;
+let paddleOffset = 50;
+
+const keys = {};
+let gameRunning = false;
+let isTouching = false;
+let touchY = 0;
+
+// Super Secret cheat codes
+let cheatCodeBuffer = '';
+const cheatCodes = ['ball54', '27', 'cat', 'time'];
+let cheatCodeTimeout = null;
+
+// Keyboard controls
+window.addEventListener('keydown', e => {
+  keys[e.key.toLowerCase()] = true;
+  if (e.key === ' ' && !gameRunning && startOverlay.classList.contains('hidden')) {
+    e.preventDefault();
+  }
+  
+  // Cheat code detection
+  if (gameRunning && e.key.length === 1) {
+    cheatCodeBuffer += e.key.toLowerCase();
+    
+    // Clear buffer after 3 seconds of inactivity
+    if (cheatCodeTimeout) clearTimeout(cheatCodeTimeout);
+    cheatCodeTimeout = setTimeout(() => {
+      cheatCodeBuffer = '';
+    }, 3000);
+    
+    // Check if any cheat code was entered
+    for (let code of cheatCodes) {
+      if (cheatCodeBuffer.includes(code)) {
+        activateCheatCode();
+        cheatCodeBuffer = '';
+        break;
+      }
+    }
+    
+    // Keep buffer from getting too long
+    if (cheatCodeBuffer.length > 10) {
+      cheatCodeBuffer = cheatCodeBuffer.slice(-10);
+    }
+  }
+});
+window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+function activateCheatCode() {
+  playerScore = 54;
+  jarvisScore = 27;
+  playerScoreEl.textContent = playerScore;
+  jarvisScoreEl.textContent = jarvisScore;
+  checkWin();
+}
+
+// Mobile touch controls
+canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+canvas.addEventListener('touchend', () => { isTouching = false; });
+
+// Mouse controls for desktop
+canvas.addEventListener('mousedown', handleMouseDown);
+canvas.addEventListener('mousemove', handleMouseMove);
+canvas.addEventListener('mouseup', () => { isTouching = false; });
+
+function handleTouchStart(e) {
+  e.preventDefault();
+  if (!gameRunning && startOverlay.classList.contains('hidden')) {
+    startGame();
+    return;
+  }
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  const x = ((touch.clientX - rect.left) / rect.width) * canvas.width;
+  
+  // Only control left side (player paddle)
+  if (x < canvas.width / 2) {
+    isTouching = true;
+    touchY = ((touch.clientY - rect.top) / rect.height) * canvas.height;
+  }
+}
+
+function handleTouchMove(e) {
+  e.preventDefault();
+  if (!isTouching) return;
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  touchY = ((touch.clientY - rect.top) / rect.height) * canvas.height;
+}
+
+function handleMouseDown(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * canvas.width;
+  
+  // Only control left side (player paddle)
+  if (x < canvas.width / 2) {
+    isTouching = true;
+    touchY = ((e.clientY - rect.top) / rect.height) * canvas.height;
+  }
+}
+
+function handleMouseMove(e) {
+  if (!isTouching) return;
+  const rect = canvas.getBoundingClientRect();
+  touchY = ((e.clientY - rect.top) / rect.height) * canvas.height;
+}
+
+function startGame() {
+  if (!selectedLayout) {
+    layoutSelect.classList.remove('hidden');
+    return;
+  }
+  startOverlay.classList.add('hidden');
+  gameRunning = true;
+  startTime = Date.now();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(updateTimer, 100);
+  timerEl.textContent = "00:00";
+  updateLivesDisplay();
+  resetBall();
+}
+
+function resetBall() {
+  ballX = canvas.width / 2;
+  ballY = canvas.height / 2;
+  ballSpeedX = (Math.random() > 0.5 ? scaledBallSpeedX : -scaledBallSpeedX) * (Math.random() > 0.5 ? 1 : -1);
+  ballSpeedY = (Math.random() * scaledBallSpeedY * 2 - scaledBallSpeedY);
+}
+
+function update() {
+  if (!gameRunning) return;
+
+  
+  const topBoundary = 70; 
+  const bottomBoundary = 40; 
+  const maxPlayerY = canvas.height - bottomBoundary - scaledPaddleHeight;
+
+  
+  if (keys['a'] && playerY > topBoundary) playerY -= 9;
+  if (keys['d'] && playerY < maxPlayerY) playerY += 9;
+  
+
+  if (isTouching) {
+    const targetY = touchY - scaledPaddleHeight / 2;
+    playerY = Math.max(topBoundary, Math.min(maxPlayerY, targetY));
+  }
+
+  
+  const targetY = ballY - scaledPaddleHeight / 2;
+  const diff = targetY - jarvisY;
+  const jarvisSpeed = 9; 
+  
+  if (Math.abs(diff) > 3) { 
+    const moveAmount = Math.min(Math.abs(diff), jarvisSpeed);
+    jarvisY += diff > 0 ? moveAmount : -moveAmount;
+  }
+  
+  
+  jarvisY = Math.max(topBoundary, Math.min(maxPlayerY, jarvisY));
+
+  
+  ballX += ballSpeedX;
+  ballY += ballSpeedY;
+
+  
+  if (ballY - scaledBallRadius <= topBoundary || ballY + scaledBallRadius >= canvas.height - bottomBoundary) {
+    ballSpeedY = -ballSpeedY;
+    
+    if (ballY - scaledBallRadius < topBoundary) {
+      ballY = topBoundary + scaledBallRadius;
+    }
+    if (ballY + scaledBallRadius > canvas.height - bottomBoundary) {
+      ballY = canvas.height - bottomBoundary - scaledBallRadius;
+    }
+  }
+
+  
+ 
+  if (ballSpeedX < 0 &&
+      ballX - scaledBallRadius < paddleOffset + scaledPaddleWidth &&
+      ballX + scaledBallRadius > paddleOffset &&
+      ballY > playerY && ballY < playerY + scaledPaddleHeight) {
+    ballSpeedX = -ballSpeedX * 1.06;
+    let deltaY = (ballY - (playerY + scaledPaddleHeight / 2)) / (scaledPaddleHeight / 2);
+    ballSpeedY = deltaY * 8;
+  }
+
+  
+  if (ballSpeedX > 0 &&
+      ballX + scaledBallRadius > canvas.width - paddleOffset - scaledPaddleWidth &&
+      ballX - scaledBallRadius < canvas.width - paddleOffset &&
+      ballY > jarvisY && ballY < jarvisY + scaledPaddleHeight) {
+    ballSpeedX = -ballSpeedX * 1.06;
+    let deltaY = (ballY - (jarvisY + scaledPaddleHeight / 2)) / (scaledPaddleHeight / 2);
+    ballSpeedY = deltaY * 8;
+  }
+
+  
+  if (ballX < 0) {
+    jarvisScore++;
+    jarvisScoreEl.textContent = jarvisScore;
+    checkWin();
+    resetBall();
+  }
+  if (ballX > canvas.width) {
+    playerScore++;
+    playerScoreEl.textContent = playerScore;
+    checkWin();
+    resetBall();
+  }
+}
+
+function checkWin() {
+  if (playerScore >= winningScore || jarvisScore >= winningScore) {
+    if (jarvisScore >= winningScore) {
+      
+      playerLives--;
+      updateLivesDisplay();
+      
+      if (playerLives <= 0) {
+        
+        gameRunning = false;
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+        winnerEl.textContent = `J4RV1S WINS!`;
+        winnerEl.style.opacity = 1;
+        winnerEl.style.textShadow = "0 0 40px #ff0066, 0 0 80px #ff0066";
+
+        setTimeout(() => {
+          playerScore = 0;
+          jarvisScore = 0;
+          playerLives = 3;
+          playerScoreEl.textContent = "0";
+          jarvisScoreEl.textContent = "0";
+          winnerEl.style.opacity = 0;
+          startOverlay.classList.remove('hidden');
+          isTouching = false;
+          startTime = null;
+          timerEl.textContent = "00:00";
+          updateLivesDisplay();
+        }, 4000);
+      } else {
+        
+        jarvisScore = 0;
+        jarvisScoreEl.textContent = "0";
+        resetBall();
+      }
+    } else {
+      
+      gameRunning = false;
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      winnerEl.textContent = `PLAYER WINS!`;
+      winnerEl.style.opacity = 1;
+      winnerEl.style.textShadow = "0 0 40px #00ddff, 0 0 80px #00ddff";
+
+      setTimeout(() => {
+        playerScore = 0;
+        jarvisScore = 0;
+        playerLives = 3;
+        playerScoreEl.textContent = "0";
+        jarvisScoreEl.textContent = "0";
+        winnerEl.style.opacity = 0;
+        startOverlay.classList.remove('hidden');
+        isTouching = false;
+        startTime = null;
+        timerEl.textContent = "00:00";
+        updateLivesDisplay();
+      }, 4000);
+    }
+  }
+}
+
+function draw() {
+  
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  
+  ctx.setLineDash([15, 15]);
+  ctx.strokeStyle = '#ddd';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(canvas.width / 2, 0);
+  ctx.lineTo(canvas.width / 2, canvas.height);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = '#000';
+
+  
+  ctx.fillStyle = 'black';
+  ctx.shadowColor = '#00ddff';
+  ctx.fillRect(paddleOffset, playerY, scaledPaddleWidth, scaledPaddleHeight);
+
+  
+  ctx.shadowColor = '#ff0066';
+  ctx.fillRect(canvas.width - paddleOffset - scaledPaddleWidth, jarvisY, scaledPaddleWidth, scaledPaddleHeight);
+
+  ctx.shadowBlur = 0;
+
+  
+  const gradient = ctx.createRadialGradient(ballX-4, ballY-4, 0, ballX, ballY, scaledBallRadius);
+  gradient.addColorStop(0, '#66bbff');
+  gradient.addColorStop(0.7, '#0088ff');
+  gradient.addColorStop(1, '#0044aa');
+
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, scaledBallRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  
+  ctx.shadowBlur = 30;
+  ctx.shadowColor = '#0088ff';
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, scaledBallRadius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function gameLoop() {
+  update();
+  draw();
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+</script>
+
+<!-- Vercel Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+
 </body>
 </html>
