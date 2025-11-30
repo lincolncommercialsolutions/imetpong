@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Ball with the Bull - What is 108?</title>
+<link rel="stylesheet" href="/src/styles/main.css">
+<style>
+  body{margin:0;overflow:hidden;background:#0b1d3a;font-family:'Courier New',monospace;touch-action:none}
+  canvas{display:block}
+  #overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;color:white;text-shadow:2px 2px 6px #000}
+  #header{display:flex;justify-content:space-between;padding:15px 20px;background:linear-gradient(to bottom,rgba(0,0,0,0.8),transparent)}
+  .score-box{background:rgba(0,0,0,0.7);padding:10px 20px;border-radius:12px;border:3px solid #fff;font-size:22px;font-weight:bold}
+  #timer{background:#c00;color:#ff0;animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
+  #startScreen,#gameOver{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);padding:30px 40px;border-radius:20px;text-align:center;max-width:90%;box-shadow:0 0 30px #c00;pointer-events:auto;border:4px solid #f00}
+  h1{margin:0;font-size:48px;color:#f00;text-shadow:3px 3px #000}
+  button{margin:15px 10px;padding:16px 32px;font-size:24px;font-weight:bold;background:#c00;color:white;border:none;border-radius:12px;cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,0.5);transition:all 0.2s}
+  button:active{transform:scale(0.95)}
+  #instructions{position:absolute;bottom:20px;left:0;width:100%;text-align:center;background:rgba(0,0,0,0.7);padding:12px;font-size:18px;pointer-events:none;border-top:3px solid #fff}
+  @media(max-width:768px){
+    h1{font-size:32px}
+    h2{font-size:40px!important}
+    button{font-size:20px;padding:12px 24px}
+    .score-box{font-size:18px;padding:8px 15px}
+    #instructions{font-size:14px;padding:8px}
+  }
+</style>
+</head>
+<body>
+<nav class="game-nav"><a href="/index.html" class="nav-link">← HOME</a></nav>
+<canvas id="c"></canvas>
+<div id="overlay">
+  <div id="header">
+    <div class="score-box">YOU <span id="pScore">0</span></div>
+    <div class="score-box" id="timer">2:00</div>
+    <div class="score-box">MJ <span id="mScore">0</span></div>
+  </div>
+  <div id="instructions">Drag to move • Swipe UP to shoot • Take it to either hoop!</div>
+  <div id="startScreen">
+    <h1>FULL COURT 1v1</h1>
+    <h2 style="color:#f00;font-size:60px;margin:20px 0">vs PRIME MJ</h2>
+    <p style="font-size:22px;color:#ff0">Two baskets • First to win in 2 minutes</p>
+    <p>Attack both ends — MJ will too!</p>
+    <button onclick="startGame()" style="font-size:30px;padding:20px 50px">PLAY BALL</button>
+  </div>
+  <div id="gameOver" style="display:none">
+    <h1 id="result">YOU WIN!!!</h1>
+    <h2 id="finalScore">21 - 18</h2>
+    <p id="verdict" style="font-size:28px;margin:20px"></p>
+    <button onclick="location.reload()">PLAY AGAIN</button>
+  </div>
+</div>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+let player={x:canvas.width/2,y:canvas.height*0.75,score:0};
+let mj={x:canvas.width/2,y:canvas.height*0.25,score:0};
+let ball={x:player.x,y:player.y-50,vx:0,vy:0,holder:'player'};
+const hoops=[{x:canvas.width/2,y:canvas.height*0.18,owner:'mj'},{x:canvas.width/2,y:canvas.height*0.82,owner:'player'}];
+let gameRunning=false,timeLeft=120,startX,startY;
+canvas.addEventListener('touchstart',e=>{if(!gameRunning)return;e.preventDefault();startX=e.touches[0].clientX;startY=e.touches[0].clientY});
+canvas.addEventListener('touchmove',e=>{if(!gameRunning)return;e.preventDefault();const x=e.touches[0].clientX,y=e.touches[0].clientY,dx=x-startX,dy=y-startY;player.x+=dx*1.4;player.x=Math.max(80,Math.min(canvas.width-80,player.x));if(dy<-100&&ball.holder==='player')shoot('player');startX=x;startY=y});
+canvas.addEventListener('click',()=>{if(gameRunning&&ball.holder==='player')shoot('player')});
+function shoot(from){if(ball.vx!==0)return;const targetHoop=hoops.find(h=>h.owner!==from)||hoops[0],accuracy=from==='player'?0.64:0.93,offset=(Math.random()-0.5)*(1-accuracy)*280;ball.vx=(targetHoop.x-ball.x+offset)*0.036;ball.vy=-16-Math.random()*4;ball.holder=null}
+function update(){if(!gameRunning)return;if(!ball.holder){ball.vy+=0.78;ball.x+=ball.vx;ball.y+=ball.vy;if(ball.y>canvas.height-70){ball.y=canvas.height-70;ball.vy*=-0.68;ball.vx*=0.84}if(Math.abs(ball.vy)<4&&ball.y>canvas.height-100){if(Math.abs(ball.x-player.x)<80)ball.holder='player';else if(Math.abs(ball.x-mj.x)<80)ball.holder='opponent'}hoops.forEach(hoop=>{if(ball.y>hoop.y-30&&ball.y<hoop.y+50&&Math.abs(ball.x-hoop.x)<80&&ball.vy>0){if(hoop.owner==='player')mj.score+=2;else player.score+=2;updateScore();resetBall()}})}if(ball.holder==='player'){ball.x=player.x;ball.y=player.y-60+Math.sin(Date.now()*0.008)*10}else if(ball.holder==='opponent'){ball.x=mj.x;ball.y=mj.y-60}if(ball.holder==='opponent'){mj.y+=4;if(mj.y>canvas.height*0.7&&Math.random()<0.07)shoot('opponent')}else{const dx=ball.x-mj.x,dy=ball.y-mj.y;mj.x+=Math.sign(dx)*7.5;mj.y+=Math.sign(dy)*4}mj.x=Math.max(80,Math.min(canvas.width-80,mj.x));mj.y=Math.max(100,Math.min(canvas.height-100,mj.y))}
+function resetBall(){setTimeout(()=>{ball={x:canvas.width/2,y:canvas.height/2,vx:0,vy:0,holder:Math.random()<0.5?'player':'opponent'}},1000)}
+function draw(){ctx.fillStyle='#3a6e3a';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.setLineDash([20,15]);ctx.strokeStyle='#fff';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(0,canvas.height/2);ctx.lineTo(canvas.width,canvas.height/2);ctx.stroke();ctx.setLineDash([]);hoops.forEach(hoop=>{ctx.fillStyle='#f50';ctx.fillRect(hoop.x-90,hoop.y+10,180,22);ctx.strokeStyle='#fff';ctx.lineWidth=7;ctx.strokeRect(hoop.x-90,hoop.y+10,180,22);ctx.fillStyle='rgba(255,255,255,0.3)';ctx.fillRect(hoop.x-100,hoop.y-110,200,130)});ctx.fillStyle='#06f';ctx.fillRect(player.x-50,player.y-110,100,120);ctx.fillStyle='#c00';ctx.fillRect(mj.x-50,mj.y-110,100,120);ctx.fillStyle='#ffdbac';ctx.beginPath();ctx.arc(player.x,player.y-135,30,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(mj.x,mj.y-135,30,0,Math.PI*2);ctx.fill();if(mj.y>canvas.height*0.6&&!ball.holder){ctx.fillStyle='#f00';ctx.fillRect(mj.x-10,mj.y-110,20,40)}ctx.fillStyle='#f70';ctx.beginPath();ctx.arc(ball.x,ball.y,30,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=5;ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-24,ball.y);ctx.lineTo(ball.x+24,ball.y);ctx.moveTo(ball.x,ball.y-24);ctx.lineTo(ball.x,ball.y+24);ctx.stroke()}
+function updateScore(){document.getElementById('pScore').textContent=player.score;document.getElementById('mScore').textContent=mj.score}
+function startGame(){document.getElementById('startScreen').remove();player.score=mj.score=0;timeLeft=120;gameRunning=true;updateScore();resetBall();const timer=setInterval(()=>{timeLeft--;const m=String(Math.floor(timeLeft/60)).padStart(2,'0'),s=String(timeLeft%60).padStart(2,'0');document.getElementById('timer').textContent=m+':'+s;if(timeLeft<=0){clearInterval(timer);gameRunning=false;const win=player.score>mj.score;document.getElementById('result').textContent=win?"YOU BEAT PRIME MJ!!!":"23 > YOU";document.getElementById('result').style.color=win?"#0f0":"#f00";document.getElementById('finalScore').textContent=player.score+' - '+mj.score;document.getElementById('verdict').textContent=win?"LEGENDARY!":"He really is the GOAT";document.getElementById('gameOver').style.display='block'}},1000)}
+function loop(){update();draw();requestAnimationFrame(loop)}
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;hoops[0].x=hoops[1].x=canvas.width/2});
+loop();
+</script>
+</body>
+</html>
