@@ -10,6 +10,7 @@ export default defineConfig({
       input: {
         main: './index.html',
         pong: './pong.html',
+        bullsball: './bullsball.html',
         comingSoon: './games/coming-soon.html'
       }
     }
