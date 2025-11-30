@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coming Soon - What is 108?</title>
+<link rel="stylesheet" href="/src/styles/main.css">
+<style>
+  .coming-soon-container {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  
+  .coming-soon-icon {
+    font-size: 120px;
+    margin-bottom: 30px;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  
+  .coming-soon-title {
+    font-size: 64px;
+    font-weight: bold;
+    color: #00ddff;
+    text-shadow: 0 0 20px rgba(0, 221, 255, 0.8);
+    margin-bottom: 20px;
+  }
+  
+  .coming-soon-text {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 40px;
+  }
+</style>
+</head>
+<body>
+  <nav class="game-nav">
+    <a href="/home.html" class="nav-link">← HOME</a>
+  </nav>
+  
+  <div class="coming-soon-container">
+    <div class="coming-soon-icon">🎮</div>
+    <h1 class="coming-soon-title">COMING SOON</h1>
+    <p class="coming-soon-text">More exciting games are in development!</p>
+  </div>
+  
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a15 0%, #1a0a2e 25%, #0f0f1e 50%, #1a1a2e 75%, #0a0a15 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+}
+
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(0, 136, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 0, 102, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(0, 221, 255, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Home Page Styles */
+.home-container {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.main-title {
+  font-size: 96px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 
+    0 0 10px rgba(0, 221, 255, 0.8),
+    0 0 20px rgba(0, 221, 255, 0.6),
+    0 0 30px rgba(0, 221, 255, 0.4),
+    0 0 40px rgba(0, 136, 255, 0.3);
+  margin-bottom: 10px;
+  letter-spacing: 12px;
+  animation: titlePulse 3s ease-in-out infinite;
+}
+
+.subtitle {
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 8px;
+  margin-bottom: 60px;
+}
+
+@keyframes titlePulse {
+  0%, 100% { 
+    text-shadow: 0 0 10px rgba(0, 221, 255, 0.8), 0 0 20px rgba(0, 221, 255, 0.6), 0 0 30px rgba(0, 221, 255, 0.4); 
+  }
+  50% { 
+    text-shadow: 0 0 20px rgba(0, 221, 255, 1), 0 0 30px rgba(0, 221, 255, 0.8), 0 0 50px rgba(0, 221, 255, 0.6); 
+  }
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  width: 100%;
+  margin-bottom: 60px;
+}
+
+.game-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(0, 221, 255, 0.3);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.game-card:hover {
+  transform: translateY(-10px);
+  border-color: rgba(0, 221, 255, 0.8);
+  box-shadow: 0 20px 60px rgba(0, 221, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.game-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.game-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.game-card h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #00ddff;
+}
+
+.game-card p {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ascii-footer {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  letter-spacing: 3px;
+  font-family: 'Courier New', monospace;
+  opacity: 0.8;
+}
+
+.game-nav {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.nav-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background: rgba(0, 221, 255, 0.2);
+  border: 2px solid rgba(0, 221, 255, 0.5);
+  border-radius: 50px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background: rgba(0, 221, 255, 0.4);
+  border-color: rgba(0, 221, 255, 1);
+  transform: translateX(-5px);
+}
+
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 48px;
+    letter-spacing: 6px;
+  }
+  
+  .subtitle {
+    font-size: 16px;
+    letter-spacing: 4px;
+    margin-bottom: 40px;
+  }
+  
+  .game-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 20px;
+  }
+  
+  .game-card {
+    padding: 30px;
+  }
+  
+  .game-icon {
+    font-size: 60px;
+  }
+  
+  .game-card h2 {
+    font-size: 24px;
+  }
+  
+  .ascii-footer {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+}

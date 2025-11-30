@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IMETPONG - What is 108?</title>
+<link rel="stylesheet" href="/src/styles/main.css">
+<link rel="stylesheet" href="/src/styles/pong.css">
+</head>
+<body>
+
+<nav class="game-nav">
+  <a href="/home.html" class="nav-link">← HOME</a>
+</nav>
+
+<div id="layoutSelect">
+  <div class="layout-buttons">
+    <button class="layout-btn" id="desktopBtn">🖥️ Desktop</button>
+    <button class="layout-btn" id="mobileBtn">📱 Mobile</button>
+  </div>
+</div>
+
+<div id="gameTitle">IMETPONG</div>
+
+<div id="gameRules">First to 54 wins the round. If J4RV1S reaches 54, you lose a life and scores reset. Your score carries over between rounds. Beat J4RV1S once to win!</div>
+
+<div id="gameContainer">
+  <canvas id="game" width="900" height="600"></canvas>
+  
+  <div id="scoreBoard">
+    <div><span class="player-name">PLAYER</span> <span id="playerScore">0</span></div>
+    <div><span class="wit-text">?</span></div>
+    <div><span id="jarvisScore">0</span> <span class="jarvis-name">J4RV1S</span></div>
+  </div>
+  
+  <div id="timer">00:00</div>
+  
+  <div id="lives">Lives: <span class="heart">🪽🪽🪽</span></div>
+  
+  <div id="winner"></div>
+  <div id="instructions">
+    <strong>Desktop:</strong> A & D to move, Space or Click to start | 
+    <strong>Mobile:</strong> Tap to start, Drag paddle to move
+  </div>
+  
+  <div id="startOverlay">
+    <h2>PLAYER vs J4RV1S</h2>
+    <div class="instructions-box">
+      <div class="control-section">
+        <div class="control-title">🖥️ DESKTOP CONTROLS</div>
+        <div>Press <strong>A</strong> and <strong>D</strong> to move your paddle</div>
+        <div>Press <strong>SPACE BAR</strong> or <strong>CLICK</strong> to start</div>
+      </div>
+      <div class="control-section">
+        <div class="control-title">📱 MOBILE CONTROLS</div>
+        <div><strong>TAP SCREEN</strong> to start the game</div>
+        <div><strong>DRAG</strong> your paddle up and down to move</div>
+      </div>
+    </div>
+    <button id="startBtn">START GAME</button>
+  </div>
+</div>
+
+<div id="cheatCodeInput" class="cheat-input-container">
+  <input type="text" id="cheatInput" placeholder="Enter cheat code..." maxlength="10">
+  <button id="submitCheat">Submit</button>
+</div>
+
+<div id="asciiCode">116 119 101 110 116 121 32 115 101 118 101 110 32 105 115 32 116 105 109 101</div>
+
+<script type="module" src="/src/games/pong.ts"></script>
+</body>
+</html>
