@@ -16,8 +16,11 @@
   .score-box{background:rgba(0,0,0,0.7);padding:10px 20px;border-radius:12px;border:3px solid #fff;font-size:22px;font-weight:bold}
   #timer{background:#c00;color:#ff0;animation:pulse 1s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
-  #shootBtn{position:absolute;bottom:20px;right:20px;width:80px;height:80px;background:#f00;color:#fff;border:4px solid #fff;border-radius:50%;font-size:16px;font-weight:bold;cursor:pointer;box-shadow:0 5px 20px rgba(255,0,0,0.7);pointer-events:auto;z-index:1000;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2}
+  #shootBtn{position:absolute;bottom:20px;right:20px;width:80px;height:80px;background:#f00;color:#fff;border:4px solid #fff;border-radius:50%;font-size:16px;font-weight:bold;cursor:pointer;box-shadow:0 5px 20px rgba(255,0,0,0.7);pointer-events:auto;z-index:1000;display:none;align-items:center;justify-content:center;text-align:center;line-height:1.2}
   #shootBtn:active{transform:scale(0.9);box-shadow:0 2px 10px rgba(255,0,0,0.5)}
+  #layoutSelect{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);padding:40px;border-radius:20px;text-align:center;box-shadow:0 0 30px #c00;pointer-events:auto;border:4px solid #f00;z-index:2000}
+  #layoutSelect h2{color:#f00;font-size:36px;margin-bottom:30px}
+  .layout-btn{margin:15px;padding:20px 40px;font-size:28px;min-width:200px}
   #startScreen,#gameOver{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);padding:30px 40px;border-radius:20px;text-align:center;max-width:90%;box-shadow:0 0 30px #c00;pointer-events:auto;border:4px solid #f00}
   h1{margin:0;font-size:48px;color:#f00;text-shadow:3px 3px #000}
   button{margin:15px 10px;padding:16px 32px;font-size:24px;font-weight:bold;background:#c00;color:white;border:none;border-radius:12px;cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,0.5);transition:all 0.2s}
@@ -36,14 +39,19 @@
 <nav class="game-nav"><a href="/index.html" class="nav-link">← HOME</a></nav>
 <canvas id="c"></canvas>
 <div id="overlay">
+  <div id="layoutSelect">
+    <h2>SELECT CONTROLS</h2>
+    <button class="layout-btn" onclick="selectLayout('desktop')">🖥️ DESKTOP</button>
+    <button class="layout-btn" onclick="selectLayout('mobile')">📱 MOBILE</button>
+  </div>
   <div id="header">
     <div class="score-box">YOU <span id="pScore">0</span></div>
     <div class="score-box" id="timer">1:48</div>
     <div class="score-box">MJ <span id="mScore">0</span></div>
   </div>
   <button id="shootBtn">SHOOT<br>🏀</button>
-  <div id="instructions">Drag to move • Swipe UP to shoot • Take it to either hoop!</div>
-  <div id="startScreen">
+  <div id="instructions"></div>
+  <div id="startScreen" style="display:none">
     <h1>FULL COURT 1v1</h1>
     <h2 style="color:#f00;font-size:60px;margin:20px 0">vs PRIME MJ</h2>
     <p style="font-size:22px;color:#ff0">First to 13 baskets (39 points) wins</p>
@@ -64,14 +72,18 @@ let player={x:canvas.width/2,y:canvas.height*0.75,score:0};
 let mj={x:canvas.width/2,y:canvas.height*0.25,score:0};
 let ball={x:player.x,y:player.y-50,vx:0,vy:0,holder:'player'};
 const hoops=[{x:canvas.width/2,y:canvas.height*0.18,owner:'mj'},{x:canvas.width/2,y:canvas.height*0.82,owner:'player'}];
-let gameRunning=false,timeLeft=108,startX,startY,gameTimer,ballScored=false;
-canvas.addEventListener('touchstart',e=>{if(!gameRunning)return;e.preventDefault();startX=e.touches[0].clientX;startY=e.touches[0].clientY});
-canvas.addEventListener('touchmove',e=>{if(!gameRunning)return;e.preventDefault();const x=e.touches[0].clientX,y=e.touches[0].clientY,dx=x-startX,dy=y-startY;player.x+=dx*1.4;player.y+=dy*1.4;player.x=Math.max(80,Math.min(canvas.width-80,player.x));player.y=Math.max(100,Math.min(canvas.height-100,player.y));if(dy<-100&&ball.holder==='player')shoot('player');startX=x;startY=y});
-canvas.addEventListener('click',()=>{if(gameRunning&&ball.holder==='player')shoot('player')});
+let gameRunning=false,timeLeft=108,startX,startY,gameTimer,ballScored=false,isDesktop=false;
+const keys={w:false,a:false,s:false,d:false,space:false};
+function selectLayout(type){document.getElementById('layoutSelect').style.display='none';isDesktop=type==='desktop';if(isDesktop){document.getElementById('instructions').textContent='WASD to move • SPACE to grab ball • LEFT CLICK to shoot';document.body.style.touchAction='auto'}else{document.getElementById('instructions').textContent='Drag to move • Tap SHOOT button • Take it to either hoop!';document.getElementById('shootBtn').style.display='flex';document.body.style.touchAction='none'}document.getElementById('startScreen').style.display='block'}
+window.addEventListener('keydown',e=>{if(!isDesktop||!gameRunning)return;const k=e.key.toLowerCase();if(k in keys)keys[k]=true;if(k===' '&&ball.holder!=='player'&&Math.abs(ball.x-player.x)<80&&Math.abs(ball.y-(player.y-60))<80){ball.holder='player';e.preventDefault()}});
+window.addEventListener('keyup',e=>{if(!isDesktop)return;const k=e.key.toLowerCase();if(k in keys)keys[k]=false});
+canvas.addEventListener('touchstart',e=>{if(!gameRunning||isDesktop)return;e.preventDefault();startX=e.touches[0].clientX;startY=e.touches[0].clientY});
+canvas.addEventListener('touchmove',e=>{if(!gameRunning||isDesktop)return;e.preventDefault();const x=e.touches[0].clientX,y=e.touches[0].clientY,dx=x-startX,dy=y-startY;player.x+=dx*1.4;player.y+=dy*1.4;player.x=Math.max(80,Math.min(canvas.width-80,player.x));player.y=Math.max(100,Math.min(canvas.height-100,player.y));startX=x;startY=y});
+canvas.addEventListener('click',()=>{if(gameRunning&&ball.holder==='player'&&isDesktop)shoot('player')});
 document.getElementById('shootBtn').addEventListener('click',()=>{if(gameRunning&&ball.holder==='player')shootClosest()});
 function shootClosest(){if(ball.vx!==0||ball.holder!=='player')return;const dist1=Math.abs(ball.y-hoops[0].y),dist2=Math.abs(ball.y-hoops[1].y);const targetHoop=dist1<dist2?hoops[0]:hoops[1];const accuracy=0.72;const offset=(Math.random()-0.5)*(1-accuracy)*320;ball.vx=(targetHoop.x-ball.x+offset)*0.036;ball.vy=-16-Math.random()*4;ball.holder=null;ballScored=false}
 function shoot(from){if(ball.vx!==0)return;const targetHoop=hoops.find(h=>h.owner!==from)||hoops[0],accuracy=from==='player'?0.72:0.78,offset=(Math.random()-0.5)*(1-accuracy)*320;ball.vx=(targetHoop.x-ball.x+offset)*0.036;ball.vy=-16-Math.random()*4;ball.holder=null;ballScored=false}
-function update(){if(!gameRunning)return;if(!ball.holder){ball.vy+=0.78;ball.x+=ball.vx;ball.y+=ball.vy;if(ball.x<40||ball.x>canvas.width-40||ball.y<40||ball.y>canvas.height-40){ball={x:canvas.width/2,y:canvas.height/2,vx:0,vy:0,holder:null};ballScored=false}if(ball.y>canvas.height-70){ball.y=canvas.height-70;ball.vy*=-0.68;ball.vx*=0.84}if(Math.abs(ball.vy)<4&&ball.y>canvas.height-100){if(Math.abs(ball.x-player.x)<80)ball.holder='player';else if(Math.abs(ball.x-mj.x)<80)ball.holder='opponent'}if(!ballScored){hoops.forEach(hoop=>{if(ball.y>hoop.y-30&&ball.y<hoop.y+50&&Math.abs(ball.x-hoop.x)<80&&ball.vy>0){ballScored=true;if(hoop.owner==='mj')player.score+=3;else mj.score+=3;updateScore();if(player.score>=39||mj.score>=39){gameRunning=false;endGame();return}resetBall()}})}}if(ball.holder==='player'){ball.x=player.x;ball.y=player.y-60+Math.sin(Date.now()*0.008)*10}else if(ball.holder==='opponent'){ball.x=mj.x;ball.y=mj.y-60}if(ball.holder==='opponent'){mj.y+=4;if(mj.y>canvas.height*0.7&&Math.random()<0.08)shoot('opponent')}else{const dx=ball.x-mj.x,dy=ball.y-mj.y;mj.x+=Math.sign(dx)*6.5;mj.y+=Math.sign(dy)*4}mj.x=Math.max(80,Math.min(canvas.width-80,mj.x));mj.y=Math.max(100,Math.min(canvas.height-100,mj.y))}
+function update(){if(!gameRunning)return;if(isDesktop&&ball.holder==='player'){if(keys.w)player.y-=6;if(keys.s)player.y+=6;if(keys.a)player.x-=6;if(keys.d)player.x+=6;player.x=Math.max(80,Math.min(canvas.width-80,player.x));player.y=Math.max(100,Math.min(canvas.height-100,player.y))}if(!ball.holder){ball.vy+=0.78;ball.x+=ball.vx;ball.y+=ball.vy;if(ball.x<40||ball.x>canvas.width-40||ball.y<40||ball.y>canvas.height-40){ball={x:canvas.width/2,y:canvas.height/2,vx:0,vy:0,holder:null};ballScored=false}if(ball.y>canvas.height-70){ball.y=canvas.height-70;ball.vy*=-0.68;ball.vx*=0.84}if(Math.abs(ball.vy)<4&&ball.y>canvas.height-100){if(Math.abs(ball.x-player.x)<80)ball.holder='player';else if(Math.abs(ball.x-mj.x)<80)ball.holder='opponent'}if(!ballScored){hoops.forEach(hoop=>{if(ball.y>hoop.y-30&&ball.y<hoop.y+50&&Math.abs(ball.x-hoop.x)<80&&ball.vy>0){ballScored=true;if(hoop.owner==='mj')player.score+=3;else mj.score+=3;updateScore();if(player.score>=39||mj.score>=39){gameRunning=false;endGame();return}resetBall()}})}}if(ball.holder==='player'){ball.x=player.x;ball.y=player.y-60+Math.sin(Date.now()*0.008)*10}else if(ball.holder==='opponent'){ball.x=mj.x;ball.y=mj.y-60}if(ball.holder==='opponent'){mj.y+=4;if(mj.y>canvas.height*0.7&&Math.random()<0.08)shoot('opponent')}else{const dx=ball.x-mj.x,dy=ball.y-mj.y;mj.x+=Math.sign(dx)*6.5;mj.y+=Math.sign(dy)*4}mj.x=Math.max(80,Math.min(canvas.width-80,mj.x));mj.y=Math.max(100,Math.min(canvas.height-100,mj.y))}
 function resetBall(){setTimeout(()=>{ball={x:canvas.width/2,y:canvas.height/2,vx:0,vy:0,holder:Math.random()<0.5?'player':'opponent'}},1000)}
 function draw(){ctx.fillStyle='#3a6e3a';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.setLineDash([20,15]);ctx.strokeStyle='#fff';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(0,canvas.height/2);ctx.lineTo(canvas.width,canvas.height/2);ctx.stroke();ctx.setLineDash([]);hoops.forEach(hoop=>{ctx.fillStyle='#f50';ctx.fillRect(hoop.x-90,hoop.y+10,180,22);ctx.strokeStyle='#fff';ctx.lineWidth=7;ctx.strokeRect(hoop.x-90,hoop.y+10,180,22);ctx.fillStyle='rgba(255,255,255,0.3)';ctx.fillRect(hoop.x-100,hoop.y-110,200,130)});ctx.fillStyle='#06f';ctx.fillRect(player.x-50,player.y-110,100,120);ctx.fillStyle='#c00';ctx.fillRect(mj.x-50,mj.y-110,100,120);ctx.fillStyle='#ffdbac';ctx.beginPath();ctx.arc(player.x,player.y-135,30,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(mj.x,mj.y-135,30,0,Math.PI*2);ctx.fill();if(mj.y>canvas.height*0.6&&!ball.holder){ctx.fillStyle='#f00';ctx.fillRect(mj.x-10,mj.y-110,20,40)}ctx.fillStyle='#f70';ctx.beginPath();ctx.arc(ball.x,ball.y,30,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=5;ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-24,ball.y);ctx.lineTo(ball.x+24,ball.y);ctx.moveTo(ball.x,ball.y-24);ctx.lineTo(ball.x,ball.y+24);ctx.stroke()}
 function updateScore(){document.getElementById('pScore').textContent=player.score;document.getElementById('mScore').textContent=mj.score}
