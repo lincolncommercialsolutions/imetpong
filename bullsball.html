@@ -8,8 +8,11 @@
 <style>
   body{margin:0;overflow:hidden;background:#0b1d3a;font-family:'Courier New',monospace;touch-action:none}
   canvas{display:block}
+  .game-nav{position:absolute;top:5px;left:5px;z-index:1000;pointer-events:auto}
+  .game-nav .nav-link{font-size:12px;padding:6px 12px;background:rgba(0,0,0,0.7);color:#fff;text-decoration:none;border-radius:6px;border:2px solid #fff;display:inline-block;font-weight:bold}
+  .game-nav .nav-link:hover{background:rgba(255,255,255,0.2)}
   #overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;color:white;text-shadow:2px 2px 6px #000}
-  #header{display:flex;justify-content:space-between;padding:15px 20px;background:linear-gradient(to bottom,rgba(0,0,0,0.8),transparent)}
+  #header{display:flex;justify-content:space-between;padding:15px 20px;background:linear-gradient(to bottom,rgba(0,0,0,0.8),transparent);margin-top:30px}
   .score-box{background:rgba(0,0,0,0.7);padding:10px 20px;border-radius:12px;border:3px solid #fff;font-size:22px;font-weight:bold}
   #timer{background:#c00;color:#ff0;animation:pulse 1s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
@@ -60,7 +63,7 @@ let ball={x:player.x,y:player.y-50,vx:0,vy:0,holder:'player'};
 const hoops=[{x:canvas.width/2,y:canvas.height*0.18,owner:'mj'},{x:canvas.width/2,y:canvas.height*0.82,owner:'player'}];
 let gameRunning=false,timeLeft=120,startX,startY;
 canvas.addEventListener('touchstart',e=>{if(!gameRunning)return;e.preventDefault();startX=e.touches[0].clientX;startY=e.touches[0].clientY});
-canvas.addEventListener('touchmove',e=>{if(!gameRunning)return;e.preventDefault();const x=e.touches[0].clientX,y=e.touches[0].clientY,dx=x-startX,dy=y-startY;player.x+=dx*1.4;player.x=Math.max(80,Math.min(canvas.width-80,player.x));if(dy<-100&&ball.holder==='player')shoot('player');startX=x;startY=y});
+canvas.addEventListener('touchmove',e=>{if(!gameRunning)return;e.preventDefault();const x=e.touches[0].clientX,y=e.touches[0].clientY,dx=x-startX,dy=y-startY;player.x+=dx*1.4;player.y+=dy*1.4;player.x=Math.max(80,Math.min(canvas.width-80,player.x));player.y=Math.max(100,Math.min(canvas.height-100,player.y));if(dy<-100&&ball.holder==='player')shoot('player');startX=x;startY=y});
 canvas.addEventListener('click',()=>{if(gameRunning&&ball.holder==='player')shoot('player')});
 function shoot(from){if(ball.vx!==0)return;const targetHoop=hoops.find(h=>h.owner!==from)||hoops[0],accuracy=from==='player'?0.64:0.93,offset=(Math.random()-0.5)*(1-accuracy)*280;ball.vx=(targetHoop.x-ball.x+offset)*0.036;ball.vy=-16-Math.random()*4;ball.holder=null}
 function update(){if(!gameRunning)return;if(!ball.holder){ball.vy+=0.78;ball.x+=ball.vx;ball.y+=ball.vy;if(ball.y>canvas.height-70){ball.y=canvas.height-70;ball.vy*=-0.68;ball.vx*=0.84}if(Math.abs(ball.vy)<4&&ball.y>canvas.height-100){if(Math.abs(ball.x-player.x)<80)ball.holder='player';else if(Math.abs(ball.x-mj.x)<80)ball.holder='opponent'}hoops.forEach(hoop=>{if(ball.y>hoop.y-30&&ball.y<hoop.y+50&&Math.abs(ball.x-hoop.x)<80&&ball.vy>0){if(hoop.owner==='player')mj.score+=2;else player.score+=2;updateScore();resetBall()}})}if(ball.holder==='player'){ball.x=player.x;ball.y=player.y-60+Math.sin(Date.now()*0.008)*10}else if(ball.holder==='opponent'){ball.x=mj.x;ball.y=mj.y-60}if(ball.holder==='opponent'){mj.y+=4;if(mj.y>canvas.height*0.7&&Math.random()<0.07)shoot('opponent')}else{const dx=ball.x-mj.x,dy=ball.y-mj.y;mj.x+=Math.sign(dx)*7.5;mj.y+=Math.sign(dy)*4}mj.x=Math.max(80,Math.min(canvas.width-80,mj.x));mj.y=Math.max(100,Math.min(canvas.height-100,mj.y))}
