@@ -81,5 +81,9 @@ function loop(){update();draw();requestAnimationFrame(loop)}
 window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;hoops[0].x=hoops[1].x=canvas.width/2});
 loop();
 </script>
+<script type="module">
+import { inject } from '@vercel/analytics';
+inject();
+</script>
 </body>
 </html>
