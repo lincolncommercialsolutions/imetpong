@@ -178,21 +178,22 @@
             </div>
             
             <div class="stat-box">⏱️ <span id="timer">54</span>s</div>
-            <div class="stat-box">💕 <span id="lives">3</span></div>
-            <div class="stat-box">⭐ <span id="score">0</span></div>
+            <div class="stat-box">🎯 <span id="score">0</span>/27</div>
+            <div class="stat-box">🔥 <span id="combo">0</span>x</div>
             <div class="stat-box">🏆 <span id="highScore">0</span></div>
         </div>
         
         <div class="control-instructions" id="controlInstructions">
-            ⌨️ Use A and D keys to move
+            ⌨️ Use A and D keys to move • First to 27 wins!
         </div>
         
         <canvas id="gameCanvas" width="800" height="600"></canvas>
     </div>
 
     <div id="gameOverScreen">
-        <h2>🌊 Game Over! 🌊</h2>
-        <p>Final Score: <span id="finalScore">0</span></p>
+        <h2 id="gameOverTitle">🌊 Game Over! 🌊</h2>
+        <p>Final Score: <span id="finalScore">0</span>/27</p>
+        <p id="gameOverMessage" style="margin: 10px 0; font-size: 1.2rem;"></p>
         <p id="newHighScore" style="display:none; color: #ffd700;">🎉 NEW HIGH SCORE! 🎉</p>
         <button id="restartButton" onclick="restartGame()">Play Again</button>
     </div>
@@ -208,9 +209,12 @@
         let gameRunning = false;
         let gameLoop;
         let timeLeft = 54;
-        let lives = 3;
         let score = 0;
+        let combo = 0;
+        let comboTimer = 0;
+        let difficultyMultiplier = 1;
         let highScore = parseInt(localStorage.getItem('jellyHighScore')) || 0;
+        const TARGET_SCORE = 27;
         
         document.getElementById('highScore').textContent = highScore;
 
@@ -258,23 +262,23 @@
             constructor() {
                 this.x = Math.random() * (canvas.width - 40) + 20;
                 this.y = -50;
-                this.radius = 20 + Math.random() * 15;
-                this.speed = 1 + Math.random() * 2;
+                this.radius = 18 + Math.random() * 12;
+                this.speed = (1.5 + Math.random() * 2) * difficultyMultiplier;
                 this.wobble = Math.random() * Math.PI * 2;
                 
                 const rand = Math.random();
-                if (rand < 0.05) {
+                if (rand < 0.08) {
                     this.type = 'golden';
                     this.color = '#ffd700';
-                    this.points = 30;
-                } else if (rand < 0.15) {
+                    this.points = 3;
+                } else if (rand < 0.20) {
                     this.type = 'rare';
                     this.color = '#ff69b4';
-                    this.points = 50;
+                    this.points = 2;
                 } else {
                     this.type = 'normal';
                     this.color = `hsl(${180 + Math.random() * 60}, 80%, 60%)`;
-                    this.points = 10;
+                    this.points = 1;
                 }
             }
 
@@ -356,9 +360,9 @@
 
         function drawSponge() {
             ctx.save();
-            if (catcher.powerUp) {
+            if (combo >= 3) {
                 ctx.shadowBlur = 30;
-                ctx.shadowColor = '#00ff00';
+                ctx.shadowColor = combo >= 5 ? '#ff00ff' : '#00ff00';
             }
             ctx.fillStyle = catcher.color;
             const cornerRadius = 15;
@@ -402,16 +406,19 @@
             if (catcher.x > canvas.width - catcher.width) {
                 catcher.x = canvas.width - catcher.width;
             }
-            if (catcher.powerUp) {
-                catcher.powerUpTime--;
-                if (catcher.powerUpTime <= 0) {
-                    catcher.powerUp = false;
-                }
+            
+            // Combo timer decay
+            if (comboTimer > 0) {
+                comboTimer--;
+            } else if (combo > 0) {
+                combo = 0;
+                document.getElementById('combo').textContent = combo;
             }
         }
 
         function spawnJellyfish() {
-            if (Math.random() < 0.02) {
+            const spawnRate = 0.025 + (score / TARGET_SCORE) * 0.02;
+            if (Math.random() < spawnRate) {
                 jellyfish.push(new Jellyfish());
             }
         }
@@ -419,29 +426,52 @@
         function updateGame() {
             updateCatcher();
             spawnJellyfish();
+            
+            // Update difficulty multiplier based on progress
+            difficultyMultiplier = 1 + (score / TARGET_SCORE) * 0.8;
+            
             for (let i = jellyfish.length - 1; i >= 0; i--) {
                 const jelly = jellyfish[i];
                 jelly.update();
                 if (jelly.isCaught()) {
-                    score += jelly.points;
+                    // Add points with combo multiplier
+                    const basePoints = jelly.points;
+                    const comboBonus = Math.floor(combo * 0.5);
+                    score = Math.min(TARGET_SCORE, score + basePoints + comboBonus);
+                    
+                    // Increase combo
+                    combo++;
+                    comboTimer = 120; // 2 seconds at 60fps
+                    
                     document.getElementById('score').textContent = score;
-                    for (let j = 0; j < 15; j++) {
+                    document.getElementById('combo').textContent = combo;
+                    
+                    // Create particles
+                    const particleCount = 15 + combo * 2;
+                    for (let j = 0; j < particleCount; j++) {
                         particles.push(new Particle(jelly.x, jelly.y, jelly.color));
                     }
+                    
+                    // Golden jellyfish bonus: +5 seconds
                     if (jelly.type === 'golden') {
-                        catcher.powerUp = true;
-                        catcher.powerUpTime = 300;
-                        timeLeft += 10;
+                        timeLeft += 5;
                         document.getElementById('timer').textContent = timeLeft;
                     }
+                    
                     jellyfish.splice(i, 1);
+                    
+                    // Check win condition
+                    if (score >= TARGET_SCORE) {
+                        endGame(true);
+                    }
                 }
                 else if (jelly.isOffScreen()) {
-                    lives--;
-                    document.getElementById('lives').textContent = lives;
                     jellyfish.splice(i, 1);
-                    if (lives <= 0) {
-                        endGame();
+                    // Reset combo on miss
+                    if (combo > 0) {
+                        combo = 0;
+                        comboTimer = 0;
+                        document.getElementById('combo').textContent = combo;
                     }
                 }
             }
@@ -459,6 +489,20 @@
             jellyfish.forEach(jelly => jelly.draw());
             particles.forEach(particle => particle.draw());
             drawSponge();
+            
+            // Draw combo text on screen if active
+            if (combo >= 3) {
+                ctx.save();
+                ctx.font = 'bold 48px "Segoe UI"';
+                ctx.fillStyle = combo >= 5 ? '#ff00ff' : '#00ff00';
+                ctx.strokeStyle = '#001122';
+                ctx.lineWidth = 4;
+                ctx.textAlign = 'center';
+                const comboText = `${combo}x COMBO!`;
+                ctx.strokeText(comboText, canvas.width / 2, 80);
+                ctx.fillText(comboText, canvas.width / 2, 80);
+                ctx.restore();
+            }
         }
 
         function gameLoopFunc() {
@@ -478,13 +522,38 @@
                 document.getElementById('timer').textContent = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    endGame();
+                    endGame(false);
                 }
             }, 1000);
         }
 
-        function endGame() {
+        function endGame(won = false) {
             gameRunning = false;
+            
+            const gameOverTitle = document.getElementById('gameOverTitle');
+            const gameOverMessage = document.getElementById('gameOverMessage');
+            
+            if (won) {
+                gameOverTitle.textContent = '🏆 VICTORY! 🏆';
+                gameOverTitle.style.color = '#ffd700';
+                const timeBonus = timeLeft > 0 ? ` (${timeLeft}s remaining)` : '';
+                gameOverMessage.textContent = `You caught all 27 jellyfish!${timeBonus}`;
+                gameOverMessage.style.color = '#00ff00';
+            } else {
+                gameOverTitle.textContent = '⏰ Time\'s Up! ⏰';
+                gameOverTitle.style.color = '#ff4444';
+                if (score >= 20) {
+                    gameOverMessage.textContent = 'So close! Try again!';
+                    gameOverMessage.style.color = '#ffaa00';
+                } else if (score >= 10) {
+                    gameOverMessage.textContent = 'Not bad! Keep practicing!';
+                    gameOverMessage.style.color = '#00aaff';
+                } else {
+                    gameOverMessage.textContent = 'Keep trying! You\'ll get there!';
+                    gameOverMessage.style.color = '#00eaff';
+                }
+            }
+            
             if (score > highScore) {
                 highScore = score;
                 localStorage.setItem('jellyHighScore', highScore);
@@ -500,15 +569,16 @@
         function startGame() {
             gameRunning = true;
             timeLeft = 54;
-            lives = 3;
             score = 0;
+            combo = 0;
+            comboTimer = 0;
+            difficultyMultiplier = 1;
             jellyfish = [];
             particles = [];
             catcher.x = canvas.width / 2 - 50;
-            catcher.powerUp = false;
             document.getElementById('timer').textContent = timeLeft;
-            document.getElementById('lives').textContent = lives;
             document.getElementById('score').textContent = score;
+            document.getElementById('combo').textContent = combo;
             document.getElementById('gameOverScreen').style.display = 'none';
             startTimer();
             gameLoopFunc();
@@ -525,9 +595,9 @@
             event.target.classList.add('active');
             const instructions = document.getElementById('controlInstructions');
             if (isMobile) {
-                instructions.textContent = '👆 Slide left and right to move';
+                instructions.textContent = '👆 Slide left and right to move • First to 27 wins!';
             } else {
-                instructions.textContent = '⌨️ Use A and D keys to move';
+                instructions.textContent = '⌨️ Use A and D keys to move • First to 27 wins!';
             }
         };
 
