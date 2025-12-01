@@ -1,654 +1,1305 @@
-<!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html><!DOCTYPE html>
 
-<html lang="en"><html lang="en">
+<html lang="en">
 
-<head><head>
+<head><html lang="en"><html lang="en">
 
-    <meta charset="UTF-8">    <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><head><head>
 
-    <title>Jellyfish Bloom - What is 108?</title>    <title>Jellyfish Bloom - Catch the Glow!</title>
+    <title>Jellyfish Bloom - What is 108?</title>
 
-    <link rel="stylesheet" href="/src/styles/main.css">    <style>
+    <link rel="stylesheet" href="/src/styles/main.css">    <meta charset="UTF-8">    <meta charset="UTF-8">
 
-    <style>        * { margin: 0; padding: 0; box-sizing: border-box; }
+    <style>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }        body {
+        * { margin: 0; padding: 0; box-sizing: border-box; }    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {            margin: 0;
+        body {
 
-            margin: 0;            height: 100vh;
+            margin: 0;    <title>Jellyfish Bloom - What is 108?</title>    <title>Jellyfish Bloom - Catch the Glow!</title>
 
-            height: 100vh;            display: flex;
+            height: 100vh;
 
-            display: flex;            justify-content: center;
+            display: flex;    <link rel="stylesheet" href="/src/styles/main.css">    <style>
 
-            justify-content: center;            align-items: center;
+            justify-content: center;
 
-            align-items: center;            background: linear-gradient(to bottom, #001122 0%, #002b55 50%, #003366 100%);
+            align-items: center;    <style>        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-            background: linear-gradient(to bottom, #001122 0%, #002b55 50%, #003366 100%);            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to bottom, #001122 0%, #002b55 50%, #003366 100%);
 
-            font-family: 'Segoe UI', sans-serif;            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;        * { margin: 0; padding: 0; box-sizing: border-box; }        body {
 
-            overflow: hidden;            touch-action: manipulation;
+            overflow: hidden;
 
-            touch-action: manipulation;        }
+            touch-action: manipulation;        body {            margin: 0;
 
-        }        #gameContainer {
+        }
 
-                    position: relative;
+                    margin: 0;            height: 100vh;
 
-        .game-nav {            text-align: center;
+        .game-nav {
 
-            position: fixed;        }
+            position: fixed;            height: 100vh;            display: flex;
 
-            top: 20px;        canvas {
+            top: 20px;
 
-            left: 20px;            border: 4px solid #00eaff;
+            left: 20px;            display: flex;            justify-content: center;
 
-            z-index: 1000;            border-radius: 16px;
+            z-index: 1000;
 
-        }            box-shadow: 0 0 40px rgba(0, 234, 255, 0.6);
+        }            justify-content: center;            align-items: center;
 
-                    image-rendering: pixelated;
+        
 
-        .game-nav .nav-link {            image-rendering: crisp-edges;
+        .game-nav .nav-link {            align-items: center;            background: linear-gradient(to bottom, #001122 0%, #002b55 50%, #003366 100%);
 
-            font-size: 14px;        }
+            font-size: 14px;
 
-            padding: 10px 20px;        #ui {
+            padding: 10px 20px;            background: linear-gradient(to bottom, #001122 0%, #002b55 50%, #003366 100%);            font-family: 'Segoe UI', sans-serif;
 
-            background: rgba(0, 234, 255, 0.9);            position: absolute;
+            background: rgba(0, 234, 255, 0.9);
 
-            color: #001122;            top: 15px;
+            color: #001122;            font-family: 'Segoe UI', sans-serif;            overflow: hidden;
 
-            text-decoration: none;            left: 0;
+            text-decoration: none;
 
-            border-radius: 8px;            right: 0;
+            border-radius: 8px;            overflow: hidden;            touch-action: manipulation;
 
-            border: 2px solid #00eaff;            display: flex;
+            border: 2px solid #00eaff;
 
-            display: inline-block;            justify-content: space-between;
+            display: inline-block;            touch-action: manipulation;        }
 
-            font-weight: bold;            padding: 0 20px;
+            font-weight: bold;
 
-            transition: all 0.3s ease;            color: #00eaff;
+            transition: all 0.3s ease;        }        #gameContainer {
 
-            box-shadow: 0 2px 8px rgba(0, 234, 255, 0.5);            font-size: 26px;
+            box-shadow: 0 2px 8px rgba(0, 234, 255, 0.5);
 
-        }            font-weight: bold;
+        }                    position: relative;
 
-                    text-shadow: 0 0 15px #00eaff;
+        
 
-        .game-nav .nav-link:hover {            z-index: 10;
+        .game-nav .nav-link:hover {        .game-nav {            text-align: center;
 
-            background: #00eaff;            pointer-events: none;
+            background: #00eaff;
 
-            transform: translateY(-2px);        }
+            transform: translateY(-2px);            position: fixed;        }
 
-            box-shadow: 0 4px 12px rgba(0, 234, 255, 0.7);        #powerUpDisplay {
+            box-shadow: 0 4px 12px rgba(0, 234, 255, 0.7);
 
-        }            position: absolute;
+        }            top: 20px;        canvas {
 
-                    top: 60px;
+        
 
-        #gameContainer {            left: 50%;
+        #gameContainer {            left: 20px;            border: 4px solid #00eaff;
 
-            position: relative;            transform: translateX(-50%);
+            position: relative;
 
-            text-align: center;            background: rgba(0, 234, 255, 0.2);
+            text-align: center;            z-index: 1000;            border-radius: 16px;
 
-        }            padding: 8px 20px;
+        }
 
-        canvas {            border-radius: 30px;
+        canvas {        }            box-shadow: 0 0 40px rgba(0, 234, 255, 0.6);
 
-            border: 4px solid #00eaff;            color: white;
+            border: 4px solid #00eaff;
 
-            border-radius: 16px;            font-size: 20px;
+            border-radius: 16px;                    image-rendering: pixelated;
 
-            box-shadow: 0 0 40px rgba(0, 234, 255, 0.6);            display: none;
+            box-shadow: 0 0 40px rgba(0, 234, 255, 0.6);
 
-            max-width: 100%;            z-index: 10;
+            max-width: 100%;        .game-nav .nav-link {            image-rendering: crisp-edges;
 
-            height: auto;            backdrop-filter: blur(5px);
+            height: auto;
 
-        }            border: 2px solid #00eaff;
+        }            font-size: 14px;        }
 
-        #ui {        }
+        #ui {
 
-            position: absolute;        #startScreen, #gameOver {
+            position: absolute;            padding: 10px 20px;        #ui {
 
-            top: 15px;            position: absolute;
+            top: 15px;
 
-            left: 0;            top: 50%;
+            left: 0;            background: rgba(0, 234, 255, 0.9);            position: absolute;
 
-            right: 0;            left: 50%;
+            right: 0;
 
-            display: flex;            transform: translate(-50%, -50%);
+            display: flex;            color: #001122;            top: 15px;
 
-            justify-content: space-between;            background: rgba(0, 15, 40, 0.97);
+            justify-content: space-between;
 
-            padding: 0 20px;            padding: 40px 60px;
+            padding: 0 20px;            text-decoration: none;            left: 0;
 
-            color: #00eaff;            border-radius: 20px;
+            color: #00eaff;
 
-            font-size: 26px;            border: 4px solid #00eaff;
+            font-size: 26px;            border-radius: 8px;            right: 0;
 
-            font-weight: bold;            box-shadow: 0 0 50px rgba(0, 234, 255, 0.8);
+            font-weight: bold;
 
-            text-shadow: 0 0 15px #00eaff;            text-align: center;
+            text-shadow: 0 0 15px #00eaff;            border: 2px solid #00eaff;            display: flex;
 
-            z-index: 10;            z-index: 100;
+            z-index: 10;
 
-            pointer-events: none;        }
+            pointer-events: none;            display: inline-block;            justify-content: space-between;
 
-        }        h1 { 
+        }
 
-        #powerUpDisplay {            font-size: 54px; 
+        #powerUpDisplay {            font-weight: bold;            padding: 0 20px;
 
-            position: absolute;            color: #00eaff;
+            position: absolute;
 
-            top: 60px;            text-shadow: 0 0 20px #00eaff;
+            top: 60px;            transition: all 0.3s ease;            color: #00eaff;
 
-            left: 50%;            margin-bottom: 20px;
+            left: 50%;
 
-            transform: translateX(-50%);        }
+            transform: translateX(-50%);            box-shadow: 0 2px 8px rgba(0, 234, 255, 0.5);            font-size: 26px;
 
-            background: rgba(0, 234, 255, 0.3);        button {
+            background: rgba(0, 234, 255, 0.3);
 
-            padding: 10px 25px;            background: linear-gradient(to bottom, #00eaff, #0077cc);
+            padding: 10px 25px;        }            font-weight: bold;
 
-            border-radius: 30px;            border: none;
+            border-radius: 30px;
 
-            color: white;            color: white;
+            color: white;                    text-shadow: 0 0 15px #00eaff;
 
-            font-size: 20px;            padding: 16px 40px;
+            font-size: 20px;
 
-            font-weight: bold;            font-size: 22px;
+            font-weight: bold;        .game-nav .nav-link:hover {            z-index: 10;
 
-            display: none;            font-weight: bold;
+            display: none;
 
-            z-index: 10;            border-radius: 50px;
+            z-index: 10;            background: #00eaff;            pointer-events: none;
 
-            backdrop-filter: blur(5px);            cursor: pointer;
+            backdrop-filter: blur(5px);
 
-            border: 2px solid #00eaff;            margin: 15px;
+            border: 2px solid #00eaff;            transform: translateY(-2px);        }
 
-            animation: pulse 0.5s ease-in-out;            box-shadow: 0 6px 20px rgba(0, 234, 255, 0.5);
+            animation: pulse 0.5s ease-in-out;
 
-        }            transition: all 0.3s;
+        }            box-shadow: 0 4px 12px rgba(0, 234, 255, 0.7);        #powerUpDisplay {
 
-        @keyframes pulse {        }
+        @keyframes pulse {
 
-            0%, 100% { transform: translateX(-50%) scale(1); }        button:hover {
+            0%, 100% { transform: translateX(-50%) scale(1); }        }            position: absolute;
 
-            50% { transform: translateX(-50%) scale(1.1); }            transform: translateY(-4px) scale(1.05);
+            50% { transform: translateX(-50%) scale(1.1); }
 
-        }            box-shadow: 0 10px 30px rgba(0, 234, 255, 0.7);
+        }                    top: 60px;
 
-        #startScreen, #gameOver {        }
+        #layoutSelector, #startScreen, #gameOver {
 
-            position: absolute;        #instructions {
+            position: absolute;        #gameContainer {            left: 50%;
 
-            top: 50%;            color: #a0f0ff;
+            top: 50%;
 
-            left: 50%;            margin: 20px 0;
+            left: 50%;            position: relative;            transform: translateX(-50%);
 
-            transform: translate(-50%, -50%);            line-height: 1.6;
+            transform: translate(-50%, -50%);
 
-            background: rgba(0, 15, 40, 0.98);        }
+            background: rgba(0, 15, 40, 0.98);            text-align: center;            background: rgba(0, 234, 255, 0.2);
 
-            padding: 40px 60px;    </style>
+            padding: 40px 60px;
 
-            border-radius: 20px;</head>
+            border-radius: 20px;        }            padding: 8px 20px;
 
-            border: 4px solid #00eaff;<body>
+            border: 4px solid #00eaff;
 
-            box-shadow: 0 0 50px rgba(0, 234, 255, 0.8);    <div id="gameContainer">
+            box-shadow: 0 0 50px rgba(0, 234, 255, 0.8);        canvas {            border-radius: 30px;
 
-            text-align: center;        <div id="ui">
+            text-align: center;
 
-            z-index: 100;            <div>Score: <span id="score">0</span></div>
+            z-index: 100;            border: 4px solid #00eaff;            color: white;
 
-            max-width: 90%;            <div>Time: <span id="timer">60</span>s</div>
+            max-width: 90%;
 
-        }        </div>
+        }            border-radius: 16px;            font-size: 20px;
 
-        h1 {         <div id="powerUpDisplay"></div>
+        h1 { 
 
-            font-size: 54px; 
+            font-size: 54px;             box-shadow: 0 0 40px rgba(0, 234, 255, 0.6);            display: none;
 
-            color: #00eaff;        <canvas id="gameCanvas" width="800" height="600"></canvas>
+            color: #00eaff;
 
-            text-shadow: 0 0 20px #00eaff;
+            text-shadow: 0 0 20px #00eaff;            max-width: 100%;            z-index: 10;
 
-            margin-bottom: 20px;        <!-- Start Screen -->
+            margin-bottom: 20px;
 
-        }        <div id="startScreen">
+        }            height: auto;            backdrop-filter: blur(5px);
 
-        button {            <h1>Jellyfish Bloom</h1>
+        h2 {
 
-            background: linear-gradient(to bottom, #00eaff, #0077cc);            <p style="color:#00eaff;font-size:28px;margin:15px 0;">Catch the glowing jellyfish!</p>
+            font-size: 36px;        }            border: 2px solid #00eaff;
 
-            border: none;            <div id="instructions">
+            color: #00eaff;
 
-            color: white;                Use ← → arrow keys or swipe to move<br>
+            margin-bottom: 30px;        #ui {        }
 
-            padding: 16px 40px;                Catch jellyfish for points!<br>
+        }
 
-            font-size: 22px;                <span style="color:#ff6b9d;">Rare pink ones give 50 points!</span><br>
+        button {            position: absolute;        #startScreen, #gameOver {
 
-            font-weight: bold;                <span style="color:#ffff00;">Golden ones slow time!</span>
+            background: linear-gradient(to bottom, #00eaff, #0077cc);
 
-            border-radius: 50px;            </div>
+            border: none;            top: 15px;            position: absolute;
 
-            cursor: pointer;            <button onclick="startGame()">Start Game</button>
+            color: white;
 
-            margin: 15px;        </div>
+            padding: 16px 40px;            left: 0;            top: 50%;
 
-            box-shadow: 0 6px 20px rgba(0, 234, 255, 0.5);
+            font-size: 22px;
 
-            transition: all 0.3s;        <!-- Game Over Screen -->
+            font-weight: bold;            right: 0;            left: 50%;
 
-        }        <div id="gameOver" style="display:none;">
+            border-radius: 50px;
 
-        button:hover {            <h1>Game Over!</h1>
+            cursor: pointer;            display: flex;            transform: translate(-50%, -50%);
 
-            transform: translateY(-4px) scale(1.05);            <p style="color:#fff;font-size:28px;">Final Score: <span id="finalScore">0</span></p>
+            margin: 15px;
 
-            box-shadow: 0 10px 30px rgba(0, 234, 255, 0.7);            <p style="color:#00eaff;font-size:24px;margin:10px 0;">High Score: <span id="highScore">0</span></p>
+            box-shadow: 0 6px 20px rgba(0, 234, 255, 0.5);            justify-content: space-between;            background: rgba(0, 15, 40, 0.97);
 
-        }            <button onclick="restartGame()">Play Again</button>
+            transition: all 0.3s;
 
-        button:active {            <button onclick="location.reload()">New Game</button>
+        }            padding: 0 20px;            padding: 40px 60px;
 
-            transform: translateY(-2px) scale(1.02);        </div>
+        button:hover {
 
-        }    </div>
+            transform: translateY(-4px) scale(1.05);            color: #00eaff;            border-radius: 20px;
 
-        #instructions {
+            box-shadow: 0 10px 30px rgba(0, 234, 255, 0.7);
 
-            color: #a0f0ff;    <script>
+        }            font-size: 26px;            border: 4px solid #00eaff;
 
-            margin: 20px 0;        const canvas = document.getElementById('gameCanvas');
+        button:active {
 
-            line-height: 1.8;        const ctx = canvas.getContext('2d');
+            transform: translateY(-2px) scale(1.02);            font-weight: bold;            box-shadow: 0 0 50px rgba(0, 234, 255, 0.8);
 
-            font-size: 18px;        
+        }
 
-        }        let score = 0;
+        #instructions {            text-shadow: 0 0 15px #00eaff;            text-align: center;
 
-        .stat-box {        let highScore = localStorage.getItem('jellyHighScore') || 0;
+            color: #a0f0ff;
 
-            background: rgba(0, 234, 255, 0.2);        let timeLeft = 60;
+            margin: 20px 0;            z-index: 10;            z-index: 100;
 
-            padding: 8px 20px;        let gameRunning = false;
+            line-height: 1.8;
 
-            border-radius: 15px;        let jellyfish = [];
+            font-size: 18px;            pointer-events: none;        }
 
-            border: 2px solid #00eaff;        let particles = [];
+        }
 
-        }        let powerUpActive = false;
+        .stat-box {        }        h1 { 
 
-                let powerUpTimer = 0;
+            background: rgba(0, 234, 255, 0.2);
 
-        @media (max-width: 850px) {        
+            padding: 8px 20px;        #powerUpDisplay {            font-size: 54px; 
 
-            .game-nav {        const player = {
+            border-radius: 15px;
 
-                top: 10px;            x: canvas.width / 2 - 30,
+            border: 2px solid #00eaff;            position: absolute;            color: #00eaff;
 
-                left: 10px;            y: canvas.height - 90,
+        }
 
-            }            width: 80,
+                    top: 60px;            text-shadow: 0 0 20px #00eaff;
 
-            .game-nav .nav-link {            height: 70,
+        @media (max-width: 850px) {
 
-                font-size: 12px;            speed: 8
+            .game-nav {            left: 50%;            margin-bottom: 20px;
 
-                padding: 8px 16px;        };
+                top: 10px;
+
+                left: 10px;            transform: translateX(-50%);        }
 
             }
 
-            h1 { font-size: 36px; }        let keys = {};
+            .game-nav .nav-link {            background: rgba(0, 234, 255, 0.3);        button {
 
-            button { font-size: 18px; padding: 12px 30px; }        let touchStartX = 0;
+                font-size: 12px;
+
+                padding: 8px 16px;            padding: 10px 25px;            background: linear-gradient(to bottom, #00eaff, #0077cc);
+
+            }
+
+            h1 { font-size: 36px; }            border-radius: 30px;            border: none;
+
+            h2 { font-size: 28px; }
+
+            button { font-size: 18px; padding: 12px 30px; }            color: white;            color: white;
 
             #ui { font-size: 20px; padding: 0 15px; }
 
-            #instructions { font-size: 16px; }        // Sound effects (using Web Audio API)
+            #instructions { font-size: 16px; }            font-size: 20px;            padding: 16px 40px;
 
-            #startScreen, #gameOver { padding: 30px 40px; }        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            #layoutSelector, #startScreen, #gameOver { padding: 30px 40px; }
 
-        }        function playSound(frequency, duration = 0.1, type = 'sine') {
+        }            font-weight: bold;            font-size: 22px;
 
-                    if (!audioCtx) return;
+        
 
-        @media (max-width: 400px) {            const osc = audioCtx.createOscillator();
+        @media (max-width: 400px) {            display: none;            font-weight: bold;
 
-            h1 { font-size: 28px; }            const gain = audioCtx.createGain();
+            h1 { font-size: 28px; }
 
-            button { font-size: 16px; padding: 10px 25px; margin: 10px 5px; }            osc.connect(gain);
+            h2 { font-size: 24px; }            z-index: 10;            border-radius: 50px;
 
-            #ui { font-size: 18px; }            gain.connect(audioCtx.destination);
+            button { font-size: 16px; padding: 10px 25px; margin: 10px 5px; }
 
-            #startScreen, #gameOver { padding: 25px 30px; }            osc.frequency.value = frequency;
+            #ui { font-size: 18px; }            backdrop-filter: blur(5px);            cursor: pointer;
 
-        }            osc.type = type;
+            #layoutSelector, #startScreen, #gameOver { padding: 25px 30px; }
 
-    </style>            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        }            border: 2px solid #00eaff;            margin: 15px;
 
-</head>            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    </style>
 
-<body>            osc.start(audioCtx.currentTime);
+</head>            animation: pulse 0.5s ease-in-out;            box-shadow: 0 6px 20px rgba(0, 234, 255, 0.5);
 
-    <nav class="game-nav">            osc.stop audioCtx.currentTime + duration);
+<body>
 
-        <a href="/index.html" class="nav-link">← HOME</a>        }
+    <nav class="game-nav">        }            transition: all 0.3s;
 
-    </nav>
+        <a href="/index.html" class="nav-link">← HOME</a>
 
-            class Jellyfish {
+    </nav>        @keyframes pulse {        }
 
-    <div id="gameContainer">            constructor(isRare = false, isGolden = false) {
+    
 
-        <div id="ui">                this.x = Math.random() * (canvas.width - 60) + 30;
+    <div id="gameContainer">            0%, 100% { transform: translateX(-50%) scale(1); }        button:hover {
 
-            <div class="stat-box">Score: <span id="score">0</span></div>                this.y = -80;
+        <div id="ui">
 
-            <div class="stat-box">Time: <span id="timer">60</span>s</div>                this.width = isGolden ? 70 : (isRare ? 55 : 45);
+            <div class="stat-box">Score: <span id="score">0</span></div>            50% { transform: translateX(-50%) scale(1.1); }            transform: translateY(-4px) scale(1.05);
 
-        </div>                this.height = isGolden ? 90 : (isRare ? 75 : 65);
+            <div class="stat-box">Time: <span id="timer">54</span>s</div>
 
-        <div id="powerUpDisplay"></div>                this.speed = isGolden ? 0.7 : (isRare ? 1.2 : 1 + Math.random() * 1.8);
+        </div>        }            box-shadow: 0 10px 30px rgba(0, 234, 255, 0.7);
 
-                this.tentacleOffset = Math.random() * Math.PI * 2;
+        <div id="powerUpDisplay"></div>
 
-        <canvas id="gameCanvas" width="800" height="600"></canvas>                this.pulsePhase = Math.random() * Math.PI * 2;
+        #startScreen, #gameOver {        }
 
-                this.isRare = isRare;
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-        <!-- Start Screen -->                this.isGolden = isGolden;
+            position: absolute;        #instructions {
 
-        <div id="startScreen">                this.points = isGolden ? 30 : (isRare ? 50 : 10);
+        <!-- Layout Selector -->
 
-            <h1>🎐 Jellyfish Bloom 🎐</h1>            }
+        <div id="layoutSelector">            top: 50%;            color: #a0f0ff;
 
-            <p style="color:#00eaff;font-size:28px;margin:15px 0;">Catch the glowing jellyfish!</p>
+            <h2>🎐 Jellyfish Bloom 🎐</h2>
 
-            <div id="instructions">            update() {
+            <p style="color:#00eaff;font-size:20px;margin-bottom:20px;">Choose your controls:</p>            left: 50%;            margin: 20px 0;
 
-                Use ← → arrow keys or swipe to move<br>                this.y += this.speed * (powerUpActive ? 0.4 : 1);
+            <button onclick="selectLayout('desktop')">🖥️ DESKTOP</button>
 
-                Catch jellyfish for points!<br>                this.pulsePhase += 0.12;
+            <button onclick="selectLayout('mobile')">📱 MOBILE</button>            transform: translate(-50%, -50%);            line-height: 1.6;
 
-                <span style="color:#ff6b9d;">💕 Rare pink ones give 50 points!</span><br>                this.tentacleOffset += 0.05;
+        </div>
 
-                <span style="color:#ffff00;">⭐ Golden ones slow time!</span>            }
+            background: rgba(0, 15, 40, 0.98);        }
 
-            </div>
+        <!-- Start Screen -->
 
-            <button onclick="startGame()">🌊 Start Game 🌊</button>            draw() {
+        <div id="startScreen" style="display:none;">            padding: 40px 60px;    </style>
 
-        </div>                const pulse = Math.sin(this.pulsePhase) * 4;
+            <h1>🎐 Jellyfish Bloom 🎐</h1>
 
-                const glowIntensity = this.isGolden ? 30 : 20;
+            <p style="color:#00eaff;font-size:28px;margin:15px 0;">Catch the glowing jellyfish!</p>            border-radius: 20px;</head>
 
-        <!-- Game Over Screen -->                const bodyColor = this.isGolden ? '#ffff00' : (this.isRare ? '#ff1493' : '#00eaff');
+            <div id="instructions">
 
-        <div id="gameOver" style="display:none;">                const glowColor = this.isGolden ? '#ffff66' : (this.isRare ? '#ff69b4' : '#66ffff');
+                <span id="controlInstructions"></span><br>            border: 4px solid #00eaff;<body>
 
-            <h1>🎐 Game Over! 🎐</h1>
+                Catch jellyfish for points!<br>
 
-            <p style="color:#fff;font-size:28px;margin:15px 0;">Final Score: <span id="finalScore">0</span></p>                ctx.shadowBlur = glowIntensity + Math.sin(this.pulsePhase * 2) * 10;
+                <span style="color:#ff6b9d;">💕 Rare pink ones give 50 points!</span><br>            box-shadow: 0 0 50px rgba(0, 234, 255, 0.8);    <div id="gameContainer">
 
-            <p style="color:#00eaff;font-size:24px;margin:10px 0;">High Score: <span id="highScore">0</span></p>                ctx.shadowColor = glowColor;
+                <span style="color:#ffff00;">⭐ Golden ones slow time!</span>
+
+            </div>            text-align: center;        <div id="ui">
+
+            <button onclick="startGame()">🌊 Start Game 🌊</button>
+
+        </div>            z-index: 100;            <div>Score: <span id="score">0</span></div>
+
+
+
+        <!-- Game Over Screen -->            max-width: 90%;            <div>Time: <span id="timer">60</span>s</div>
+
+        <div id="gameOver" style="display:none;">
+
+            <h1>🎐 Game Over! 🎐</h1>        }        </div>
+
+            <p style="color:#fff;font-size:28px;margin:15px 0;">Final Score: <span id="finalScore">0</span></p>
+
+            <p style="color:#00eaff;font-size:24px;margin:10px 0;">High Score: <span id="highScore">0</span></p>        h1 {         <div id="powerUpDisplay"></div>
 
             <button onclick="restartGame()">Play Again</button>
 
-            <button onclick="location.href='/index.html'">Home</button>                // Bell
+            <button onclick="location.href='/index.html'">Home</button>            font-size: 54px; 
 
-        </div>                const gradient = ctx.createRadialGradient(
+        </div>
 
-    </div>                    this.x + this.width/2, this.y + 20 + pulse, 5,
+    </div>            color: #00eaff;        <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-                    this.x + this.width/2, this.y + 20 + pulse, this.width/2 + 10
 
-    <script>                );
 
-        const canvas = document.getElementById('gameCanvas');                gradient.addColorStop(0, bodyColor + 'ff');
+    <script>            text-shadow: 0 0 20px #00eaff;
 
-        const ctx = canvas.getContext('2d');                gradient.addColorStop(0.7, bodyColor + 'cc');
+        const canvas = document.getElementById('gameCanvas');
 
-                        gradient.addColorStop(1, bodyColor + '44');
+        const ctx = canvas.getContext('2d');            margin-bottom: 20px;        <!-- Start Screen -->
 
-        let score = 0;                ctx.fillStyle = gradient;
+        
+
+        let score = 0;        }        <div id="startScreen">
 
         let highScore = localStorage.getItem('jellyHighScore') || 0;
 
-        let timeLeft = 60;                ctx.beginPath();
+        let timeLeft = 54;        button {            <h1>Jellyfish Bloom</h1>
 
-        let gameRunning = false;                ctx.ellipse(this.x + this.width/2, this.y + 25 + pulse, 
+        let gameRunning = false;
 
-        let jellyfish = [];                           this.width/2 + pulse, 20 + pulse * 0.5, 0, 0, Math.PI * 2);
+        let jellyfish = [];            background: linear-gradient(to bottom, #00eaff, #0077cc);            <p style="color:#00eaff;font-size:28px;margin:15px 0;">Catch the glowing jellyfish!</p>
 
-        let particles = [];                ctx.fill();
+        let particles = [];
 
-        let powerUpActive = false;
+        let powerUpActive = false;            border: none;            <div id="instructions">
 
-        let powerUpTimer = 0;                // Tentacles
+        let powerUpTimer = 0;
 
-                        ctx.strokeStyle = this.isGolden ? '#ffaa00' : bodyColor + 'aa';
+        let isMobile = false;            color: white;                Use ← → arrow keys or swipe to move<br>
 
-        const player = {                ctx.lineWidth = 3;
+        
 
-            x: canvas.width / 2 - 40,                for(let i = 0; i < 8; i++) {
+        const player = {            padding: 16px 40px;                Catch jellyfish for points!<br>
 
-            y: canvas.height - 90,                    const angle = (i / 8) * Math.PI;
+            x: canvas.width / 2 - 40,
 
-            width: 80,                    const startX = this.x + this.width/2 + Math.cos(angle) * (this.width/2 - 5);
+            y: canvas.height - 90,            font-size: 22px;                <span style="color:#ff6b9d;">Rare pink ones give 50 points!</span><br>
 
-            height: 70,                    const startY = this.y + 35 + pulse;
+            width: 80,
 
-            speed: 8                    ctx.beginPath();
+            height: 70,            font-weight: bold;                <span style="color:#ffff00;">Golden ones slow time!</span>
 
-        };                    ctx.moveTo(startX, startY);
+            speed: 8
 
-                    const ctrlX = startX + Math.sin(this.tentacleOffset + i) * 20;
+        };            border-radius: 50px;            </div>
 
-        let keys = {};                    const ctrlY = startY + 30;
 
-        let touchStartX = 0;                    const endX = startX + Math.sin(this.tentacleOffset + i * 1.3) * 30;
 
-                    const endY = startY + 70;
+        let keys = {};            cursor: pointer;            <button onclick="startGame()">Start Game</button>
 
-        // Sound effects (using Web Audio API)                    ctx.bezierCurveTo(ctrlX, ctrlY, endX, endY, endX + 10, endY + 20);
+        let touchStartX = 0;
 
-        let audioCtx;                    ctx.stroke();
+            margin: 15px;        </div>
 
-        function initAudio() {                }
+        // Sound effects (using Web Audio API)
 
-            if (!audioCtx) {
+        let audioCtx;            box-shadow: 0 6px 20px rgba(0, 234, 255, 0.5);
 
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();                if (this.isGolden) {
+        function initAudio() {
 
-            }                    ctx.shadowBlur = 40;
+            if (!audioCtx) {            transition: all 0.3s;        <!-- Game Over Screen -->
 
-        }                    ctx.shadowColor = '#ffff00';
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-                            ctx.fillStyle = 'rgba(255,255,100,0.3)';
+            }        }        <div id="gameOver" style="display:none;">
 
-        function playSound(frequency, duration = 0.1, type = 'sine') {                    ctx.beginPath();
+        }
 
-            if (!audioCtx) return;                    ctx.arc(this.x + this.width/2, this.y + 25, 50, 0, Math.PI * 2);
+                button:hover {            <h1>Game Over!</h1>
 
-            try {                    ctx.fill();
+        function playSound(frequency, duration = 0.1, type = 'sine') {
 
-                const osc = audioCtx.createOscillator();                }
+            if (!audioCtx) return;            transform: translateY(-4px) scale(1.05);            <p style="color:#fff;font-size:28px;">Final Score: <span id="finalScore">0</span></p>
+
+            try {
+
+                const osc = audioCtx.createOscillator();            box-shadow: 0 10px 30px rgba(0, 234, 255, 0.7);            <p style="color:#00eaff;font-size:24px;margin:10px 0;">High Score: <span id="highScore">0</span></p>
 
                 const gain = audioCtx.createGain();
 
-                osc.connect(gain);                ctx.shadowBlur = 0;
+                osc.connect(gain);        }            <button onclick="restartGame()">Play Again</button>
 
-                gain.connect(audioCtx.destination);            }
+                gain.connect(audioCtx.destination);
 
-                osc.frequency.value = frequency;        }
+                osc.frequency.value = frequency;        button:active {            <button onclick="location.reload()">New Game</button>
 
                 osc.type = type;
 
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);        class Particle {
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);            transform: translateY(-2px) scale(1.02);        </div>
 
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);            constructor(x, y, color) {
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
 
-                osc.start(audioCtx.currentTime);                this.x = x;
+                osc.start(audioCtx.currentTime);        }    </div>
 
-                osc.stop(audioCtx.currentTime + duration);                this.y = y;
+                osc.stop(audioCtx.currentTime + duration);
 
-            } catch(e) {                this.vx = Math.random() * 6 - 3;
+            } catch(e) {        #instructions {
 
-                console.log('Audio error:', e);                this.vy = Math.random() * -5 - 2;
+                console.log('Audio error:', e);
 
-            }                this.life = 1;
+            }            color: #a0f0ff;    <script>
 
-        }                this.decay = 0.02;
+        }
 
-                this.color = color;
+            margin: 20px 0;        const canvas = document.getElementById('gameCanvas');
 
-        class Jellyfish {                this.size = Math.random() * 6 + 3;
+        function selectLayout(layout) {
 
-            constructor(isRare = false, isGolden = false) {            }
+            isMobile = (layout === 'mobile');            line-height: 1.8;        const ctx = canvas.getContext('2d');
 
-                this.x = Math.random() * (canvas.width - 60) + 30;            update() {
+            document.getElementById('layoutSelector').style.display = 'none';
 
-                this.y = -80;                this.x += this.vx;
+            document.getElementById('startScreen').style.display = 'block';            font-size: 18px;        
 
-                this.width = isGolden ? 70 : (isRare ? 55 : 45);                this.y += this.vy;
+            
 
-                this.height = isGolden ? 90 : (isRare ? 75 : 65);                this.vy += 0.1;
+            const controlInstructions = document.getElementById('controlInstructions');        }        let score = 0;
 
-                this.speed = isGolden ? 0.7 : (isRare ? 1.2 : 1 + Math.random() * 1.8);                this.life -= this.decay;
+            if (isMobile) {
 
-                this.tentacleOffset = Math.random() * Math.PI * 2;            }
+                controlInstructions.textContent = '👆 Slide left and right to move';        .stat-box {        let highScore = localStorage.getItem('jellyHighScore') || 0;
 
-                this.pulsePhase = Math.random() * Math.PI * 2;            draw() {
+            } else {
 
-                this.isRare = isRare;                ctx.globalAlpha = this.life;
+                controlInstructions.textContent = '⌨️ Use A and D keys to move';            background: rgba(0, 234, 255, 0.2);        let timeLeft = 60;
 
-                this.isGolden = isGolden;                ctx.fillStyle = this.color;
+            }
 
-                this.points = isGolden ? 30 : (isRare ? 50 : 10);                ctx.beginPath();
+        }            padding: 8px 20px;        let gameRunning = false;
 
-            }                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
 
-                ctx.fill();
 
-            update() {                ctx.globalAlpha = 1;
+        class Jellyfish {            border-radius: 15px;        let jellyfish = [];
 
-                this.y += this.speed * (powerUpActive ? 0.4 : 1);            }
+            constructor(isRare = false, isGolden = false) {
 
-                this.pulsePhase += 0.12;        }
+                this.x = Math.random() * (canvas.width - 60) + 30;            border: 2px solid #00eaff;        let particles = [];
+
+                this.y = -80;
+
+                this.width = isGolden ? 70 : (isRare ? 55 : 45);        }        let powerUpActive = false;
+
+                this.height = isGolden ? 90 : (isRare ? 75 : 65);
+
+                this.speed = isGolden ? 0.7 : (isRare ? 1.2 : 1 + Math.random() * 1.8);                let powerUpTimer = 0;
+
+                this.tentacleOffset = Math.random() * Math.PI * 2;
+
+                this.pulsePhase = Math.random() * Math.PI * 2;        @media (max-width: 850px) {        
+
+                this.isRare = isRare;
+
+                this.isGolden = isGolden;            .game-nav {        const player = {
+
+                this.points = isGolden ? 30 : (isRare ? 50 : 10);
+
+            }                top: 10px;            x: canvas.width / 2 - 30,
+
+
+
+            update() {                left: 10px;            y: canvas.height - 90,
+
+                this.y += this.speed * (powerUpActive ? 0.4 : 1);
+
+                this.pulsePhase += 0.12;            }            width: 80,
 
                 this.tentacleOffset += 0.05;
 
-            }        function createParticles(x, y, color, count = 15) {
+            }            .game-nav .nav-link {            height: 70,
 
-            for(let i = 0; i < count; i++) {
 
-            draw() {                particles.push(new Particle(x, y, color));
 
-                const pulse = Math.sin(this.pulsePhase) * 4;            }
+            draw() {                font-size: 12px;            speed: 8
 
-                const glowIntensity = this.isGolden ? 30 : 20;        }
+                const pulse = Math.sin(this.pulsePhase) * 4;
+
+                const glowIntensity = this.isGolden ? 30 : 20;                padding: 8px 16px;        };
 
                 const bodyColor = this.isGolden ? '#ffff00' : (this.isRare ? '#ff1493' : '#00eaff');
 
-                const glowColor = this.isGolden ? '#ffff66' : (this.isRare ? '#ff69b4' : '#66ffff');        function drawPlayer() {
-
-            // Net handle
-
-                ctx.shadowBlur = glowIntensity + Math.sin(this.pulsePhase * 2) * 10;            ctx.fillStyle = '#8B4513';
-
-                ctx.shadowColor = glowColor;            ctx.fillRect(player.x + 35, player.y + 20, 12, 50);
+                const glowColor = this.isGolden ? '#ffff66' : (this.isRare ? '#ff69b4' : '#66ffff');            }
 
 
 
-                // Bell            // Net rim
+                ctx.shadowBlur = glowIntensity + Math.sin(this.pulsePhase * 2) * 10;            h1 { font-size: 36px; }        let keys = {};
 
-                const gradient = ctx.createRadialGradient(            ctx.lineWidth = 6;
+                ctx.shadowColor = glowColor;
 
-                    this.x + this.width/2, this.y + 20 + pulse, 5,            ctx.strokeStyle = '#DAA520';
+            button { font-size: 18px; padding: 12px 30px; }        let touchStartX = 0;
 
-                    this.x + this.width/2, this.y + 20 + pulse, this.width/2 + 10            ctx.beginPath();
+                // Bell
 
-                );            ctx.arc(player.x + 40, player.y + 20, 35, Math.PI, 0, true);
+                const gradient = ctx.createRadialGradient(            #ui { font-size: 20px; padding: 0 15px; }
 
-                gradient.addColorStop(0, bodyColor + 'ff');            ctx.stroke();
+                    this.x + this.width/2, this.y + 20 + pulse, 5,
+
+                    this.x + this.width/2, this.y + 20 + pulse, this.width/2 + 10            #instructions { font-size: 16px; }        // Sound effects (using Web Audio API)
+
+                );
+
+                gradient.addColorStop(0, bodyColor + 'ff');            #startScreen, #gameOver { padding: 30px 40px; }        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
                 gradient.addColorStop(0.7, bodyColor + 'cc');
 
-                gradient.addColorStop(1, bodyColor + '44');            // Net mesh
+                gradient.addColorStop(1, bodyColor + '44');        }        function playSound(frequency, duration = 0.1, type = 'sine') {
 
-                ctx.fillStyle = gradient;            ctx.strokeStyle = 'rgba(100, 255, 100, 0.6)';
+                ctx.fillStyle = gradient;
 
-            ctx.lineWidth = 2;
-
-                ctx.beginPath();            for(let i = 0; i < 8; i++) {
-
-                ctx.ellipse(this.x + this.width/2, this.y + 25 + pulse,                 const angle = Math.PI + (i/7) * Math.PI;
-
-                           this.width/2 + pulse, 20 + pulse * 0.5, 0, 0, Math.PI * 2);                const x = player.x + 40 + Math.cos(angle) * 30;
-
-                ctx.fill();                const y = player.y + 20 + Math.sin(angle) * 30;
+                    if (!audioCtx) return;
 
                 ctx.beginPath();
 
-                // Tentacles                ctx.moveTo(player.x + 40, player.y + 20);
+                ctx.ellipse(this.x + this.width/2, this.y + 25 + pulse,         @media (max-width: 400px) {            const osc = audioCtx.createOscillator();
 
-                ctx.strokeStyle = this.isGolden ? '#ffaa00' : bodyColor + 'aa';                ctx.lineTo(x, y);
+                           this.width/2 + pulse, 20 + pulse * 0.5, 0, 0, Math.PI * 2);
 
-                ctx.lineWidth = 3;                ctx.stroke();
+                ctx.fill();            h1 { font-size: 28px; }            const gain = audioCtx.createGain();
 
-                for(let i = 0; i < 8; i++) {            }
 
-                    const angle = (i / 8) * Math.PI;
 
-                    const startX = this.x + this.width/2 + Math.cos(angle) * (this.width/2 - 5);            // Glow effect when power-up active
+                // Tentacles            button { font-size: 16px; padding: 10px 25px; margin: 10px 5px; }            osc.connect(gain);
 
-                    const startY = this.y + 35 + pulse;            if (powerUpActive) {
+                ctx.strokeStyle = this.isGolden ? '#ffaa00' : bodyColor + 'aa';
 
-                    ctx.beginPath();                ctx.shadowBlur = 40;
+                ctx.lineWidth = 3;            #ui { font-size: 18px; }            gain.connect(audioCtx.destination);
 
-                    ctx.moveTo(startX, startY);                ctx.shadowColor = '#00ff00';
+                for(let i = 0; i < 8; i++) {
 
-                    const ctrlX = startX + Math.sin(this.tentacleOffset + i) * 20;                ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+                    const angle = (i / 8) * Math.PI;            #startScreen, #gameOver { padding: 25px 30px; }            osc.frequency.value = frequency;
 
-                    const ctrlY = startY + 30;                ctx.fillRect(player.x - 20, player.y - 40, player.width + 40, player.height + 60);
+                    const startX = this.x + this.width/2 + Math.cos(angle) * (this.width/2 - 5);
 
-                    const endX = startX + Math.sin(this.tentacleOffset + i * 1.3) * 30;                ctx.shadowBlur = 0;
+                    const startY = this.y + 35 + pulse;        }            osc.type = type;
 
-                    const endY = startY + 70;            }
+                    ctx.beginPath();
 
-                    ctx.bezierCurveTo(ctrlX, ctrlY, endX, endY, endX + 10, endY + 20);        }
+                    ctx.moveTo(startX, startY);    </style>            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
 
-                    ctx.stroke();
+                    const ctrlX = startX + Math.sin(this.tentacleOffset + i) * 20;
 
-                }        function spawnJellyfish() {
+                    const ctrlY = startY + 30;</head>            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+
+                    const endX = startX + Math.sin(this.tentacleOffset + i * 1.3) * 30;
+
+                    const endY = startY + 70;<body>            osc.start(audioCtx.currentTime);
+
+                    ctx.bezierCurveTo(ctrlX, ctrlY, endX, endY, endX + 10, endY + 20);
+
+                    ctx.stroke();    <nav class="game-nav">            osc.stop audioCtx.currentTime + duration);
+
+                }
+
+        <a href="/index.html" class="nav-link">← HOME</a>        }
+
+                if (this.isGolden) {
+
+                    ctx.shadowBlur = 40;    </nav>
+
+                    ctx.shadowColor = '#ffff00';
+
+                    ctx.fillStyle = 'rgba(255,255,100,0.3)';            class Jellyfish {
+
+                    ctx.beginPath();
+
+                    ctx.arc(this.x + this.width/2, this.y + 25, 50, 0, Math.PI * 2);    <div id="gameContainer">            constructor(isRare = false, isGolden = false) {
+
+                    ctx.fill();
+
+                }        <div id="ui">                this.x = Math.random() * (canvas.width - 60) + 30;
+
+
+
+                ctx.shadowBlur = 0;            <div class="stat-box">Score: <span id="score">0</span></div>                this.y = -80;
+
+            }
+
+        }            <div class="stat-box">Time: <span id="timer">60</span>s</div>                this.width = isGolden ? 70 : (isRare ? 55 : 45);
+
+
+
+        class Particle {        </div>                this.height = isGolden ? 90 : (isRare ? 75 : 65);
+
+            constructor(x, y, color) {
+
+                this.x = x;        <div id="powerUpDisplay"></div>                this.speed = isGolden ? 0.7 : (isRare ? 1.2 : 1 + Math.random() * 1.8);
+
+                this.y = y;
+
+                this.vx = Math.random() * 6 - 3;                this.tentacleOffset = Math.random() * Math.PI * 2;
+
+                this.vy = Math.random() * -5 - 2;
+
+                this.life = 1;        <canvas id="gameCanvas" width="800" height="600"></canvas>                this.pulsePhase = Math.random() * Math.PI * 2;
+
+                this.decay = 0.02;
+
+                this.color = color;                this.isRare = isRare;
+
+                this.size = Math.random() * 6 + 3;
+
+            }        <!-- Start Screen -->                this.isGolden = isGolden;
+
+            update() {
+
+                this.x += this.vx;        <div id="startScreen">                this.points = isGolden ? 30 : (isRare ? 50 : 10);
+
+                this.y += this.vy;
+
+                this.vy += 0.1;            <h1>🎐 Jellyfish Bloom 🎐</h1>            }
+
+                this.life -= this.decay;
+
+            }            <p style="color:#00eaff;font-size:28px;margin:15px 0;">Catch the glowing jellyfish!</p>
+
+            draw() {
+
+                ctx.globalAlpha = this.life;            <div id="instructions">            update() {
+
+                ctx.fillStyle = this.color;
+
+                ctx.beginPath();                Use ← → arrow keys or swipe to move<br>                this.y += this.speed * (powerUpActive ? 0.4 : 1);
+
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+
+                ctx.fill();                Catch jellyfish for points!<br>                this.pulsePhase += 0.12;
+
+                ctx.globalAlpha = 1;
+
+            }                <span style="color:#ff6b9d;">💕 Rare pink ones give 50 points!</span><br>                this.tentacleOffset += 0.05;
+
+        }
+
+                <span style="color:#ffff00;">⭐ Golden ones slow time!</span>            }
+
+        function createParticles(x, y, color, count = 15) {
+
+            for(let i = 0; i < count; i++) {            </div>
+
+                particles.push(new Particle(x, y, color));
+
+            }            <button onclick="startGame()">🌊 Start Game 🌊</button>            draw() {
+
+        }
+
+        </div>                const pulse = Math.sin(this.pulsePhase) * 4;
+
+        function drawPlayer() {
+
+            // Draw yellow sponge                const glowIntensity = this.isGolden ? 30 : 20;
+
+            const spongeColor = '#FFD700';
+
+            const poreColor = '#FFA500';        <!-- Game Over Screen -->                const bodyColor = this.isGolden ? '#ffff00' : (this.isRare ? '#ff1493' : '#00eaff');
+
+            
+
+            // Main sponge body (irregular shape)        <div id="gameOver" style="display:none;">                const glowColor = this.isGolden ? '#ffff66' : (this.isRare ? '#ff69b4' : '#66ffff');
+
+            ctx.shadowBlur = 15;
+
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';            <h1>🎐 Game Over! 🎐</h1>
+
+            ctx.fillStyle = spongeColor;
+
+                        <p style="color:#fff;font-size:28px;margin:15px 0;">Final Score: <span id="finalScore">0</span></p>                ctx.shadowBlur = glowIntensity + Math.sin(this.pulsePhase * 2) * 10;
+
+            // Rounded rectangle for sponge body
+
+            const cornerRadius = 15;            <p style="color:#00eaff;font-size:24px;margin:10px 0;">High Score: <span id="highScore">0</span></p>                ctx.shadowColor = glowColor;
+
+            const x = player.x;
+
+            const y = player.y;            <button onclick="restartGame()">Play Again</button>
+
+            const w = player.width;
+
+            const h = player.height;            <button onclick="location.href='/index.html'">Home</button>                // Bell
+
+            
+
+            ctx.beginPath();        </div>                const gradient = ctx.createRadialGradient(
+
+            ctx.moveTo(x + cornerRadius, y);
+
+            ctx.lineTo(x + w - cornerRadius, y);    </div>                    this.x + this.width/2, this.y + 20 + pulse, 5,
+
+            ctx.quadraticCurveTo(x + w, y, x + w, y + cornerRadius);
+
+            ctx.lineTo(x + w, y + h - cornerRadius);                    this.x + this.width/2, this.y + 20 + pulse, this.width/2 + 10
+
+            ctx.quadraticCurveTo(x + w, y + h, x + w - cornerRadius, y + h);
+
+            ctx.lineTo(x + cornerRadius, y + h);    <script>                );
+
+            ctx.quadraticCurveTo(x, y + h, x, y + h - cornerRadius);
+
+            ctx.lineTo(x, y + cornerRadius);        const canvas = document.getElementById('gameCanvas');                gradient.addColorStop(0, bodyColor + 'ff');
+
+            ctx.quadraticCurveTo(x, y, x + cornerRadius, y);
+
+            ctx.closePath();        const ctx = canvas.getContext('2d');                gradient.addColorStop(0.7, bodyColor + 'cc');
+
+            ctx.fill();
+
+                                    gradient.addColorStop(1, bodyColor + '44');
+
+            // Add pores/texture
+
+            ctx.shadowBlur = 0;        let score = 0;                ctx.fillStyle = gradient;
+
+            ctx.fillStyle = poreColor;
+
+            for(let i = 0; i < 20; i++) {        let highScore = localStorage.getItem('jellyHighScore') || 0;
+
+                const poreX = x + 10 + Math.random() * (w - 20);
+
+                const poreY = y + 10 + Math.random() * (h - 20);        let timeLeft = 60;                ctx.beginPath();
+
+                const poreSize = 2 + Math.random() * 4;
+
+                ctx.beginPath();        let gameRunning = false;                ctx.ellipse(this.x + this.width/2, this.y + 25 + pulse, 
+
+                ctx.arc(poreX, poreY, poreSize, 0, Math.PI * 2);
+
+                ctx.fill();        let jellyfish = [];                           this.width/2 + pulse, 20 + pulse * 0.5, 0, 0, Math.PI * 2);
+
+            }
+
+                    let particles = [];                ctx.fill();
+
+            // Highlight to show it's catching
+
+            ctx.shadowBlur = 0;        let powerUpActive = false;
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+
+            ctx.beginPath();        let powerUpTimer = 0;                // Tentacles
+
+            ctx.arc(x + w/3, y + h/3, w/4, 0, Math.PI * 2);
+
+            ctx.fill();                        ctx.strokeStyle = this.isGolden ? '#ffaa00' : bodyColor + 'aa';
+
+
+
+            // Glow effect when power-up active        const player = {                ctx.lineWidth = 3;
+
+            if (powerUpActive) {
+
+                ctx.shadowBlur = 40;            x: canvas.width / 2 - 40,                for(let i = 0; i < 8; i++) {
+
+                ctx.shadowColor = '#00ff00';
+
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';            y: canvas.height - 90,                    const angle = (i / 8) * Math.PI;
+
+                ctx.fillRect(player.x - 20, player.y - 20, player.width + 40, player.height + 40);
+
+                ctx.shadowBlur = 0;            width: 80,                    const startX = this.x + this.width/2 + Math.cos(angle) * (this.width/2 - 5);
+
+            }
+
+        }            height: 70,                    const startY = this.y + 35 + pulse;
+
+
+
+        function spawnJellyfish() {            speed: 8                    ctx.beginPath();
 
             if (!gameRunning) return;
 
-                if (this.isGolden) {            
+                    };                    ctx.moveTo(startX, startY);
 
-                    ctx.shadowBlur = 40;            if (Math.random() < 0.02) jellyfish.push(new Jellyfish());
+            if (Math.random() < 0.02) jellyfish.push(new Jellyfish());
 
-                    ctx.shadowColor = '#ffff00';            if (Math.random() < 0.005) jellyfish.push(new Jellyfish(true)); // Rare pink
+            if (Math.random() < 0.005) jellyfish.push(new Jellyfish(true)); // Rare pink                    const ctrlX = startX + Math.sin(this.tentacleOffset + i) * 20;
 
-                    ctx.fillStyle = 'rgba(255,255,100,0.3)';            if (Math.random() < 0.002) jellyfish.push(new Jellyfish(false, true)); // Golden!
+            if (Math.random() < 0.002) jellyfish.push(new Jellyfish(false, true)); // Golden!
 
-                    ctx.beginPath();        }
+        }        let keys = {};                    const ctrlY = startY + 30;
 
-                    ctx.arc(this.x + this.width/2, this.y + 25, 50, 0, Math.PI * 2);
+
+
+        function drawBackground() {        let touchStartX = 0;                    const endX = startX + Math.sin(this.tentacleOffset + i * 1.3) * 30;
+
+            // Animated water caustics
+
+            ctx.fillStyle = 'rgba(0, 30, 60, 0.1)';                    const endY = startY + 70;
+
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Sound effects (using Web Audio API)                    ctx.bezierCurveTo(ctrlX, ctrlY, endX, endY, endX + 10, endY + 20);
+
+            // Bubbles
+
+            for(let i = 0; i < 4; i++) {        let audioCtx;                    ctx.stroke();
+
+                const x = (Date.now() * 0.01 + i * 200) % (canvas.width + 100) - 50;
+
+                const y = (Date.now() * 0.02 + i * 300) % (canvas.height + 200) - 100;        function initAudio() {                }
+
+                ctx.fillStyle = 'rgba(100, 200, 255, 0.2)';
+
+                ctx.beginPath();            if (!audioCtx) {
+
+                ctx.arc(x, y, 8 + Math.sin(Date.now() * 0.001 + i) * 3, 0, Math.PI * 2);
+
+                ctx.fill();                audioCtx = new (window.AudioContext || window.webkitAudioContext)();                if (this.isGolden) {
+
+            }
+
+        }            }                    ctx.shadowBlur = 40;
+
+
+
+        function update() {        }                    ctx.shadowColor = '#ffff00';
+
+            if (!gameRunning) return;
+
+                            ctx.fillStyle = 'rgba(255,255,100,0.3)';
+
+            // Player movement
+
+            if ((keys['a'] || keys['A']) && player.x > 0) {        function playSound(frequency, duration = 0.1, type = 'sine') {                    ctx.beginPath();
+
+                player.x -= player.speed;
+
+            }            if (!audioCtx) return;                    ctx.arc(this.x + this.width/2, this.y + 25, 50, 0, Math.PI * 2);
+
+            if ((keys['d'] || keys['D']) && player.x < canvas.width - player.width) {
+
+                player.x += player.speed;            try {                    ctx.fill();
+
+            }
+
+                            const osc = audioCtx.createOscillator();                }
+
+            // Keep player in bounds
+
+            player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));                const gain = audioCtx.createGain();
+
+
+
+            // Update jellyfish                osc.connect(gain);                ctx.shadowBlur = 0;
+
+            for(let i = jellyfish.length - 1; i >= 0; i--) {
+
+                const j = jellyfish[i];                gain.connect(audioCtx.destination);            }
+
+                j.update();
+
+                osc.frequency.value = frequency;        }
+
+                if (j.y > canvas.height + 100) {
+
+                    jellyfish.splice(i, 1);                osc.type = type;
+
+                    continue;
+
+                }                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);        class Particle {
+
+
+
+                // Collision                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);            constructor(x, y, color) {
+
+                if (j.x < player.x + player.width &&
+
+                    j.x + j.width > player.x &&                osc.start(audioCtx.currentTime);                this.x = x;
+
+                    j.y < player.y + player.height &&
+
+                    j.y + j.height > player.y + 20) {                osc.stop(audioCtx.currentTime + duration);                this.y = y;
+
+
+
+                    score += j.points;            } catch(e) {                this.vx = Math.random() * 6 - 3;
+
+                    document.getElementById('score').textContent = score;
+
+                    playSound(j.isGolden ? 800 : (j.isRare ? 600 : 400), 0.2, 'triangle');                console.log('Audio error:', e);                this.vy = Math.random() * -5 - 2;
+
+
+
+                    if (j.isGolden) {            }                this.life = 1;
+
+                        timeLeft += 10;
+
+                        document.getElementById('timer').textContent = timeLeft;        }                this.decay = 0.02;
+
+                        powerUpActive = true;
+
+                        powerUpTimer = 300;                this.color = color;
+
+                        document.getElementById('powerUpDisplay').textContent = "⭐ SLOW MOTION +10s! ⭐";
+
+                        document.getElementById('powerUpDisplay').style.display = 'block';        class Jellyfish {                this.size = Math.random() * 6 + 3;
+
+                        setTimeout(() => {
+
+                            document.getElementById('powerUpDisplay').style.display = 'none';            constructor(isRare = false, isGolden = false) {            }
+
+                        }, 3000);
+
+                    }                this.x = Math.random() * (canvas.width - 60) + 30;            update() {
+
+
+
+                    createParticles(j.x + j.width/2, j.y + j.height/2,                 this.y = -80;                this.x += this.vx;
+
+                        j.isGolden ? '#ffff00' : (j.isRare ? '#ff69b4' : '#00ffff'), j.isGolden ? 30 : 20);
+
+                this.width = isGolden ? 70 : (isRare ? 55 : 45);                this.y += this.vy;
+
+                    jellyfish.splice(i, 1);
+
+                }                this.height = isGolden ? 90 : (isRare ? 75 : 65);                this.vy += 0.1;
+
+            }
+
+                this.speed = isGolden ? 0.7 : (isRare ? 1.2 : 1 + Math.random() * 1.8);                this.life -= this.decay;
+
+            // Update particles
+
+            particles = particles.filter(p => {                this.tentacleOffset = Math.random() * Math.PI * 2;            }
+
+                p.update();
+
+                return p.life > 0;                this.pulsePhase = Math.random() * Math.PI * 2;            draw() {
+
+            });
+
+                this.isRare = isRare;                ctx.globalAlpha = this.life;
+
+            if (powerUpActive) {
+
+                powerUpTimer--;                this.isGolden = isGolden;                ctx.fillStyle = this.color;
+
+                if (powerUpTimer <= 0) powerUpActive = false;
+
+            }                this.points = isGolden ? 30 : (isRare ? 50 : 10);                ctx.beginPath();
+
+
+
+            spawnJellyfish();            }                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+
+        }
+
+                ctx.fill();
+
+        function draw() {
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);            update() {                ctx.globalAlpha = 1;
+
+            drawBackground();
+
+            jellyfish.forEach(j => j.draw());                this.y += this.speed * (powerUpActive ? 0.4 : 1);            }
+
+            particles.forEach(p => p.draw());
+
+            drawPlayer();                this.pulsePhase += 0.12;        }
+
+        }
+
+                this.tentacleOffset += 0.05;
+
+        function gameLoop() {
+
+            update();            }        function createParticles(x, y, color, count = 15) {
+
+            draw();
+
+            requestAnimationFrame(gameLoop);            for(let i = 0; i < count; i++) {
+
+        }
+
+            draw() {                particles.push(new Particle(x, y, color));
+
+        function startTimer() {
+
+            if (timeLeft > 0 && gameRunning) {                const pulse = Math.sin(this.pulsePhase) * 4;            }
+
+                timeLeft--;
+
+                document.getElementById('timer').textContent = timeLeft;                const glowIntensity = this.isGolden ? 30 : 20;        }
+
+                if (timeLeft <= 10) {
+
+                    document.getElementById('timer').style.color = '#ff3366';                const bodyColor = this.isGolden ? '#ffff00' : (this.isRare ? '#ff1493' : '#00eaff');
+
+                    document.getElementById('timer').parentElement.style.background = 'rgba(255, 51, 102, 0.3)';
+
+                }                const glowColor = this.isGolden ? '#ffff66' : (this.isRare ? '#ff69b4' : '#66ffff');        function drawPlayer() {
+
+                setTimeout(startTimer, 1000);
+
+            } else if (gameRunning) {            // Net handle
+
+                endGame();
+
+            }                ctx.shadowBlur = glowIntensity + Math.sin(this.pulsePhase * 2) * 10;            ctx.fillStyle = '#8B4513';
+
+        }
+
+                ctx.shadowColor = glowColor;            ctx.fillRect(player.x + 35, player.y + 20, 12, 50);
+
+        function startGame() {
+
+            initAudio();
+
+            document.getElementById('startScreen').style.display = 'none';
+
+            score = 0;                // Bell            // Net rim
+
+            timeLeft = 54;
+
+            gameRunning = true;                const gradient = ctx.createRadialGradient(            ctx.lineWidth = 6;
+
+            jellyfish = [];
+
+            particles = [];                    this.x + this.width/2, this.y + 20 + pulse, 5,            ctx.strokeStyle = '#DAA520';
+
+            powerUpActive = false;
+
+            player.x = canvas.width / 2 - 40;                    this.x + this.width/2, this.y + 20 + pulse, this.width/2 + 10            ctx.beginPath();
+
+            document.getElementById('score').textContent = score;
+
+            document.getElementById('timer').textContent = timeLeft;                );            ctx.arc(player.x + 40, player.y + 20, 35, Math.PI, 0, true);
+
+            document.getElementById('timer').style.color = '#00eaff';
+
+            document.getElementById('timer').parentElement.style.background = 'rgba(0, 234, 255, 0.2)';                gradient.addColorStop(0, bodyColor + 'ff');            ctx.stroke();
+
+            document.getElementById('highScore').textContent = highScore;
+
+            startTimer();                gradient.addColorStop(0.7, bodyColor + 'cc');
+
+        }
+
+                gradient.addColorStop(1, bodyColor + '44');            // Net mesh
+
+        function endGame() {
+
+            gameRunning = false;                ctx.fillStyle = gradient;            ctx.strokeStyle = 'rgba(100, 255, 100, 0.6)';
+
+            if (score > highScore) {
+
+                highScore = score;            ctx.lineWidth = 2;
+
+                localStorage.setItem('jellyHighScore', highScore);
+
+            }                ctx.beginPath();            for(let i = 0; i < 8; i++) {
+
+            document.getElementById('finalScore').textContent = score;
+
+            document.getElementById('highScore').textContent = highScore;                ctx.ellipse(this.x + this.width/2, this.y + 25 + pulse,                 const angle = Math.PI + (i/7) * Math.PI;
+
+            document.getElementById('gameOver').style.display = 'block';
+
+            playSound(200, 1, 'sine');                           this.width/2 + pulse, 20 + pulse * 0.5, 0, 0, Math.PI * 2);                const x = player.x + 40 + Math.cos(angle) * 30;
+
+        }
+
+                ctx.fill();                const y = player.y + 20 + Math.sin(angle) * 30;
+
+        function restartGame() {
+
+            document.getElementById('gameOver').style.display = 'none';                ctx.beginPath();
+
+            startGame();
+
+        }                // Tentacles                ctx.moveTo(player.x + 40, player.y + 20);
+
+
+
+        // Controls                ctx.strokeStyle = this.isGolden ? '#ffaa00' : bodyColor + 'aa';                ctx.lineTo(x, y);
+
+        document.addEventListener('keydown', e => { 
+
+            keys[e.key] = true;                ctx.lineWidth = 3;                ctx.stroke();
+
+            if (e.key === 'a' || e.key === 'd' || e.key === 'A' || e.key === 'D') {
+
+                e.preventDefault();                for(let i = 0; i < 8; i++) {            }
+
+            }
+
+        });                    const angle = (i / 8) * Math.PI;
+
+        document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+                    const startX = this.x + this.width/2 + Math.cos(angle) * (this.width/2 - 5);            // Glow effect when power-up active
+
+        // Touch controls
+
+        canvas.addEventListener('touchstart', e => {                    const startY = this.y + 35 + pulse;            if (powerUpActive) {
+
+            if (!isMobile || !gameRunning) return;
+
+            touchStartX = e.touches[0].clientX;                    ctx.beginPath();                ctx.shadowBlur = 40;
+
+            e.preventDefault();
+
+        }, { passive: false });                    ctx.moveTo(startX, startY);                ctx.shadowColor = '#00ff00';
+
+
+
+        canvas.addEventListener('touchmove', e => {                    const ctrlX = startX + Math.sin(this.tentacleOffset + i) * 20;                ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+
+            if (!isMobile || !gameRunning) return;
+
+            const touchX = e.touches[0].clientX;                    const ctrlY = startY + 30;                ctx.fillRect(player.x - 20, player.y - 40, player.width + 40, player.height + 60);
+
+            const diff = touchX - touchStartX;
+
+            player.x += diff * 0.4;                    const endX = startX + Math.sin(this.tentacleOffset + i * 1.3) * 30;                ctx.shadowBlur = 0;
+
+            player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
+
+            touchStartX = touchX;                    const endY = startY + 70;            }
+
+            e.preventDefault();
+
+        }, { passive: false });                    ctx.bezierCurveTo(ctrlX, ctrlY, endX, endY, endX + 10, endY + 20);        }
+
+
+
+        // Prevent scroll                    ctx.stroke();
+
+        document.body.addEventListener('touchmove', e => {
+
+            if (isMobile) e.preventDefault();                }        function spawnJellyfish() {
+
+        }, { passive: false });
+
+            if (!gameRunning) return;
+
+        // Show high score
+
+        document.getElementById('highScore').textContent = highScore;                if (this.isGolden) {            
+
+
+
+        // Start the animation loop                    ctx.shadowBlur = 40;            if (Math.random() < 0.02) jellyfish.push(new Jellyfish());
+
+        gameLoop();
+
+    </script>                    ctx.shadowColor = '#ffff00';            if (Math.random() < 0.005) jellyfish.push(new Jellyfish(true)); // Rare pink
+
+    <script type="module">
+
+        import { inject } from '@vercel/analytics';                    ctx.fillStyle = 'rgba(255,255,100,0.3)';            if (Math.random() < 0.002) jellyfish.push(new Jellyfish(false, true)); // Golden!
+
+        inject();
+
+    </script>                    ctx.beginPath();        }
+
+</body>
+
+</html>                    ctx.arc(this.x + this.width/2, this.y + 25, 50, 0, Math.PI * 2);
+
 
                     ctx.fill();        function drawBackground() {
 
