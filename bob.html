@@ -13,12 +13,34 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(to bottom, #001122 0%, #002b55 50%, #003366 100%);
+            background: linear-gradient(135deg, #0a0a15 0%, #1a0a2e 25%, #0f0f1e 50%, #1a1a2e 75%, #0a0a15 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             font-family: 'Segoe UI', sans-serif;
             overflow: hidden;
             touch-action: manipulation;
         }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 136, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 0, 102, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(0, 221, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
         #gameContainer {
+            position: relative;
+            z-index: 1;
             width: 100%;
             max-width: 900px;
             display: flex;
@@ -28,12 +50,13 @@
             padding: 20px;
         }
         canvas {
-            border: 3px solid #00eaff;
-            border-radius: 12px;
-            background: linear-gradient(to bottom, #001a33 0%, #003d5c 100%);
-            box-shadow: 0 10px 40px rgba(0, 234, 255, 0.4);
+            border: 2px solid rgba(0, 221, 255, 0.5);
+            border-radius: 20px;
+            background: rgba(10, 10, 21, 0.8);
+            box-shadow: 0 20px 60px rgba(0, 221, 255, 0.3);
             max-width: 100%;
             height: auto;
+            backdrop-filter: blur(10px);
         }
         .controls {
             display: flex;
@@ -45,75 +68,92 @@
         .layout-selector {
             display: flex;
             gap: 10px;
-            background: rgba(0, 50, 80, 0.6);
+            background: rgba(255, 255, 255, 0.05);
             padding: 10px 15px;
-            border-radius: 8px;
-            border: 2px solid #00eaff;
+            border-radius: 50px;
+            border: 2px solid rgba(0, 221, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
         .layout-btn {
             padding: 8px 16px;
-            background: rgba(0, 234, 255, 0.2);
-            color: #00eaff;
-            border: 2px solid #00eaff;
-            border-radius: 6px;
+            background: rgba(0, 221, 255, 0.1);
+            color: #00ddff;
+            border: 2px solid rgba(0, 221, 255, 0.3);
+            border-radius: 25px;
             cursor: pointer;
             font-size: 14px;
             font-weight: bold;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
         .layout-btn:hover {
-            background: rgba(0, 234, 255, 0.4);
-            transform: scale(1.05);
+            background: rgba(0, 221, 255, 0.2);
+            border-color: rgba(0, 221, 255, 0.6);
+            transform: translateY(-2px);
         }
         .layout-btn.active {
-            background: #00eaff;
-            color: #001122;
+            background: rgba(0, 221, 255, 0.3);
+            border-color: #00ddff;
+            color: white;
         }
         .stat-box {
-            background: rgba(0, 50, 80, 0.6);
+            background: rgba(255, 255, 255, 0.05);
             padding: 10px 20px;
-            border-radius: 8px;
-            border: 2px solid #00eaff;
-            color: #00eaff;
+            border-radius: 50px;
+            border: 2px solid rgba(0, 221, 255, 0.3);
+            color: #00ddff;
             font-weight: bold;
             font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .stat-box:hover {
+            border-color: rgba(0, 221, 255, 0.6);
+            box-shadow: 0 5px 20px rgba(0, 221, 255, 0.2);
         }
         .control-instructions {
-            background: rgba(0, 50, 80, 0.6);
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: 2px solid #00eaff;
-            color: #00eaff;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: 2px solid rgba(0, 221, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
             font-size: 14px;
             text-align: center;
+            backdrop-filter: blur(10px);
         }
         h1 {
-            color: #00eaff;
+            color: white;
             font-size: clamp(1.5rem, 5vw, 3rem);
-            text-shadow: 0 0 20px rgba(0, 234, 255, 0.8);
+            text-shadow: 
+                0 0 10px rgba(0, 221, 255, 0.8),
+                0 0 20px rgba(0, 221, 255, 0.6),
+                0 0 30px rgba(0, 221, 255, 0.4);
             margin: 0;
             text-align: center;
+            font-weight: bold;
+            letter-spacing: 2px;
         }
         .home-button {
             position: fixed;
             top: 20px;
             left: 20px;
             padding: 10px 20px;
-            background: rgba(0, 234, 255, 0.9);
-            color: #001122;
+            background: rgba(0, 221, 255, 0.2);
+            color: white;
             text-decoration: none;
-            border-radius: 8px;
-            border: 2px solid #00eaff;
+            border-radius: 50px;
+            border: 2px solid rgba(0, 221, 255, 0.5);
             font-weight: bold;
             cursor: pointer;
             z-index: 1000;
             font-size: 14px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
         .home-button:hover {
-            background: #00eaff;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0, 234, 255, 0.8);
+            background: rgba(0, 221, 255, 0.4);
+            border-color: #00ddff;
+            transform: translateX(-5px);
+            box-shadow: 0 5px 20px rgba(0, 221, 255, 0.4);
         }
         #gameOverScreen {
             display: none;
@@ -121,40 +161,44 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 26, 51, 0.95);
+            background: rgba(10, 10, 21, 0.95);
             padding: 40px;
-            border-radius: 15px;
-            border: 3px solid #00eaff;
+            border-radius: 20px;
+            border: 2px solid rgba(0, 221, 255, 0.5);
             text-align: center;
             z-index: 100;
-            box-shadow: 0 0 40px rgba(0, 234, 255, 0.6);
+            box-shadow: 0 20px 60px rgba(0, 221, 255, 0.4);
+            backdrop-filter: blur(20px);
         }
         #gameOverScreen h2 {
-            color: #00eaff;
+            color: #00ddff;
             font-size: 2.5rem;
             margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(0, 234, 255, 0.8);
+            text-shadow: 
+                0 0 10px rgba(0, 221, 255, 0.8),
+                0 0 20px rgba(0, 221, 255, 0.6);
         }
         #gameOverScreen p {
-            color: #00eaff;
+            color: rgba(255, 255, 255, 0.9);
             font-size: 1.5rem;
             margin: 10px 0;
         }
         #restartButton {
             margin-top: 20px;
             padding: 15px 30px;
-            background: #00eaff;
-            color: #001122;
-            border: none;
-            border-radius: 8px;
+            background: rgba(0, 221, 255, 0.2);
+            color: white;
+            border: 2px solid #00ddff;
+            border-radius: 50px;
             font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
         #restartButton:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(0, 234, 255, 0.8);
+            background: rgba(0, 221, 255, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 221, 255, 0.4);
         }
         @media (max-width: 850px) {
             #gameContainer { padding: 10px; gap: 10px; }
@@ -162,6 +206,10 @@
             .stat-box { padding: 8px 15px; font-size: 14px; }
             .layout-selector { padding: 8px 12px; }
             .layout-btn { padding: 6px 12px; font-size: 12px; }
+            h1 { font-size: 2rem; }
+            #gameOverScreen { padding: 30px 20px; }
+            #gameOverScreen h2 { font-size: 2rem; }
+            #gameOverScreen p { font-size: 1.2rem; }
         }
     </style>
 </head>
