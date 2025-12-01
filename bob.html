@@ -255,7 +255,8 @@
         
         let isMobile = false;
         let gameRunning = false;
-        let gameLoop;
+        let animationFrameId = null;
+        let timerInterval = null;
         let timeLeft = 54;
         let score = 0;
         let combo = 0;
@@ -263,6 +264,8 @@
         let difficultyMultiplier = 1;
         let highScore = parseInt(localStorage.getItem('jellyHighScore')) || 0;
         const TARGET_SCORE = 27;
+        const MAX_JELLYFISH = 15; // Prevent too many on screen
+        const MAX_PARTICLES = 200; // Cap particle count
         
         document.getElementById('highScore').textContent = highScore;
 
@@ -273,9 +276,17 @@
             height: 40,
             speed: 8,
             color: '#FFD700',
-            powerUp: false,
-            powerUpTime: 0
+            spongePoRes: [] // Cache pore positions
         };
+
+        // Pre-generate sponge pore positions for better performance
+        for (let i = 0; i < 20; i++) {
+            catcher.spongePoRes.push({
+                x: 10 + Math.random() * 80,
+                y: 5 + Math.random() * 30,
+                size: 2 + Math.random() * 2
+            });
+        }
 
         const keys = {};
         let touchX = null;
@@ -426,14 +437,16 @@
             ctx.quadraticCurveTo(catcher.x, catcher.y, catcher.x + cornerRadius, catcher.y);
             ctx.closePath();
             ctx.fill();
+            
+            // Use cached pore positions for better performance
             ctx.fillStyle = '#FFA500';
-            for (let i = 0; i < 20; i++) {
-                const px = catcher.x + 10 + Math.random() * (catcher.width - 20);
-                const py = catcher.y + 5 + Math.random() * (catcher.height - 10);
+            for (let i = 0; i < catcher.spongePoRes.length; i++) {
+                const pore = catcher.spongePoRes[i];
                 ctx.beginPath();
-                ctx.arc(px, py, 2 + Math.random() * 2, 0, Math.PI * 2);
+                ctx.arc(catcher.x + pore.x, catcher.y + pore.y, pore.size, 0, Math.PI * 2);
                 ctx.fill();
             }
+            
             ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
             ctx.beginPath();
             ctx.arc(catcher.x + catcher.width / 3, catcher.y + catcher.height / 3, catcher.width / 4, 0, Math.PI * 2);
@@ -465,6 +478,9 @@
         }
 
         function spawnJellyfish() {
+            // Prevent too many jellyfish on screen
+            if (jellyfish.length >= MAX_JELLYFISH) return;
+            
             const spawnRate = 0.025 + (score / TARGET_SCORE) * 0.02;
             if (Math.random() < spawnRate) {
                 jellyfish.push(new Jellyfish());
@@ -494,10 +510,12 @@
                     document.getElementById('score').textContent = score;
                     document.getElementById('combo').textContent = combo;
                     
-                    // Create particles
-                    const particleCount = 15 + combo * 2;
+                    // Create particles with cap
+                    const particleCount = Math.min(15 + combo * 2, 30);
                     for (let j = 0; j < particleCount; j++) {
-                        particles.push(new Particle(jelly.x, jelly.y, jelly.color));
+                        if (particles.length < MAX_PARTICLES) {
+                            particles.push(new Particle(jelly.x, jelly.y, jelly.color));
+                        }
                     }
                     
                     // Golden jellyfish bonus: +5 seconds
@@ -529,6 +547,11 @@
                     particles.splice(i, 1);
                 }
             }
+            
+            // Emergency cleanup if particles exceed max
+            if (particles.length > MAX_PARTICLES) {
+                particles = particles.slice(particles.length - MAX_PARTICLES);
+            }
         }
 
         function drawGame() {
@@ -554,22 +577,35 @@
         }
 
         function gameLoopFunc() {
-            if (!gameRunning) return;
+            if (!gameRunning) {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+                return;
+            }
             updateGame();
             drawGame();
-            requestAnimationFrame(gameLoopFunc);
+            animationFrameId = requestAnimationFrame(gameLoopFunc);
         }
 
         function startTimer() {
-            const timerInterval = setInterval(() => {
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            timerInterval = setInterval(() => {
                 if (!gameRunning) {
                     clearInterval(timerInterval);
+                    timerInterval = null;
                     return;
                 }
                 timeLeft--;
                 document.getElementById('timer').textContent = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
+                    timerInterval = null;
                     endGame(false);
                 }
             }, 1000);
@@ -577,6 +613,16 @@
 
         function endGame(won = false) {
             gameRunning = false;
+            
+            // Clean up animation frame and timer
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
             
             const gameOverTitle = document.getElementById('gameOverTitle');
             const gameOverMessage = document.getElementById('gameOverMessage');
@@ -615,6 +661,16 @@
         }
 
         function startGame() {
+            // Clean up any existing game state
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
             gameRunning = true;
             timeLeft = 54;
             score = 0;
@@ -624,10 +680,12 @@
             jellyfish = [];
             particles = [];
             catcher.x = canvas.width / 2 - 50;
+            
             document.getElementById('timer').textContent = timeLeft;
             document.getElementById('score').textContent = score;
             document.getElementById('combo').textContent = combo;
             document.getElementById('gameOverScreen').style.display = 'none';
+            
             startTimer();
             gameLoopFunc();
         }
@@ -648,6 +706,42 @@
                 instructions.textContent = '⌨️ Use A and D keys to move • First to 27 wins!';
             }
         };
+
+        // Pause game when tab is hidden to prevent lag/desync
+        let wasRunning = false;
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (gameRunning) {
+                    wasRunning = true;
+                    // Pause the game loop
+                    if (animationFrameId) {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                    if (timerInterval) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                    }
+                }
+            } else {
+                // Resume game if it was running
+                if (wasRunning && gameRunning) {
+                    wasRunning = false;
+                    startTimer();
+                    gameLoopFunc();
+                }
+            }
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        });
 
         startGame();
     </script>
