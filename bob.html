@@ -1,0 +1,1085 @@
+<!DOCTYPE html><!DOCTYPE html>
+
+<html lang="en"><html lang="en">
+
+<head><head>
+
+    <meta charset="UTF-8">    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jellyfish Bloom - What is 108?</title>    <title>Jellyfish Bloom - Catch the Glow!</title>
+
+    <link rel="stylesheet" href="/src/styles/main.css">    <style>
+
+    <style>        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }        body {
+
+        body {            margin: 0;
+
+            margin: 0;            height: 100vh;
+
+            height: 100vh;            display: flex;
+
+            display: flex;            justify-content: center;
+
+            justify-content: center;            align-items: center;
+
+            align-items: center;            background: linear-gradient(to bottom, #001122 0%, #002b55 50%, #003366 100%);
+
+            background: linear-gradient(to bottom, #001122 0%, #002b55 50%, #003366 100%);            font-family: 'Segoe UI', sans-serif;
+
+            font-family: 'Segoe UI', sans-serif;            overflow: hidden;
+
+            overflow: hidden;            touch-action: manipulation;
+
+            touch-action: manipulation;        }
+
+        }        #gameContainer {
+
+                    position: relative;
+
+        .game-nav {            text-align: center;
+
+            position: fixed;        }
+
+            top: 20px;        canvas {
+
+            left: 20px;            border: 4px solid #00eaff;
+
+            z-index: 1000;            border-radius: 16px;
+
+        }            box-shadow: 0 0 40px rgba(0, 234, 255, 0.6);
+
+                    image-rendering: pixelated;
+
+        .game-nav .nav-link {            image-rendering: crisp-edges;
+
+            font-size: 14px;        }
+
+            padding: 10px 20px;        #ui {
+
+            background: rgba(0, 234, 255, 0.9);            position: absolute;
+
+            color: #001122;            top: 15px;
+
+            text-decoration: none;            left: 0;
+
+            border-radius: 8px;            right: 0;
+
+            border: 2px solid #00eaff;            display: flex;
+
+            display: inline-block;            justify-content: space-between;
+
+            font-weight: bold;            padding: 0 20px;
+
+            transition: all 0.3s ease;            color: #00eaff;
+
+            box-shadow: 0 2px 8px rgba(0, 234, 255, 0.5);            font-size: 26px;
+
+        }            font-weight: bold;
+
+                    text-shadow: 0 0 15px #00eaff;
+
+        .game-nav .nav-link:hover {            z-index: 10;
+
+            background: #00eaff;            pointer-events: none;
+
+            transform: translateY(-2px);        }
+
+            box-shadow: 0 4px 12px rgba(0, 234, 255, 0.7);        #powerUpDisplay {
+
+        }            position: absolute;
+
+                    top: 60px;
+
+        #gameContainer {            left: 50%;
+
+            position: relative;            transform: translateX(-50%);
+
+            text-align: center;            background: rgba(0, 234, 255, 0.2);
+
+        }            padding: 8px 20px;
+
+        canvas {            border-radius: 30px;
+
+            border: 4px solid #00eaff;            color: white;
+
+            border-radius: 16px;            font-size: 20px;
+
+            box-shadow: 0 0 40px rgba(0, 234, 255, 0.6);            display: none;
+
+            max-width: 100%;            z-index: 10;
+
+            height: auto;            backdrop-filter: blur(5px);
+
+        }            border: 2px solid #00eaff;
+
+        #ui {        }
+
+            position: absolute;        #startScreen, #gameOver {
+
+            top: 15px;            position: absolute;
+
+            left: 0;            top: 50%;
+
+            right: 0;            left: 50%;
+
+            display: flex;            transform: translate(-50%, -50%);
+
+            justify-content: space-between;            background: rgba(0, 15, 40, 0.97);
+
+            padding: 0 20px;            padding: 40px 60px;
+
+            color: #00eaff;            border-radius: 20px;
+
+            font-size: 26px;            border: 4px solid #00eaff;
+
+            font-weight: bold;            box-shadow: 0 0 50px rgba(0, 234, 255, 0.8);
+
+            text-shadow: 0 0 15px #00eaff;            text-align: center;
+
+            z-index: 10;            z-index: 100;
+
+            pointer-events: none;        }
+
+        }        h1 { 
+
+        #powerUpDisplay {            font-size: 54px; 
+
+            position: absolute;            color: #00eaff;
+
+            top: 60px;            text-shadow: 0 0 20px #00eaff;
+
+            left: 50%;            margin-bottom: 20px;
+
+            transform: translateX(-50%);        }
+
+            background: rgba(0, 234, 255, 0.3);        button {
+
+            padding: 10px 25px;            background: linear-gradient(to bottom, #00eaff, #0077cc);
+
+            border-radius: 30px;            border: none;
+
+            color: white;            color: white;
+
+            font-size: 20px;            padding: 16px 40px;
+
+            font-weight: bold;            font-size: 22px;
+
+            display: none;            font-weight: bold;
+
+            z-index: 10;            border-radius: 50px;
+
+            backdrop-filter: blur(5px);            cursor: pointer;
+
+            border: 2px solid #00eaff;            margin: 15px;
+
+            animation: pulse 0.5s ease-in-out;            box-shadow: 0 6px 20px rgba(0, 234, 255, 0.5);
+
+        }            transition: all 0.3s;
+
+        @keyframes pulse {        }
+
+            0%, 100% { transform: translateX(-50%) scale(1); }        button:hover {
+
+            50% { transform: translateX(-50%) scale(1.1); }            transform: translateY(-4px) scale(1.05);
+
+        }            box-shadow: 0 10px 30px rgba(0, 234, 255, 0.7);
+
+        #startScreen, #gameOver {        }
+
+            position: absolute;        #instructions {
+
+            top: 50%;            color: #a0f0ff;
+
+            left: 50%;            margin: 20px 0;
+
+            transform: translate(-50%, -50%);            line-height: 1.6;
+
+            background: rgba(0, 15, 40, 0.98);        }
+
+            padding: 40px 60px;    </style>
+
+            border-radius: 20px;</head>
+
+            border: 4px solid #00eaff;<body>
+
+            box-shadow: 0 0 50px rgba(0, 234, 255, 0.8);    <div id="gameContainer">
+
+            text-align: center;        <div id="ui">
+
+            z-index: 100;            <div>Score: <span id="score">0</span></div>
+
+            max-width: 90%;            <div>Time: <span id="timer">60</span>s</div>
+
+        }        </div>
+
+        h1 {         <div id="powerUpDisplay"></div>
+
+            font-size: 54px; 
+
+            color: #00eaff;        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+            text-shadow: 0 0 20px #00eaff;
+
+            margin-bottom: 20px;        <!-- Start Screen -->
+
+        }        <div id="startScreen">
+
+        button {            <h1>Jellyfish Bloom</h1>
+
+            background: linear-gradient(to bottom, #00eaff, #0077cc);            <p style="color:#00eaff;font-size:28px;margin:15px 0;">Catch the glowing jellyfish!</p>
+
+            border: none;            <div id="instructions">
+
+            color: white;                Use ← → arrow keys or swipe to move<br>
+
+            padding: 16px 40px;                Catch jellyfish for points!<br>
+
+            font-size: 22px;                <span style="color:#ff6b9d;">Rare pink ones give 50 points!</span><br>
+
+            font-weight: bold;                <span style="color:#ffff00;">Golden ones slow time!</span>
+
+            border-radius: 50px;            </div>
+
+            cursor: pointer;            <button onclick="startGame()">Start Game</button>
+
+            margin: 15px;        </div>
+
+            box-shadow: 0 6px 20px rgba(0, 234, 255, 0.5);
+
+            transition: all 0.3s;        <!-- Game Over Screen -->
+
+        }        <div id="gameOver" style="display:none;">
+
+        button:hover {            <h1>Game Over!</h1>
+
+            transform: translateY(-4px) scale(1.05);            <p style="color:#fff;font-size:28px;">Final Score: <span id="finalScore">0</span></p>
+
+            box-shadow: 0 10px 30px rgba(0, 234, 255, 0.7);            <p style="color:#00eaff;font-size:24px;margin:10px 0;">High Score: <span id="highScore">0</span></p>
+
+        }            <button onclick="restartGame()">Play Again</button>
+
+        button:active {            <button onclick="location.reload()">New Game</button>
+
+            transform: translateY(-2px) scale(1.02);        </div>
+
+        }    </div>
+
+        #instructions {
+
+            color: #a0f0ff;    <script>
+
+            margin: 20px 0;        const canvas = document.getElementById('gameCanvas');
+
+            line-height: 1.8;        const ctx = canvas.getContext('2d');
+
+            font-size: 18px;        
+
+        }        let score = 0;
+
+        .stat-box {        let highScore = localStorage.getItem('jellyHighScore') || 0;
+
+            background: rgba(0, 234, 255, 0.2);        let timeLeft = 60;
+
+            padding: 8px 20px;        let gameRunning = false;
+
+            border-radius: 15px;        let jellyfish = [];
+
+            border: 2px solid #00eaff;        let particles = [];
+
+        }        let powerUpActive = false;
+
+                let powerUpTimer = 0;
+
+        @media (max-width: 850px) {        
+
+            .game-nav {        const player = {
+
+                top: 10px;            x: canvas.width / 2 - 30,
+
+                left: 10px;            y: canvas.height - 90,
+
+            }            width: 80,
+
+            .game-nav .nav-link {            height: 70,
+
+                font-size: 12px;            speed: 8
+
+                padding: 8px 16px;        };
+
+            }
+
+            h1 { font-size: 36px; }        let keys = {};
+
+            button { font-size: 18px; padding: 12px 30px; }        let touchStartX = 0;
+
+            #ui { font-size: 20px; padding: 0 15px; }
+
+            #instructions { font-size: 16px; }        // Sound effects (using Web Audio API)
+
+            #startScreen, #gameOver { padding: 30px 40px; }        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        }        function playSound(frequency, duration = 0.1, type = 'sine') {
+
+                    if (!audioCtx) return;
+
+        @media (max-width: 400px) {            const osc = audioCtx.createOscillator();
+
+            h1 { font-size: 28px; }            const gain = audioCtx.createGain();
+
+            button { font-size: 16px; padding: 10px 25px; margin: 10px 5px; }            osc.connect(gain);
+
+            #ui { font-size: 18px; }            gain.connect(audioCtx.destination);
+
+            #startScreen, #gameOver { padding: 25px 30px; }            osc.frequency.value = frequency;
+
+        }            osc.type = type;
+
+    </style>            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+
+</head>            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+
+<body>            osc.start(audioCtx.currentTime);
+
+    <nav class="game-nav">            osc.stop audioCtx.currentTime + duration);
+
+        <a href="/index.html" class="nav-link">← HOME</a>        }
+
+    </nav>
+
+            class Jellyfish {
+
+    <div id="gameContainer">            constructor(isRare = false, isGolden = false) {
+
+        <div id="ui">                this.x = Math.random() * (canvas.width - 60) + 30;
+
+            <div class="stat-box">Score: <span id="score">0</span></div>                this.y = -80;
+
+            <div class="stat-box">Time: <span id="timer">60</span>s</div>                this.width = isGolden ? 70 : (isRare ? 55 : 45);
+
+        </div>                this.height = isGolden ? 90 : (isRare ? 75 : 65);
+
+        <div id="powerUpDisplay"></div>                this.speed = isGolden ? 0.7 : (isRare ? 1.2 : 1 + Math.random() * 1.8);
+
+                this.tentacleOffset = Math.random() * Math.PI * 2;
+
+        <canvas id="gameCanvas" width="800" height="600"></canvas>                this.pulsePhase = Math.random() * Math.PI * 2;
+
+                this.isRare = isRare;
+
+        <!-- Start Screen -->                this.isGolden = isGolden;
+
+        <div id="startScreen">                this.points = isGolden ? 30 : (isRare ? 50 : 10);
+
+            <h1>🎐 Jellyfish Bloom 🎐</h1>            }
+
+            <p style="color:#00eaff;font-size:28px;margin:15px 0;">Catch the glowing jellyfish!</p>
+
+            <div id="instructions">            update() {
+
+                Use ← → arrow keys or swipe to move<br>                this.y += this.speed * (powerUpActive ? 0.4 : 1);
+
+                Catch jellyfish for points!<br>                this.pulsePhase += 0.12;
+
+                <span style="color:#ff6b9d;">💕 Rare pink ones give 50 points!</span><br>                this.tentacleOffset += 0.05;
+
+                <span style="color:#ffff00;">⭐ Golden ones slow time!</span>            }
+
+            </div>
+
+            <button onclick="startGame()">🌊 Start Game 🌊</button>            draw() {
+
+        </div>                const pulse = Math.sin(this.pulsePhase) * 4;
+
+                const glowIntensity = this.isGolden ? 30 : 20;
+
+        <!-- Game Over Screen -->                const bodyColor = this.isGolden ? '#ffff00' : (this.isRare ? '#ff1493' : '#00eaff');
+
+        <div id="gameOver" style="display:none;">                const glowColor = this.isGolden ? '#ffff66' : (this.isRare ? '#ff69b4' : '#66ffff');
+
+            <h1>🎐 Game Over! 🎐</h1>
+
+            <p style="color:#fff;font-size:28px;margin:15px 0;">Final Score: <span id="finalScore">0</span></p>                ctx.shadowBlur = glowIntensity + Math.sin(this.pulsePhase * 2) * 10;
+
+            <p style="color:#00eaff;font-size:24px;margin:10px 0;">High Score: <span id="highScore">0</span></p>                ctx.shadowColor = glowColor;
+
+            <button onclick="restartGame()">Play Again</button>
+
+            <button onclick="location.href='/index.html'">Home</button>                // Bell
+
+        </div>                const gradient = ctx.createRadialGradient(
+
+    </div>                    this.x + this.width/2, this.y + 20 + pulse, 5,
+
+                    this.x + this.width/2, this.y + 20 + pulse, this.width/2 + 10
+
+    <script>                );
+
+        const canvas = document.getElementById('gameCanvas');                gradient.addColorStop(0, bodyColor + 'ff');
+
+        const ctx = canvas.getContext('2d');                gradient.addColorStop(0.7, bodyColor + 'cc');
+
+                        gradient.addColorStop(1, bodyColor + '44');
+
+        let score = 0;                ctx.fillStyle = gradient;
+
+        let highScore = localStorage.getItem('jellyHighScore') || 0;
+
+        let timeLeft = 60;                ctx.beginPath();
+
+        let gameRunning = false;                ctx.ellipse(this.x + this.width/2, this.y + 25 + pulse, 
+
+        let jellyfish = [];                           this.width/2 + pulse, 20 + pulse * 0.5, 0, 0, Math.PI * 2);
+
+        let particles = [];                ctx.fill();
+
+        let powerUpActive = false;
+
+        let powerUpTimer = 0;                // Tentacles
+
+                        ctx.strokeStyle = this.isGolden ? '#ffaa00' : bodyColor + 'aa';
+
+        const player = {                ctx.lineWidth = 3;
+
+            x: canvas.width / 2 - 40,                for(let i = 0; i < 8; i++) {
+
+            y: canvas.height - 90,                    const angle = (i / 8) * Math.PI;
+
+            width: 80,                    const startX = this.x + this.width/2 + Math.cos(angle) * (this.width/2 - 5);
+
+            height: 70,                    const startY = this.y + 35 + pulse;
+
+            speed: 8                    ctx.beginPath();
+
+        };                    ctx.moveTo(startX, startY);
+
+                    const ctrlX = startX + Math.sin(this.tentacleOffset + i) * 20;
+
+        let keys = {};                    const ctrlY = startY + 30;
+
+        let touchStartX = 0;                    const endX = startX + Math.sin(this.tentacleOffset + i * 1.3) * 30;
+
+                    const endY = startY + 70;
+
+        // Sound effects (using Web Audio API)                    ctx.bezierCurveTo(ctrlX, ctrlY, endX, endY, endX + 10, endY + 20);
+
+        let audioCtx;                    ctx.stroke();
+
+        function initAudio() {                }
+
+            if (!audioCtx) {
+
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();                if (this.isGolden) {
+
+            }                    ctx.shadowBlur = 40;
+
+        }                    ctx.shadowColor = '#ffff00';
+
+                            ctx.fillStyle = 'rgba(255,255,100,0.3)';
+
+        function playSound(frequency, duration = 0.1, type = 'sine') {                    ctx.beginPath();
+
+            if (!audioCtx) return;                    ctx.arc(this.x + this.width/2, this.y + 25, 50, 0, Math.PI * 2);
+
+            try {                    ctx.fill();
+
+                const osc = audioCtx.createOscillator();                }
+
+                const gain = audioCtx.createGain();
+
+                osc.connect(gain);                ctx.shadowBlur = 0;
+
+                gain.connect(audioCtx.destination);            }
+
+                osc.frequency.value = frequency;        }
+
+                osc.type = type;
+
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);        class Particle {
+
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);            constructor(x, y, color) {
+
+                osc.start(audioCtx.currentTime);                this.x = x;
+
+                osc.stop(audioCtx.currentTime + duration);                this.y = y;
+
+            } catch(e) {                this.vx = Math.random() * 6 - 3;
+
+                console.log('Audio error:', e);                this.vy = Math.random() * -5 - 2;
+
+            }                this.life = 1;
+
+        }                this.decay = 0.02;
+
+                this.color = color;
+
+        class Jellyfish {                this.size = Math.random() * 6 + 3;
+
+            constructor(isRare = false, isGolden = false) {            }
+
+                this.x = Math.random() * (canvas.width - 60) + 30;            update() {
+
+                this.y = -80;                this.x += this.vx;
+
+                this.width = isGolden ? 70 : (isRare ? 55 : 45);                this.y += this.vy;
+
+                this.height = isGolden ? 90 : (isRare ? 75 : 65);                this.vy += 0.1;
+
+                this.speed = isGolden ? 0.7 : (isRare ? 1.2 : 1 + Math.random() * 1.8);                this.life -= this.decay;
+
+                this.tentacleOffset = Math.random() * Math.PI * 2;            }
+
+                this.pulsePhase = Math.random() * Math.PI * 2;            draw() {
+
+                this.isRare = isRare;                ctx.globalAlpha = this.life;
+
+                this.isGolden = isGolden;                ctx.fillStyle = this.color;
+
+                this.points = isGolden ? 30 : (isRare ? 50 : 10);                ctx.beginPath();
+
+            }                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+
+                ctx.fill();
+
+            update() {                ctx.globalAlpha = 1;
+
+                this.y += this.speed * (powerUpActive ? 0.4 : 1);            }
+
+                this.pulsePhase += 0.12;        }
+
+                this.tentacleOffset += 0.05;
+
+            }        function createParticles(x, y, color, count = 15) {
+
+            for(let i = 0; i < count; i++) {
+
+            draw() {                particles.push(new Particle(x, y, color));
+
+                const pulse = Math.sin(this.pulsePhase) * 4;            }
+
+                const glowIntensity = this.isGolden ? 30 : 20;        }
+
+                const bodyColor = this.isGolden ? '#ffff00' : (this.isRare ? '#ff1493' : '#00eaff');
+
+                const glowColor = this.isGolden ? '#ffff66' : (this.isRare ? '#ff69b4' : '#66ffff');        function drawPlayer() {
+
+            // Net handle
+
+                ctx.shadowBlur = glowIntensity + Math.sin(this.pulsePhase * 2) * 10;            ctx.fillStyle = '#8B4513';
+
+                ctx.shadowColor = glowColor;            ctx.fillRect(player.x + 35, player.y + 20, 12, 50);
+
+
+
+                // Bell            // Net rim
+
+                const gradient = ctx.createRadialGradient(            ctx.lineWidth = 6;
+
+                    this.x + this.width/2, this.y + 20 + pulse, 5,            ctx.strokeStyle = '#DAA520';
+
+                    this.x + this.width/2, this.y + 20 + pulse, this.width/2 + 10            ctx.beginPath();
+
+                );            ctx.arc(player.x + 40, player.y + 20, 35, Math.PI, 0, true);
+
+                gradient.addColorStop(0, bodyColor + 'ff');            ctx.stroke();
+
+                gradient.addColorStop(0.7, bodyColor + 'cc');
+
+                gradient.addColorStop(1, bodyColor + '44');            // Net mesh
+
+                ctx.fillStyle = gradient;            ctx.strokeStyle = 'rgba(100, 255, 100, 0.6)';
+
+            ctx.lineWidth = 2;
+
+                ctx.beginPath();            for(let i = 0; i < 8; i++) {
+
+                ctx.ellipse(this.x + this.width/2, this.y + 25 + pulse,                 const angle = Math.PI + (i/7) * Math.PI;
+
+                           this.width/2 + pulse, 20 + pulse * 0.5, 0, 0, Math.PI * 2);                const x = player.x + 40 + Math.cos(angle) * 30;
+
+                ctx.fill();                const y = player.y + 20 + Math.sin(angle) * 30;
+
+                ctx.beginPath();
+
+                // Tentacles                ctx.moveTo(player.x + 40, player.y + 20);
+
+                ctx.strokeStyle = this.isGolden ? '#ffaa00' : bodyColor + 'aa';                ctx.lineTo(x, y);
+
+                ctx.lineWidth = 3;                ctx.stroke();
+
+                for(let i = 0; i < 8; i++) {            }
+
+                    const angle = (i / 8) * Math.PI;
+
+                    const startX = this.x + this.width/2 + Math.cos(angle) * (this.width/2 - 5);            // Glow effect when power-up active
+
+                    const startY = this.y + 35 + pulse;            if (powerUpActive) {
+
+                    ctx.beginPath();                ctx.shadowBlur = 40;
+
+                    ctx.moveTo(startX, startY);                ctx.shadowColor = '#00ff00';
+
+                    const ctrlX = startX + Math.sin(this.tentacleOffset + i) * 20;                ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+
+                    const ctrlY = startY + 30;                ctx.fillRect(player.x - 20, player.y - 40, player.width + 40, player.height + 60);
+
+                    const endX = startX + Math.sin(this.tentacleOffset + i * 1.3) * 30;                ctx.shadowBlur = 0;
+
+                    const endY = startY + 70;            }
+
+                    ctx.bezierCurveTo(ctrlX, ctrlY, endX, endY, endX + 10, endY + 20);        }
+
+                    ctx.stroke();
+
+                }        function spawnJellyfish() {
+
+            if (!gameRunning) return;
+
+                if (this.isGolden) {            
+
+                    ctx.shadowBlur = 40;            if (Math.random() < 0.02) jellyfish.push(new Jellyfish());
+
+                    ctx.shadowColor = '#ffff00';            if (Math.random() < 0.005) jellyfish.push(new Jellyfish(true)); // Rare pink
+
+                    ctx.fillStyle = 'rgba(255,255,100,0.3)';            if (Math.random() < 0.002) jellyfish.push(new Jellyfish(false, true)); // Golden!
+
+                    ctx.beginPath();        }
+
+                    ctx.arc(this.x + this.width/2, this.y + 25, 50, 0, Math.PI * 2);
+
+                    ctx.fill();        function drawBackground() {
+
+                }            // Animated water caustics
+
+            ctx.fillStyle = 'rgba(0, 30, 60, 0.1)';
+
+                ctx.shadowBlur = 0;            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            }
+
+        }            // Bubbles
+
+            for(let i = 0; i < 4; i++) {
+
+        class Particle {                const x = (Date.now() * 0.01 + i * 200) % (canvas.width + 100) - 50;
+
+            constructor(x, y, color) {                const y = (Date.now() * 0.02 + i * 300) % (canvas.height + 200) - 100;
+
+                this.x = x;                ctx.fillStyle = 'rgba(100, 200, 255, 0.2)';
+
+                this.y = y;                ctx.beginPath();
+
+                this.vx = Math.random() * 6 - 3;                ctx.arc(x, y, 8 + Math.sin(Date.now() * 0.001 + i) * 3, 0, Math.PI * 2);
+
+                this.vy = Math.random() * -5 - 2;                ctx.fill();
+
+                this.life = 1;            }
+
+                this.decay = 0.02;        }
+
+                this.color = color;
+
+                this.size = Math.random() * 6 + 3;        function update() {
+
+            }            if (!gameRunning) return;
+
+            update() {
+
+                this.x += this.vx;            // Player movement
+
+                this.y += this.vy;            if ((keys['ArrowLeft'] || keys['a']) && player.x > 0) player.x -= player.speed;
+
+                this.vy += 0.1;            if ((keys['ArrowRight'] || keys['d']) && player.x < canvas.width - player.width) player.x += player.speed;
+
+                this.life -= this.decay;
+
+            }            // Update jellyfish
+
+            draw() {            for(let i = jellyfish.length - 1; i >= 0; i--) {
+
+                ctx.globalAlpha = this.life;                const j = jellyfish[i];
+
+                ctx.fillStyle = this.color;                j.update();
+
+                ctx.beginPath();
+
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);                if (j.y > canvas.height + 100) {
+
+                ctx.fill();                    jellyfish.splice(i, 1);
+
+                ctx.globalAlpha = 1;                    continue;
+
+            }                }
+
+        }
+
+                // Collision
+
+        function createParticles(x, y, color, count = 15) {                if (j.x < player.x + player.width &&
+
+            for(let i = 0; i < count; i++) {                    j.x + j.width > player.x &&
+
+                particles.push(new Particle(x, y, color));                    j.y < player.y + player.height &&
+
+            }                    j.y + j.height > player.y + 20) {
+
+        }
+
+                    score += j.points;
+
+        function drawPlayer() {                    document.getElementById('score').textContent = score;
+
+            // Net handle                    playSound(j.isGolden ? 800 : (j.isRare ? 600 : 400), 0.2, 'triangle');
+
+            ctx.fillStyle = '#8B4513';
+
+            ctx.fillRect(player.x + 35, player.y + 20, 12, 50);                    if (j.isGolden) {
+
+                        timeLeft += 10;
+
+            // Net rim                        document.getElementById('timer').textContent = timeLeft;
+
+            ctx.lineWidth = 6;                        powerUpActive = true;
+
+            ctx.strokeStyle = '#DAA520';                        powerUpTimer = 300;
+
+            ctx.beginPath();                        document.getElementById('powerUpDisplay').textContent = "SLOW MOTION +10s!";
+
+            ctx.arc(player.x + 40, player.y + 20, 35, Math.PI, 0, true);                        document.getElementById('powerUpDisplay').style.display = 'block';
+
+            ctx.stroke();                        setTimeout(() => {
+
+                            document.getElementById('powerUpDisplay').style.display = 'none';
+
+            // Net mesh                        }, 3000);
+
+            ctx.strokeStyle = 'rgba(100, 255, 100, 0.6)';                    }
+
+            ctx.lineWidth = 2;
+
+            for(let i = 0; i < 8; i++) {                    createParticles(j.x + j.width/2, j.y + j.height/2, 
+
+                const angle = Math.PI + (i/7) * Math.PI;                        j.isGolden ? '#ffff00' : (j.isRare ? '#ff69b4' : '#00ffff'), j.isGolden ? 30 : 20);
+
+                const x = player.x + 40 + Math.cos(angle) * 30;
+
+                const y = player.y + 20 + Math.sin(angle) * 30;                    jellyfish.splice(i, 1);
+
+                ctx.beginPath();                }
+
+                ctx.moveTo(player.x + 40, player.y + 20);            }
+
+                ctx.lineTo(x, y);
+
+                ctx.stroke();            // Update particles
+
+            }            particles = particles.filter(p => {
+
+                p.update();
+
+            // Glow effect when power-up active                p.draw();
+
+            if (powerUpActive) {                return p.life > 0;
+
+                ctx.shadowBlur = 40;            });
+
+                ctx.shadowColor = '#00ff00';
+
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';            if (powerUpActive) {
+
+                ctx.fillRect(player.x - 20, player.y - 40, player.width + 40, player.height + 60);                powerUpTimer--;
+
+                ctx.shadowBlur = 0;                if (powerUpTimer <= 0) powerUpActive = false;
+
+            }            }
+
+        }
+
+            spawnJellyfish();
+
+        function spawnJellyfish() {        }
+
+            if (!gameRunning) return;
+
+                    function draw() {
+
+            if (Math.random() < 0.02) jellyfish.push(new Jellyfish());            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (Math.random() < 0.005) jellyfish.push(new Jellyfish(true)); // Rare pink            drawBackground();
+
+            if (Math.random() < 0.002) jellyfish.push(new Jellyfish(false, true)); // Golden!            jellyfish.forEach(j => j.draw());
+
+        }            particles.forEach(p => p.draw());
+
+            drawPlayer();
+
+        function drawBackground() {        }
+
+            // Animated water caustics
+
+            ctx.fillStyle = 'rgba(0, 30, 60, 0.1)';        function gameLoop() {
+
+            ctx.fillRect(0, 0, canvas.width, canvas.height);            update();
+
+            draw();
+
+            // Bubbles            requestAnimationFrame(gameLoop);
+
+            for(let i = 0; i < 4; i++) {        }
+
+                const x = (Date.now() * 0.01 + i * 200) % (canvas.width + 100) - 50;
+
+                const y = (Date.now() * 0.02 + i * 300) % (canvas.height + 200) - 100;        function startTimer() {
+
+                ctx.fillStyle = 'rgba(100, 200, 255, 0.2)';            if (timeLeft > 0 && gameRunning) {
+
+                ctx.beginPath();                timeLeft--;
+
+                ctx.arc(x, y, 8 + Math.sin(Date.now() * 0.001 + i) * 3, 0, Math.PI * 2);                document.getElementById('timer').textContent = timeLeft;
+
+                ctx.fill();                if (timeLeft <= 10) {
+
+            }                    document.getElementById('timer').style.color = '#ff3366';
+
+        }                    document.getElementById('timer').style.textShadow = '0 0 20px #ff3366';
+
+                }
+
+        function update() {                setTimeout(startTimer, 1000);
+
+            if (!gameRunning) return;            } else if (gameRunning) {
+
+                endGame();
+
+            // Player movement            }
+
+            if ((keys['ArrowLeft'] || keys['a'] || keys['A']) && player.x > 0) {        }
+
+                player.x -= player.speed;
+
+            }        function startGame() {
+
+            if ((keys['ArrowRight'] || keys['d'] || keys['D']) && player.x < canvas.width - player.width) {            document.getElementById('startScreen').style.display = 'none';
+
+                player.x += player.speed;            score = 0;
+
+            }            timeLeft = 60;
+
+                        gameRunning = true;
+
+            // Keep player in bounds            jellyfish = [];
+
+            player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));            particles = [];
+
+            powerUpActive = false;
+
+            // Update jellyfish            document.getElementById('score').textContent = score;
+
+            for(let i = jellyfish.length - 1; i >= 0; i--) {            document.getElementById('timer').textContent = timeLeft;
+
+                const j = jellyfish[i];            document.getElementById('timer').style.color = '#00eaff';
+
+                j.update();            document.getElementById('highScore').textContent = highScore;
+
+            startTimer();
+
+                if (j.y > canvas.height + 100) {        }
+
+                    jellyfish.splice(i, 1);
+
+                    continue;        function endGame() {
+
+                }            gameRunning = false;
+
+            if (score > highScore) {
+
+                // Collision                highScore = score;
+
+                if (j.x < player.x + player.width &&                localStorage.setItem('jellyHighScore', highScore);
+
+                    j.x + j.width > player.x &&            }
+
+                    j.y < player.y + player.height &&            document.getElementById('finalScore').textContent = score;
+
+                    j.y + j.height > player.y + 20) {            document.getElementById('highScore').textContent = highScore;
+
+            document.getElementById('gameOver').style.display = 'block';
+
+                    score += j.points;            playSound(200, 1, 'sine');
+
+                    document.getElementById('score').textContent = score;        }
+
+                    playSound(j.isGolden ? 800 : (j.isRare ? 600 : 400), 0.2, 'triangle');
+
+        function restartGame() {
+
+                    if (j.isGolden) {            document.getElementById('gameOver').style.display = 'none';
+
+                        timeLeft += 10;            startGame();
+
+                        document.getElementById('timer').textContent = timeLeft;        }
+
+                        powerUpActive = true;
+
+                        powerUpTimer = 300;        // Controls
+
+                        document.getElementById('powerUpDisplay').textContent = "⭐ SLOW MOTION +10s! ⭐";        document.addEventListener('keydown', e => { keys[e.key] = true; });
+
+                        document.getElementById('powerUpDisplay').style.display = 'block';        document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+                        setTimeout(() => {
+
+                            document.getElementById('powerUpDisplay').style.display = 'none';        // Touch controls
+
+                        }, 3000);        canvas.addEventListener('touchstart', e => {
+
+                    }            touchStartX = e.touches[0].clientX;
+
+            e.preventDefault();
+
+                    createParticles(j.x + j.width/2, j.y + j.height/2,         }, { passive: false });
+
+                        j.isGolden ? '#ffff00' : (j.isRare ? '#ff69b4' : '#00ffff'), j.isGolden ? 30 : 20);
+
+        canvas.addEventListener('touchmove', e => {
+
+                    jellyfish.splice(i, 1);            const touchX = e.touches[0].clientX;
+
+                }            const diff = touchX - touchStartX;
+
+            }            player.x = Math.max(0, Math.min(canvas.width - player.width, player.x + diff * 0.3));
+
+            touchStartX = touchX;
+
+            // Update particles            e.preventDefault();
+
+            particles = particles.filter(p => {        }, { passive: false });
+
+                p.update();
+
+                return p.life > 0;        // Prevent scroll
+
+            });        document.body.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
+
+
+            if (powerUpActive) {        // Show high score
+
+                powerUpTimer--;        document.getElementById('highScore').textContent = highScore;
+
+                if (powerUpTimer <= 0) powerUpActive = false;
+
+            }        // Start the animation loop
+
+        gameLoop();
+
+            spawnJellyfish();    </script>
+
+        }</body>
+
+</html>
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBackground();
+            jellyfish.forEach(j => j.draw());
+            particles.forEach(p => p.draw());
+            drawPlayer();
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function startTimer() {
+            if (timeLeft > 0 && gameRunning) {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                if (timeLeft <= 10) {
+                    document.getElementById('timer').style.color = '#ff3366';
+                    document.getElementById('timer').parentElement.style.background = 'rgba(255, 51, 102, 0.3)';
+                }
+                setTimeout(startTimer, 1000);
+            } else if (gameRunning) {
+                endGame();
+            }
+        }
+
+        function startGame() {
+            initAudio();
+            document.getElementById('startScreen').style.display = 'none';
+            score = 0;
+            timeLeft = 60;
+            gameRunning = true;
+            jellyfish = [];
+            particles = [];
+            powerUpActive = false;
+            player.x = canvas.width / 2 - 40;
+            document.getElementById('score').textContent = score;
+            document.getElementById('timer').textContent = timeLeft;
+            document.getElementById('timer').style.color = '#00eaff';
+            document.getElementById('timer').parentElement.style.background = 'rgba(0, 234, 255, 0.2)';
+            document.getElementById('highScore').textContent = highScore;
+            startTimer();
+        }
+
+        function endGame() {
+            gameRunning = false;
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('jellyHighScore', highScore);
+            }
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('highScore').textContent = highScore;
+            document.getElementById('gameOver').style.display = 'block';
+            playSound(200, 1, 'sine');
+        }
+
+        function restartGame() {
+            document.getElementById('gameOver').style.display = 'none';
+            startGame();
+        }
+
+        // Controls
+        document.addEventListener('keydown', e => { 
+            keys[e.key] = true;
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                e.preventDefault();
+            }
+        });
+        document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+        // Touch controls
+        canvas.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            e.preventDefault();
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', e => {
+            const touchX = e.touches[0].clientX;
+            const diff = touchX - touchStartX;
+            player.x += diff * 0.4;
+            player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
+            touchStartX = touchX;
+            e.preventDefault();
+        }, { passive: false });
+
+        // Prevent scroll
+        document.body.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
+        // Show high score
+        document.getElementById('highScore').textContent = highScore;
+
+        // Start the animation loop
+        gameLoop();
+    </script>
+    <script type="module">
+        import { inject } from '@vercel/analytics';
+        inject();
+    </script>
+</body>
+</html>

@@ -13,6 +13,7 @@ export default defineConfig({
         bullsball: './bullsball.html',
         konkarne: './konkarne.html',
         birdbench: './birdbench.html',
+        bob: './bob.html',
         comingSoon: './games/coming-soon.html'
       }
     }
