@@ -73,6 +73,9 @@
         #gameCanvas {
             display: block;
             cursor: crosshair;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         #ui {
@@ -115,24 +118,79 @@
         }
         
         @media (max-width: 850px) {
+            body {
+                padding: 10px;
+            }
+            
+            .game-nav {
+                top: 10px;
+                left: 10px;
+            }
+            
+            .game-nav .nav-link {
+                font-size: 12px;
+                padding: 8px 16px;
+            }
+            
+            .game-title {
+                font-size: 32px;
+                margin-top: 50px;
+                margin-bottom: 8px;
+            }
+            
+            .game-subtitle {
+                font-size: 14px;
+                margin-bottom: 15px;
+            }
+            
             #gameCanvas {
                 width: 100%;
                 height: auto;
+                cursor: default;
             }
             
             #gameContainer {
                 width: 100%;
                 max-width: 800px;
+                border-width: 3px;
             }
             
+            #ui {
+                flex-direction: row;
+                gap: 20px;
+                padding: 15px 20px;
+                font-size: 16px;
+            }
+            
+            .label {
+                font-size: 14px;
+            }
+            
+            .value {
+                font-size: 22px;
+                min-width: 40px;
+                padding: 3px 10px;
+            }
+            
+            .icon {
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 400px) {
             .game-title {
-                font-size: 36px;
+                font-size: 28px;
             }
             
             #ui {
                 flex-direction: column;
-                gap: 15px;
-                padding: 15px 25px;
+                gap: 12px;
+                padding: 12px 15px;
+                width: 90%;
+            }
+            
+            #ui div {
+                justify-content: center;
             }
         }
     </style>
@@ -142,8 +200,15 @@
         <a href="/index.html" class="nav-link">← HOME</a>
     </nav>
     
+    <div id="layoutSelector" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px;">
+        <h2 style="color: #87CEEB; font-size: 36px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">🦆 Bird Park 🦆</h2>
+        <p style="color: #E0F6FF; font-size: 20px; margin-bottom: 20px;">Choose your layout:</p>
+        <button onclick="selectLayout('desktop')" style="font-size: 24px; padding: 20px 50px; background: linear-gradient(135deg, #4A90E2, #2E5C8A); color: white; border: 3px solid #87CEEB; border-radius: 15px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">🖥️ DESKTOP</button>
+        <button onclick="selectLayout('mobile')" style="font-size: 24px; padding: 20px 50px; background: linear-gradient(135deg, #4A90E2, #2E5C8A); color: white; border: 3px solid #87CEEB; border-radius: 15px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">📱 MOBILE</button>
+    </div>
+    
     <h1 class="game-title">🦆 Bird Park 🦆</h1>
-    <p class="game-subtitle">Feed the ducks by the pond!</p>
+    <p class="game-subtitle">The birds are hungry.</p>
     
     <div id="gameContainer">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
@@ -159,9 +224,32 @@
             <span class="label">Score:</span>
             <span class="value" id="score">0</span>
         </div>
+        <div>
+            <span class="icon">🏆</span>
+            <span class="label">High Score:</span>
+            <span class="value" id="highScore">0</span>
+        </div>
     </div>
 
     <script>
+        let selectedLayout = null;
+        let highScore = 0;
+        
+        function selectLayout(layout) {
+            selectedLayout = layout;
+            document.getElementById('layoutSelector').style.display = 'none';
+            
+            if (layout === 'mobile') {
+                // Enable touch-friendly mode
+                canvas.style.cursor = 'default';
+            } else {
+                // Enable desktop mode
+                canvas.style.cursor = 'crosshair';
+            }
+            
+            initGame();
+        }
+        
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
@@ -170,6 +258,7 @@
         let ducks = [];
         let breads = [];
         let aimLine = null;
+        let gameStarted = false;
         
         const player = {
             x: 400,
@@ -177,6 +266,16 @@
             width: 80,
             height: 60
         };
+        
+        function updateScore(points) {
+            score += points;
+            document.getElementById('score').textContent = score;
+            
+            if (score > highScore) {
+                highScore = score;
+                document.getElementById('highScore').textContent = highScore;
+            }
+        }
         
         class Duck {
             constructor() {
@@ -266,8 +365,7 @@
                     if (this.active && 
                         this.x > duck.x && this.x < duck.x + duck.width &&
                         this.y > duck.y && this.y < duck.y + duck.height) {
-                        score += 10;
-                        document.getElementById('score').textContent = score;
+                        updateScore(10);
                         this.active = false;
                     }
                 });
@@ -365,6 +463,8 @@
         }
         
         function gameLoop() {
+            if (!gameStarted) return;
+            
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             drawWater();
@@ -401,37 +501,81 @@
             requestAnimationFrame(gameLoop);
         }
         
-        // Initialize ducks
-        for (let i = 0; i < 6; i++) {
-            ducks.push(new Duck());
+        // Initialize game
+        function initGame() {
+            // Initialize ducks
+            for (let i = 0; i < 6; i++) {
+                ducks.push(new Duck());
+            }
+            
+            gameStarted = true;
+            gameLoop();
+        }
+        
+        // Get scaled coordinates for touch/mouse events
+        function getEventCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+        
+        function throwBread(x, y) {
+            if (breadCount > 0) {
+                breads.push(new Bread(player.x + 40, player.y, x, y));
+                breadCount--;
+                document.getElementById('breadCount').textContent = breadCount;
+            }
         }
         
         // Mouse events
         canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            aimLine = {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
+            const coords = getEventCoordinates(e);
+            aimLine = coords;
         });
         
         canvas.addEventListener('click', (e) => {
-            if (breadCount > 0) {
-                const rect = canvas.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                const mouseY = e.clientY - rect.top;
-                
-                breads.push(new Bread(player.x + 40, player.y, mouseX, mouseY));
-                breadCount--;
-                document.getElementById('breadCount').textContent = breadCount;
-            }
+            const coords = getEventCoordinates(e);
+            throwBread(coords.x, coords.y);
         });
         
         canvas.addEventListener('mouseleave', () => {
             aimLine = null;
         });
         
-        gameLoop();
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const coords = getEventCoordinates(e);
+            aimLine = coords;
+        }, { passive: false });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const coords = getEventCoordinates(e);
+            aimLine = coords;
+        }, { passive: false });
+        
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (aimLine) {
+                throwBread(aimLine.x, aimLine.y);
+            }
+            aimLine = null;
+        }, { passive: false });
     </script>
     <script type="module">
         import { inject } from '@vercel/analytics';
