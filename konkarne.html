@@ -285,8 +285,21 @@
     </div>
 
     <script>
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let audioContext;
         let audioInitialized = false;
+        
+        // Initialize audio context on first user interaction
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    audioInitialized = true;
+                    console.log('Audio unlocked');
+                });
+            }
+        }
         
         const chordNotes = {
             'G': [392.00, 493.88, 587.33],
@@ -299,19 +312,12 @@
             'D': [293.66, 369.99, 440.00]
         };
 
-        async function initAudioContext() {
-            if (!audioInitialized && audioContext.state === 'suspended') {
-                try {
-                    await audioContext.resume();
-                    audioInitialized = true;
-                    console.log('Audio context initialized');
-                } catch (err) {
-                    console.error('Failed to initialize audio:', err);
-                }
-            }
-        }
-
         function playChord(chord) {
+            if (!audioContext) {
+                initAudio();
+                return;
+            }
+            
             const notes = chordNotes[chord];
             const now = audioContext.currentTime;
             
@@ -335,16 +341,20 @@
         }
 
         document.querySelectorAll('.key').forEach(key => {
-            // Handle both click and touch events for better mobile support
-            const handlePlay = async function(e) {
+            const handlePlay = function(e) {
                 e.preventDefault();
-                e.stopPropagation();
                 
-                // Ensure audio context is initialized on first interaction
-                await initAudioContext();
+                // Initialize audio on first touch/click
+                if (!audioContext || audioContext.state === 'suspended') {
+                    initAudio();
+                }
                 
                 const chord = this.dataset.chord;
-                playChord(chord);
+                
+                // Small delay to ensure audio context is ready
+                setTimeout(() => {
+                    playChord(chord);
+                }, 50);
                 
                 this.classList.add('playing');
                 setTimeout(() => {
@@ -352,17 +362,15 @@
                 }, 200);
             };
 
+            // Use both touchstart and click
+            key.addEventListener('touchstart', handlePlay);
             key.addEventListener('click', handlePlay);
-            key.addEventListener('touchend', handlePlay, { passive: false });
         });
 
-        // Initialize audio context on any user interaction
-        const initOnInteraction = async (e) => {
-            await initAudioContext();
-        };
-        
-        document.body.addEventListener('touchstart', initOnInteraction, { once: true });
-        document.body.addEventListener('click', initOnInteraction, { once: true });
+        // Unlock audio on page load for mobile
+        window.addEventListener('load', initAudio);
+        document.addEventListener('touchstart', initAudio, { once: true });
+        document.addEventListener('click', initAudio, { once: true });
     </script>
     <script type="module">
         import { inject } from '@vercel/analytics';
