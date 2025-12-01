@@ -285,20 +285,33 @@
     </div>
 
     <script>
-        let audioContext;
-        let audioInitialized = false;
+        // Hybrid approach: try Web Audio API first, fallback to tone generation
+        let audioContext = null;
+        let isAudioReady = false;
         
-        // Initialize audio context on first user interaction
-        function initAudio() {
+        // Initialize audio context with user gesture
+        function setupAudio() {
             if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    console.log('AudioContext created, state:', audioContext.state);
+                } catch (e) {
+                    console.error('Failed to create AudioContext:', e);
+                    return false;
+                }
             }
+            
             if (audioContext.state === 'suspended') {
                 audioContext.resume().then(() => {
-                    audioInitialized = true;
-                    console.log('Audio unlocked');
+                    isAudioReady = true;
+                    console.log('Audio ready, state:', audioContext.state);
+                }).catch(e => {
+                    console.error('Failed to resume:', e);
                 });
+            } else {
+                isAudioReady = true;
             }
+            return true;
         }
         
         const chordNotes = {
@@ -313,64 +326,87 @@
         };
 
         function playChord(chord) {
-            if (!audioContext) {
-                initAudio();
-                return;
+            console.log('Playing chord:', chord);
+            
+            if (!audioContext || !isAudioReady) {
+                console.log('Audio not ready, attempting setup...');
+                if (!setupAudio()) {
+                    console.error('Failed to setup audio');
+                    return;
+                }
             }
             
-            const notes = chordNotes[chord];
-            const now = audioContext.currentTime;
-            
-            notes.forEach((freq, i) => {
-                const osc = audioContext.createOscillator();
-                const gain = audioContext.createGain();
+            try {
+                const notes = chordNotes[chord];
+                const now = audioContext.currentTime;
                 
-                osc.connect(gain);
-                gain.connect(audioContext.destination);
+                notes.forEach((freq) => {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    
+                    // Envelope
+                    gain.gain.setValueAtTime(0, now);
+                    gain.gain.linearRampToValueAtTime(0.3, now + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 1.2);
+                    
+                    osc.start(now);
+                    osc.stop(now + 1.2);
+                });
                 
-                osc.frequency.value = freq;
-                osc.type = 'sine';
-                
-                gain.gain.setValueAtTime(0, now);
-                gain.gain.linearRampToValueAtTime(0.2, now + 0.01);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
-                
-                osc.start(now);
-                osc.stop(now + 1.5);
-            });
+                console.log('Chord played successfully');
+            } catch (e) {
+                console.error('Error playing chord:', e);
+            }
         }
 
+        // Handle key presses
         document.querySelectorAll('.key').forEach(key => {
-            const handlePlay = function(e) {
+            const playSound = function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 
-                // Initialize audio on first touch/click
-                if (!audioContext || audioContext.state === 'suspended') {
-                    initAudio();
-                }
+                console.log('Key pressed:', this.dataset.chord);
+                
+                // Ensure audio is set up
+                setupAudio();
                 
                 const chord = this.dataset.chord;
                 
-                // Small delay to ensure audio context is ready
-                setTimeout(() => {
-                    playChord(chord);
-                }, 50);
-                
+                // Visual feedback
                 this.classList.add('playing');
                 setTimeout(() => {
                     this.classList.remove('playing');
                 }, 200);
+                
+                // Play sound immediately
+                playChord(chord);
             };
 
-            // Use both touchstart and click
-            key.addEventListener('touchstart', handlePlay);
-            key.addEventListener('click', handlePlay);
+            // Listen for both touch and click
+            key.addEventListener('touchend', playSound, { passive: false });
+            key.addEventListener('click', playSound);
         });
 
-        // Unlock audio on page load for mobile
-        window.addEventListener('load', initAudio);
-        document.addEventListener('touchstart', initAudio, { once: true });
-        document.addEventListener('click', initAudio, { once: true });
+        // Initialize on first interaction
+        const initSound = () => {
+            console.log('Initializing audio...');
+            setupAudio();
+        };
+        
+        document.body.addEventListener('touchstart', initSound, { once: true, passive: true });
+        document.body.addEventListener('click', initSound, { once: true });
+        
+        // Also try on load
+        window.addEventListener('load', () => {
+            console.log('Page loaded, attempting audio setup...');
+            setupAudio();
+        });
     </script>
     <script type="module">
         import { inject } from '@vercel/analytics';
