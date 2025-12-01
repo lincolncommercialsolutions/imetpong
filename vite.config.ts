@@ -12,6 +12,7 @@ export default defineConfig({
         pong: './pong.html',
         bullsball: './bullsball.html',
         konkarne: './konkarne.html',
+        birdbench: './birdbench.html',
         comingSoon: './games/coming-soon.html'
       }
     }

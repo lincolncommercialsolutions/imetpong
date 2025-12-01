@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bird Park - What is 108?</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+        }
+        
+        .game-nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        .game-nav .nav-link {
+            font-size: 14px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.9);
+            color: #2E5C8A;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 2px solid #2E5C8A;
+            display: inline-block;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .game-nav .nav-link:hover {
+            background: #2E5C8A;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .game-title {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2E5C8A;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .game-subtitle {
+            font-size: 18px;
+            color: #4A90E2;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        #gameContainer {
+            position: relative;
+            background: linear-gradient(to bottom, #87CEEB 0%, #4A90E2 70%, #2E5C8A 100%);
+            border: 4px solid #8B4513;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        #gameCanvas {
+            display: block;
+            cursor: crosshair;
+        }
+        
+        #ui {
+            margin-top: 20px;
+            display: flex;
+            gap: 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            background: rgba(255,255,255,0.95);
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        #ui div {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .label {
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .value {
+            color: #2E5C8A;
+            font-size: 28px;
+            min-width: 50px;
+            text-align: center;
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            padding: 5px 15px;
+            border-radius: 8px;
+            border: 2px solid #2E5C8A;
+        }
+        
+        .icon {
+            font-size: 24px;
+        }
+        
+        @media (max-width: 850px) {
+            #gameCanvas {
+                width: 100%;
+                height: auto;
+            }
+            
+            #gameContainer {
+                width: 100%;
+                max-width: 800px;
+            }
+            
+            .game-title {
+                font-size: 36px;
+            }
+            
+            #ui {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="game-nav">
+        <a href="/index.html" class="nav-link">← HOME</a>
+    </nav>
+    
+    <h1 class="game-title">🦆 Bird Park 🦆</h1>
+    <p class="game-subtitle">Feed the ducks by the pond!</p>
+    
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+    </div>
+    <div id="ui">
+        <div>
+            <span class="icon">🍞</span>
+            <span class="label">Bread:</span>
+            <span class="value" id="breadCount">54</span>
+        </div>
+        <div>
+            <span class="icon">⭐</span>
+            <span class="label">Score:</span>
+            <span class="value" id="score">0</span>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let breadCount = 54;
+        let score = 0;
+        let ducks = [];
+        let breads = [];
+        let aimLine = null;
+        
+        const player = {
+            x: 400,
+            y: 500,
+            width: 80,
+            height: 60
+        };
+        
+        class Duck {
+            constructor() {
+                this.x = Math.random() * (canvas.width - 60);
+                this.y = Math.random() * 200 + 100;
+                this.vx = (Math.random() - 0.5) * 3;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.width = 50;
+                this.height = 40;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > canvas.width - this.width) {
+                    this.vx *= -1;
+                }
+                if (this.y < 80 || this.y > 350) {
+                    this.vy *= -1;
+                }
+            }
+            
+            draw() {
+                ctx.save();
+                
+                // Duck body
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath();
+                ctx.ellipse(this.x + 25, this.y + 20, 25, 18, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Duck head
+                ctx.fillStyle = '#FFA500';
+                ctx.beginPath();
+                ctx.arc(this.x + (this.vx > 0 ? 40 : 10), this.y + 10, 12, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Duck beak
+                ctx.fillStyle = '#FF6347';
+                ctx.beginPath();
+                if (this.vx > 0) {
+                    ctx.moveTo(this.x + 50, this.y + 10);
+                    ctx.lineTo(this.x + 58, this.y + 8);
+                    ctx.lineTo(this.x + 50, this.y + 12);
+                } else {
+                    ctx.moveTo(this.x + 0, this.y + 10);
+                    ctx.lineTo(this.x - 8, this.y + 8);
+                    ctx.lineTo(this.x + 0, this.y + 12);
+                }
+                ctx.fill();
+                
+                // Eye
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(this.x + (this.vx > 0 ? 43 : 7), this.y + 8, 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+        }
+        
+        class Bread {
+            constructor(x, y, targetX, targetY) {
+                this.x = x;
+                this.y = y;
+                const dx = targetX - x;
+                const dy = targetY - y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const speed = 8;
+                this.vx = (dx / distance) * speed;
+                this.vy = (dy / distance) * speed;
+                this.radius = 8;
+                this.active = true;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.active = false;
+                }
+                
+                // Check collision with ducks
+                ducks.forEach(duck => {
+                    if (this.active && 
+                        this.x > duck.x && this.x < duck.x + duck.width &&
+                        this.y > duck.y && this.y < duck.y + duck.height) {
+                        score += 10;
+                        document.getElementById('score').textContent = score;
+                        this.active = false;
+                    }
+                });
+            }
+            
+            draw() {
+                ctx.fillStyle = '#D2691E';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#F4A460';
+                ctx.beginPath();
+                ctx.arc(this.x - 2, this.y - 2, this.radius - 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function drawPlayer() {
+            // Bench
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(player.x - 20, player.y + 30, player.width + 40, 10);
+            ctx.fillRect(player.x - 15, player.y + 40, 10, 20);
+            ctx.fillRect(player.x + player.width + 5, player.y + 40, 10, 20);
+            
+            // Person (stick figure on bench)
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 3;
+            
+            // Head
+            ctx.beginPath();
+            ctx.arc(player.x + 40, player.y - 10, 12, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFD4A3';
+            ctx.fill();
+            ctx.stroke();
+            
+            // Body
+            ctx.beginPath();
+            ctx.moveTo(player.x + 40, player.y + 2);
+            ctx.lineTo(player.x + 40, player.y + 25);
+            ctx.stroke();
+            
+            // Arms
+            ctx.beginPath();
+            ctx.moveTo(player.x + 40, player.y + 8);
+            ctx.lineTo(player.x + 25, player.y + 18);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(player.x + 40, player.y + 8);
+            ctx.lineTo(player.x + 55, player.y + 18);
+            ctx.stroke();
+            
+            // Legs (sitting)
+            ctx.beginPath();
+            ctx.moveTo(player.x + 40, player.y + 25);
+            ctx.lineTo(player.x + 30, player.y + 35);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(player.x + 40, player.y + 25);
+            ctx.lineTo(player.x + 50, player.y + 35);
+            ctx.stroke();
+        }
+        
+        function drawWater() {
+            ctx.fillStyle = '#4A90E2';
+            ctx.fillRect(0, 0, canvas.width, 400);
+            
+            // Water ripples
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.arc(100 + i * 150, 150 + Math.sin(Date.now() / 500 + i) * 10, 30, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+        
+        function drawGround() {
+            ctx.fillStyle = '#90EE90';
+            ctx.fillRect(0, 400, canvas.width, 200);
+            
+            // Grass texture
+            ctx.strokeStyle = '#228B22';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 100; i++) {
+                const gx = Math.random() * canvas.width;
+                const gy = 400 + Math.random() * 100;
+                ctx.beginPath();
+                ctx.moveTo(gx, gy);
+                ctx.lineTo(gx, gy - 5);
+                ctx.stroke();
+            }
+        }
+        
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawWater();
+            drawGround();
+            
+            ducks.forEach(duck => {
+                duck.update();
+                duck.draw();
+            });
+            
+            breads = breads.filter(bread => {
+                bread.update();
+                if (bread.active) {
+                    bread.draw();
+                    return true;
+                }
+                return false;
+            });
+            
+            drawPlayer();
+            
+            // Draw aim line
+            if (aimLine) {
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(player.x + 40, player.y);
+                ctx.lineTo(aimLine.x, aimLine.y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Initialize ducks
+        for (let i = 0; i < 6; i++) {
+            ducks.push(new Duck());
+        }
+        
+        // Mouse events
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            aimLine = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        });
+        
+        canvas.addEventListener('click', (e) => {
+            if (breadCount > 0) {
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                breads.push(new Bread(player.x + 40, player.y, mouseX, mouseY));
+                breadCount--;
+                document.getElementById('breadCount').textContent = breadCount;
+            }
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            aimLine = null;
+        });
+        
+        gameLoop();
+    </script>
+    <script type="module">
+        import { inject } from '@vercel/analytics';
+        inject();
+    </script>
+</body>
+</html>
