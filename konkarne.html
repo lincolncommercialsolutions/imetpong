@@ -209,16 +209,51 @@
                 inset 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: clamp(1.5rem, 5vw, 2.5rem);
+                letter-spacing: 2px;
+            }
+
+            .subtitle {
+                font-size: clamp(0.8rem, 2.5vw, 1rem);
+                margin-bottom: 20px;
+            }
+
+            .keyboard {
+                gap: 10px;
+                padding: 20px;
+            }
+
+            .key {
+                font-size: clamp(1rem, 3.5vw, 1.3rem);
+                touch-action: manipulation;
+            }
+        }
+
         @media (max-width: 400px) {
             .keyboard {
                 gap: 8px;
-                padding: 20px;
+                padding: 15px;
+            }
+
+            .key {
+                font-size: clamp(0.9rem, 3vw, 1.1rem);
             }
             
             .pyramid {
                 border-left-width: 50px;
                 border-right-width: 50px;
                 border-bottom-width: 90px;
+            }
+
+            .game-nav .nav-link {
+                font-size: 12px;
+                padding: 8px 15px;
             }
         }
     </style>
@@ -287,7 +322,9 @@
         }
 
         document.querySelectorAll('.key').forEach(key => {
-            key.addEventListener('click', function() {
+            // Handle both click and touch events for better mobile support
+            const handlePlay = function(e) {
+                e.preventDefault();
                 const chord = this.dataset.chord;
                 playChord(chord);
                 
@@ -295,15 +332,21 @@
                 setTimeout(() => {
                     this.classList.remove('playing');
                 }, 200);
-            });
+            };
+
+            key.addEventListener('click', handlePlay);
+            key.addEventListener('touchstart', handlePlay, { passive: false });
         });
 
-        // Initialize audio context on first interaction
-        document.addEventListener('click', () => {
+        // Initialize audio context on first interaction (touch or click)
+        const initAudio = () => {
             if (audioContext.state === 'suspended') {
                 audioContext.resume();
             }
-        }, { once: true });
+        };
+        
+        document.addEventListener('click', initAudio, { once: true });
+        document.addEventListener('touchstart', initAudio, { once: true });
     </script>
     <script type="module">
         import { inject } from '@vercel/analytics';
