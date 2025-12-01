@@ -283,6 +283,9 @@
                 this.y = Math.random() * 200 + 100;
                 this.vx = (Math.random() - 0.5) * 3;
                 this.vy = (Math.random() - 0.5) * 1.5;
+                // Ensure ducks always have some movement
+                if (Math.abs(this.vx) < 0.5) this.vx = 0.5 * (this.vx > 0 ? 1 : -1);
+                if (Math.abs(this.vy) < 0.3) this.vy = 0.3 * (this.vy > 0 ? 1 : -1);
                 this.width = 50;
                 this.height = 40;
             }
@@ -291,11 +294,22 @@
                 this.x += this.vx;
                 this.y += this.vy;
                 
-                if (this.x < 0 || this.x > canvas.width - this.width) {
-                    this.vx *= -1;
+                // Prevent getting stuck at edges with better boundary checking
+                if (this.x <= 0) {
+                    this.x = 1;
+                    this.vx = Math.abs(this.vx);
                 }
-                if (this.y < 80 || this.y > 350) {
-                    this.vy *= -1;
+                if (this.x >= canvas.width - this.width) {
+                    this.x = canvas.width - this.width - 1;
+                    this.vx = -Math.abs(this.vx);
+                }
+                if (this.y <= 80) {
+                    this.y = 81;
+                    this.vy = Math.abs(this.vy);
+                }
+                if (this.y >= 350) {
+                    this.y = 349;
+                    this.vy = -Math.abs(this.vy);
                 }
             }
             
