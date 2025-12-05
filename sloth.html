@@ -139,8 +139,8 @@
     <h1>🦥 Sloth's Leaf Sanctuary 🍃</h1>
     <p>Welcome to the mystical forest! Choose your control mode to begin your journey.</p>
     <div>
-        <button class="mode-btn" id="desktopBtn">🖥️ Desktop Mode</button>
-        <button class="mode-btn" id="mobileBtn">📱 Mobile Mode</button>
+        <button class="mode-btn" onclick="window.startGame('desktop')">🖥️ Desktop Mode</button>
+        <button class="mode-btn" onclick="window.startGame('mobile')">📱 Mobile Mode</button>
     </div>
 </div>
 
@@ -191,8 +191,8 @@
     // Global game mode
     let gameMode = null;
     
-    // Start game function
-    function startGame(mode) {
+    // Start game function - expose to window for button access
+    window.startGame = function(mode) {
         console.log('Starting game in', mode, 'mode');
         gameMode = mode;
         document.getElementById('startScreen').style.display = 'none';
@@ -204,19 +204,7 @@
         
         // Start the game
         initGame();
-    }
-
-    // Wait for DOM to be ready, then attach event listeners
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('desktopBtn').addEventListener('click', () => startGame('desktop'));
-            document.getElementById('mobileBtn').addEventListener('click', () => startGame('mobile'));
-        });
-    } else {
-        // DOM already loaded
-        document.getElementById('desktopBtn').addEventListener('click', () => startGame('desktop'));
-        document.getElementById('mobileBtn').addEventListener('click', () => startGame('mobile'));
-    }
+    };
 
     function initGame() {
     console.log('Initializing game...');
