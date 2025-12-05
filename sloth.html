@@ -184,6 +184,21 @@
     <button id="closeModal" style="margin-top:20px; padding:12px 30px; background:#D32F2F;">Close</button>
 </div>
 
+<script>
+    // Pre-define startGame to queue calls until module loads
+    let gameInitialized = false;
+    let pendingMode = null;
+    
+    window.startGame = function(mode) {
+        console.log('startGame called with mode:', mode);
+        if (gameInitialized) {
+            window.actualStartGame(mode);
+        } else {
+            pendingMode = mode;
+        }
+    };
+</script>
+
 <script type="module">
     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
     import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/loaders/GLTFLoader.js';
@@ -191,8 +206,8 @@
     // Global game mode
     let gameMode = null;
     
-    // Start game function - expose to window for button access
-    window.startGame = function(mode) {
+    // Start game function
+    window.actualStartGame = function(mode) {
         console.log('Starting game in', mode, 'mode');
         gameMode = mode;
         document.getElementById('startScreen').style.display = 'none';
@@ -205,6 +220,13 @@
         // Start the game
         initGame();
     };
+    
+    // Mark as initialized and check for pending calls
+    gameInitialized = true;
+    if (pendingMode) {
+        window.actualStartGame(pendingMode);
+        pendingMode = null;
+    }
 
     function initGame() {
     console.log('Initializing game...');
