@@ -290,9 +290,9 @@
         
         <div id="loginForm">
             <div class="auth-form">
-                <input type="text" id="loginUsername" placeholder="Username" required onkeypress="if(event.key==='Enter') window.login()">
-                <input type="password" id="loginPassword" placeholder="Password" required onkeypress="if(event.key==='Enter') window.login()">
-                <button class="reset-btn" onclick="console.log('Button clicked!'); window.login();">🔑 Login</button>
+                <input type="text" id="loginUsername" placeholder="Username" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button class="reset-btn" type="button">🔑 Login</button>
                 <div class="error-message hidden" id="loginError"></div>
             </div>
             <p style="color: #666;">Don't have an account? <a href="#" onclick="window.showSignup(); return false;" style="color: #667eea;">Sign up</a></p>
@@ -300,10 +300,10 @@
         
         <div id="signupForm" class="hidden">
             <div class="auth-form">
-                <input type="text" id="signupUsername" placeholder="Username" required onkeypress="if(event.key==='Enter') window.signup()">
-                <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required onkeypress="if(event.key==='Enter') window.signup()">
-                <input type="password" id="signupPasswordConfirm" placeholder="Confirm Password" required onkeypress="if(event.key==='Enter') window.signup()">
-                <button class="reset-btn" onclick="window.signup()">🎮 Sign Up</button>
+                <input type="text" id="signupUsername" placeholder="Username" required>
+                <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required>
+                <input type="password" id="signupPasswordConfirm" placeholder="Confirm Password" required>
+                <button class="reset-btn" type="button">🎮 Sign Up</button>
                 <div class="error-message hidden" id="signupError"></div>
                 <div class="success-message hidden" id="signupSuccess"></div>
             </div>
@@ -443,6 +443,53 @@
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('signupForm').classList.remove('hidden');
         };
+
+        // Attach event listeners after DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, attaching event listeners...');
+            
+            const loginBtn = document.querySelector('#loginForm button');
+            const signupBtn = document.querySelector('#signupForm button');
+            
+            if (loginBtn) {
+                console.log('Login button found, attaching click handler');
+                loginBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('Login button clicked via event listener!');
+                    window.login();
+                });
+            } else {
+                console.error('Login button not found!');
+            }
+            
+            if (signupBtn) {
+                console.log('Signup button found, attaching click handler');
+                signupBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('Signup button clicked via event listener!');
+                    window.signup();
+                });
+            } else {
+                console.error('Signup button not found!');
+            }
+            
+            // Enter key handlers
+            document.getElementById('loginUsername')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') window.login();
+            });
+            document.getElementById('loginPassword')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') window.login();
+            });
+            document.getElementById('signupUsername')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') window.signup();
+            });
+            document.getElementById('signupPassword')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') window.signup();
+            });
+            document.getElementById('signupPasswordConfirm')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') window.signup();
+            });
+        });
 
         window.signup = async function() {
             const username = document.getElementById('signupUsername').value.trim();
