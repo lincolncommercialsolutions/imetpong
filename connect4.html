@@ -474,7 +474,14 @@
                 successEl.textContent = 'Account created! Logging you in...';
                 successEl.classList.remove('hidden');
             } catch (error) {
-                errorEl.textContent = error.message.includes('already-in-use') ? 'Username already taken' : error.message;
+                console.error('Signup error:', error);
+                if (error.code === 'auth/operation-not-allowed') {
+                    errorEl.textContent = '⚠️ Firebase Setup Required: Enable Email/Password authentication in Firebase Console > Authentication > Sign-in method';
+                } else if (error.message.includes('already-in-use')) {
+                    errorEl.textContent = 'Username already taken';
+                } else {
+                    errorEl.textContent = error.message;
+                }
                 errorEl.classList.remove('hidden');
             }
         };
@@ -496,7 +503,12 @@
                 const email = username + '@goldbbschallenge.local';
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                errorEl.textContent = 'Invalid username or password';
+                console.error('Login error:', error);
+                if (error.code === 'auth/operation-not-allowed') {
+                    errorEl.textContent = '⚠️ Firebase Setup Required: Enable Email/Password authentication in Firebase Console';
+                } else {
+                    errorEl.textContent = 'Invalid username or password';
+                }
                 errorEl.classList.remove('hidden');
             }
         };
