@@ -44,7 +44,7 @@
         }
         
         .player1-turn { color: #e74c3c; }
-        .player2-turn { color: #f39c12; }
+        .player2-turn { color: #3498db; }
         .winner { color: #27ae60; }
         .draw { color: #7f8c8d; }
         
@@ -96,8 +96,8 @@
         }
         
         .cell.player2 {
-            background: #f39c12;
-            box-shadow: 0 4px 8px rgba(243, 156, 18, 0.4);
+            background: #3498db;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
         }
         
         .cell.winning {
@@ -173,7 +173,7 @@
         }
         
         .red { color: #e74c3c; }
-        .yellow { color: #f39c12; }
+        .blue { color: #3498db; }
         .gray { color: #7f8c8d; }
         
         @media (max-width: 600px) {
@@ -194,7 +194,7 @@
 </head>
 <body>
     <div class="game-container">
-        <h1>🔴 Connect 4 🟡</h1>
+        <h1>🔴 Connect 4 �</h1>
         <div class="status player1-turn" id="status">Red's Turn</div>
         
         <div id="board"></div>
@@ -210,8 +210,8 @@
                 <div class="stat-value red" id="redWins">0</div>
             </div>
             <div class="stat">
-                <div class="stat-label">Yellow Wins</div>
-                <div class="stat-value yellow" id="yellowWins">0</div>
+                <div class="stat-label">Blue Wins</div>
+                <div class="stat-value blue" id="blueWins">0</div>
             </div>
             <div class="stat">
                 <div class="stat-label">Draws</div>
@@ -224,11 +224,11 @@
         const ROWS = 6;
         const COLS = 7;
         let board = [];
-        let currentPlayer = 1; // 1 = red, 2 = yellow
+        let currentPlayer = 1; // 1 = red, 2 = blue
         let gameOver = false;
         let stats = {
             redWins: parseInt(localStorage.getItem('connect4RedWins') || '0'),
-            yellowWins: parseInt(localStorage.getItem('connect4YellowWins') || '0'),
+            blueWins: parseInt(localStorage.getItem('connect4BlueWins') || '0'),
             draws: parseInt(localStorage.getItem('connect4Draws') || '0')
         };
         
@@ -284,7 +284,7 @@
             // Check for win
             if (checkWin(row, col)) {
                 gameOver = true;
-                const winner = currentPlayer === 1 ? 'Red' : 'Yellow';
+                const winner = currentPlayer === 1 ? 'Red' : 'Blue';
                 document.getElementById('status').textContent = `${winner} Wins! 🎉`;
                 document.getElementById('status').className = 'status winner';
                 
@@ -293,8 +293,8 @@
                     stats.redWins++;
                     localStorage.setItem('connect4RedWins', stats.redWins);
                 } else {
-                    stats.yellowWins++;
-                    localStorage.setItem('connect4YellowWins', stats.yellowWins);
+                    stats.blueWins++;
+                    localStorage.setItem('connect4BlueWins', stats.blueWins);
                 }
                 updateStats();
                 return;
@@ -376,14 +376,14 @@
                 status.textContent = "Red's Turn 🔴";
                 status.className = 'status player1-turn';
             } else {
-                status.textContent = "Yellow's Turn 🟡";
+                status.textContent = "Blue's Turn �";
                 status.className = 'status player2-turn';
             }
         }
         
         function updateStats() {
             document.getElementById('redWins').textContent = stats.redWins;
-            document.getElementById('yellowWins').textContent = stats.yellowWins;
+            document.getElementById('blueWins').textContent = stats.blueWins;
             document.getElementById('draws').textContent = stats.draws;
         }
         
