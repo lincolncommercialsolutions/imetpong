@@ -290,24 +290,24 @@
         
         <div id="loginForm">
             <div class="auth-form">
-                <input type="text" id="loginUsername" placeholder="Username" required onkeypress="if(event.key==='Enter') login()">
-                <input type="password" id="loginPassword" placeholder="Password" required onkeypress="if(event.key==='Enter') login()">
-                <button class="reset-btn" onclick="login()">🔑 Login</button>
+                <input type="text" id="loginUsername" placeholder="Username" required onkeypress="if(event.key==='Enter') window.login()">
+                <input type="password" id="loginPassword" placeholder="Password" required onkeypress="if(event.key==='Enter') window.login()">
+                <button class="reset-btn" onclick="window.login()">🔑 Login</button>
                 <div class="error-message hidden" id="loginError"></div>
             </div>
-            <p style="color: #666;">Don't have an account? <a href="#" onclick="showSignup(); return false;" style="color: #667eea;">Sign up</a></p>
+            <p style="color: #666;">Don't have an account? <a href="#" onclick="window.showSignup(); return false;" style="color: #667eea;">Sign up</a></p>
         </div>
         
         <div id="signupForm" class="hidden">
             <div class="auth-form">
-                <input type="text" id="signupUsername" placeholder="Username" required onkeypress="if(event.key==='Enter') signup()">
-                <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required onkeypress="if(event.key==='Enter') signup()">
-                <input type="password" id="signupPasswordConfirm" placeholder="Confirm Password" required onkeypress="if(event.key==='Enter') signup()">
-                <button class="reset-btn" onclick="signup()">🎮 Sign Up</button>
+                <input type="text" id="signupUsername" placeholder="Username" required onkeypress="if(event.key==='Enter') window.signup()">
+                <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required onkeypress="if(event.key==='Enter') window.signup()">
+                <input type="password" id="signupPasswordConfirm" placeholder="Confirm Password" required onkeypress="if(event.key==='Enter') window.signup()">
+                <button class="reset-btn" onclick="window.signup()">🎮 Sign Up</button>
                 <div class="error-message hidden" id="signupError"></div>
                 <div class="success-message hidden" id="signupSuccess"></div>
             </div>
-            <p style="color: #666;">Already have an account? <a href="#" onclick="showLogin(); return false;" style="color: #667eea;">Login</a></p>
+            <p style="color: #666;">Already have an account? <a href="#" onclick="window.showLogin(); return false;" style="color: #667eea;">Login</a></p>
         </div>
     </div>
 
