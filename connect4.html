@@ -587,10 +587,26 @@
         }
 
         function showGame() {
-            document.getElementById('authContainer').classList.add('hidden');
-            document.getElementById('gameContainer').classList.remove('hidden');
-            document.getElementById('displayUsername').textContent = userData.username;
+            console.log('showGame() called');
+            const authContainer = document.getElementById('authContainer');
+            const gameContainer = document.getElementById('gameContainer');
+            
+            console.log('Auth container:', authContainer);
+            console.log('Game container:', gameContainer);
+            
+            authContainer.classList.add('hidden');
+            gameContainer.classList.remove('hidden');
+            
+            console.log('Auth container hidden:', authContainer.classList.contains('hidden'));
+            console.log('Game container visible:', !gameContainer.classList.contains('hidden'));
+            
+            if (userData && userData.username) {
+                document.getElementById('displayUsername').textContent = userData.username;
+            }
+            
+            console.log('Initializing board...');
             initBoard();
+            console.log('Board initialized, game should be visible now!');
         }
 
         function updateUI() {
