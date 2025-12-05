@@ -290,8 +290,8 @@
         
         <div id="loginForm">
             <div class="auth-form">
-                <input type="text" id="loginUsername" placeholder="Username" required>
-                <input type="password" id="loginPassword" placeholder="Password" required>
+                <input type="text" id="loginUsername" placeholder="Username" required onkeypress="if(event.key==='Enter') login()">
+                <input type="password" id="loginPassword" placeholder="Password" required onkeypress="if(event.key==='Enter') login()">
                 <button class="reset-btn" onclick="login()">🔑 Login</button>
                 <div class="error-message hidden" id="loginError"></div>
             </div>
@@ -300,9 +300,9 @@
         
         <div id="signupForm" class="hidden">
             <div class="auth-form">
-                <input type="text" id="signupUsername" placeholder="Username" required>
-                <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required>
-                <input type="password" id="signupPasswordConfirm" placeholder="Confirm Password" required>
+                <input type="text" id="signupUsername" placeholder="Username" required onkeypress="if(event.key==='Enter') signup()">
+                <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required onkeypress="if(event.key==='Enter') signup()">
+                <input type="password" id="signupPasswordConfirm" placeholder="Confirm Password" required onkeypress="if(event.key==='Enter') signup()">
                 <button class="reset-btn" onclick="signup()">🎮 Sign Up</button>
                 <div class="error-message hidden" id="signupError"></div>
                 <div class="success-message hidden" id="signupSuccess"></div>
@@ -391,13 +391,17 @@
 
         // Auth state observer
         onAuthStateChanged(auth, async (user) => {
+            console.log('Auth state changed:', user ? user.uid : 'null');
             if (user) {
                 currentUser = user;
+                console.log('Loading user data...');
                 await loadUserData();
+                console.log('Showing game...');
                 showGame();
             } else {
                 currentUser = null;
                 userData = null;
+                console.log('No user, showing auth...');
                 showAuth();
             }
         });
@@ -470,9 +474,12 @@
             
             try {
                 const email = username + '@goldbbschallenge.local';
+                console.log('Attempting signup for:', username);
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                console.log('Signup successful! User:', userCredential.user.uid);
                 successEl.textContent = 'Account created! Logging you in...';
                 successEl.classList.remove('hidden');
+                // onAuthStateChanged will handle the transition to game
             } catch (error) {
                 console.error('Signup error:', error);
                 if (error.code === 'auth/operation-not-allowed') {
@@ -491,6 +498,7 @@
             const password = document.getElementById('loginPassword').value;
             const errorEl = document.getElementById('loginError');
             
+            console.log('Login attempt for:', username);
             errorEl.classList.add('hidden');
             
             if (!username || !password) {
@@ -501,13 +509,20 @@
             
             try {
                 const email = username + '@goldbbschallenge.local';
-                await signInWithEmailAndPassword(auth, email, password);
+                console.log('Attempting login with email:', email);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log('Login successful! User:', userCredential.user.uid);
+                // onAuthStateChanged will handle the transition to game
             } catch (error) {
                 console.error('Login error:', error);
                 if (error.code === 'auth/operation-not-allowed') {
                     errorEl.textContent = '⚠️ Firebase Setup Required: Enable Email/Password authentication in Firebase Console';
+                } else if (error.code === 'auth/user-not-found') {
+                    errorEl.textContent = 'Username not found';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorEl.textContent = 'Incorrect password';
                 } else {
-                    errorEl.textContent = 'Invalid username or password';
+                    errorEl.textContent = 'Login failed: ' + error.message;
                 }
                 errorEl.classList.remove('hidden');
             }
