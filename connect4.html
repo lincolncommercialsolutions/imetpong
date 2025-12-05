@@ -292,7 +292,7 @@
             <div class="auth-form">
                 <input type="text" id="loginUsername" placeholder="Username" required onkeypress="if(event.key==='Enter') window.login()">
                 <input type="password" id="loginPassword" placeholder="Password" required onkeypress="if(event.key==='Enter') window.login()">
-                <button class="reset-btn" onclick="window.login()">🔑 Login</button>
+                <button class="reset-btn" onclick="console.log('Button clicked!'); window.login();">🔑 Login</button>
                 <div class="error-message hidden" id="loginError"></div>
             </div>
             <p style="color: #666;">Don't have an account? <a href="#" onclick="window.showSignup(); return false;" style="color: #667eea;">Sign up</a></p>
@@ -494,14 +494,16 @@
         };
 
         window.login = async function() {
+            console.log('Login function called!');
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
             const errorEl = document.getElementById('loginError');
             
-            console.log('Login attempt for:', username);
+            console.log('Login attempt for:', username, 'password length:', password.length);
             errorEl.classList.add('hidden');
             
             if (!username || !password) {
+                console.log('Missing username or password');
                 errorEl.textContent = 'Please fill in all fields';
                 errorEl.classList.remove('hidden');
                 return;
