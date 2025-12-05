@@ -1,0 +1,31 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+        "username": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "goldRims": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 4"
+        },
+        "totalWins": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "consecutiveWins": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "secretsUnlocked": {
+          ".validate": "newData.isBoolean()"
+        }
+      }
+    },
+    "leaderboard": {
+      ".read": true,
+      "$uid": {
+        ".write": "$uid === auth.uid"
+      }
+    }
+  }
+}

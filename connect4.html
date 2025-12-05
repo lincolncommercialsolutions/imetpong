@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect 4</title>
+    <title>Connect 4 - Gold BBs Challenge</title>
     <style>
         * {
             margin: 0;
@@ -21,7 +21,7 @@
             padding: 20px;
         }
         
-        .game-container {
+        .auth-container, .game-container {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 30px;
@@ -30,10 +30,99 @@
             max-width: 600px;
         }
         
+        .auth-container {
+            max-width: 400px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
         h1 {
             color: #333;
             margin-bottom: 10px;
             font-size: 2.5em;
+        }
+        
+        h2 {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        input {
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        
+        .success-message {
+            color: #27ae60;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        
+        .user-info {
+            background: rgba(103, 126, 234, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .gold-rims {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            font-size: 2.5em;
+        }
+        
+        .rim {
+            transition: all 0.3s ease;
+        }
+        
+        .rim.earned {
+            filter: drop-shadow(0 0 10px gold);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { filter: drop-shadow(0 0 5px gold) brightness(1); }
+            50% { filter: drop-shadow(0 0 15px gold) brightness(1.3); }
+        }
+        
+        .secrets-unlocked {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         
         .status {
@@ -193,7 +282,56 @@
     </style>
 </head>
 <body>
-    <div class="game-container">
+    <!-- Auth Container -->
+    <div class="auth-container" id="authContainer">
+        <h1>🏆 Gold BBs Challenge 🏆</h1>
+        <h2>Connect 4 vs J4RV1S</h2>
+        <p style="color: #666; margin: 20px 0;">Beat J4RV1S 4 times to collect all 4 Gold BBs Tire Rims and unlock ALL the secrets!</p>
+        
+        <div id="loginForm">
+            <div class="auth-form">
+                <input type="text" id="loginUsername" placeholder="Username" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button class="reset-btn" onclick="login()">🔑 Login</button>
+                <div class="error-message hidden" id="loginError"></div>
+            </div>
+            <p style="color: #666;">Don't have an account? <a href="#" onclick="showSignup(); return false;" style="color: #667eea;">Sign up</a></p>
+        </div>
+        
+        <div id="signupForm" class="hidden">
+            <div class="auth-form">
+                <input type="text" id="signupUsername" placeholder="Username" required>
+                <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required>
+                <input type="password" id="signupPasswordConfirm" placeholder="Confirm Password" required>
+                <button class="reset-btn" onclick="signup()">🎮 Sign Up</button>
+                <div class="error-message hidden" id="signupError"></div>
+                <div class="success-message hidden" id="signupSuccess"></div>
+            </div>
+            <p style="color: #666;">Already have an account? <a href="#" onclick="showLogin(); return false;" style="color: #667eea;">Login</a></p>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div class="game-container hidden" id="gameContainer">
+        <div class="user-info">
+            <h3>Welcome, <span id="displayUsername"></span>! �</h3>
+            <button class="home-btn" onclick="logout()" style="margin: 10px 5px;">🚪 Logout</button>
+            <button class="home-btn" onclick="window.location.href='/'" style="margin: 10px 5px;">🏠 Home</button>
+        </div>
+        
+        <div class="gold-rims" id="goldRims">
+            <span class="rim" data-rim="1">🔘</span>
+            <span class="rim" data-rim="2">🔘</span>
+            <span class="rim" data-rim="3">🔘</span>
+            <span class="rim" data-rim="4">🔘</span>
+        </div>
+        
+        <div id="secretsMessage" class="secrets-unlocked hidden">
+            <h2>🎉 ALL SECRETS UNLOCKED! 🎉</h2>
+            <p>You've collected all 4 Gold BBs Tire Rims!</p>
+            <p>Check your email for the secret location...</p>
+        </div>
+        
         <h1>🔴 Connect 4 🔵</h1>
         <div class="status player1-turn" id="status">Your Turn</div>
         
@@ -201,13 +339,12 @@
         
         <div class="controls">
             <button class="reset-btn" onclick="resetGame()">🔄 New Game</button>
-            <button class="home-btn" onclick="window.location.href='/'">🏠 Home</button>
         </div>
         
         <div class="stats">
             <div class="stat">
-                <div class="stat-label">Your Wins</div>
-                <div class="stat-value red" id="redWins">0</div>
+                <div class="stat-label">Consecutive Wins</div>
+                <div class="stat-value red" id="consecutiveWins">0</div>
             </div>
             <div class="stat">
                 <div class="stat-label">J4RV1S Wins</div>
@@ -220,17 +357,191 @@
         </div>
     </div>
     
-    <script>
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getDatabase, ref, set, get, update } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Firebase configuration - REPLACE WITH YOUR CONFIG
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID",
+            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        let currentUser = null;
+        let userData = null;
+
+        // Game variables
         const ROWS = 6;
         const COLS = 7;
         let board = [];
-        let currentPlayer = 1; // 1 = red, 2 = blue
+        let currentPlayer = 1;
         let gameOver = false;
-        let stats = {
-            redWins: parseInt(localStorage.getItem('connect4RedWins') || '0'),
-            blueWins: parseInt(localStorage.getItem('connect4BlueWins') || '0'),
-            draws: parseInt(localStorage.getItem('connect4Draws') || '0')
+
+        // Auth state observer
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadUserData();
+                showGame();
+            } else {
+                currentUser = null;
+                userData = null;
+                showAuth();
+            }
+        });
+
+        async function loadUserData() {
+            const userRef = ref(database, 'users/' + currentUser.uid);
+            const snapshot = await get(userRef);
+            
+            if (snapshot.exists()) {
+                userData = snapshot.val();
+            } else {
+                // Initialize new user data
+                userData = {
+                    username: currentUser.email.split('@')[0],
+                    goldRims: 0,
+                    consecutiveWins: 0,
+                    totalWins: 0,
+                    secretsUnlocked: false
+                };
+                await set(userRef, userData);
+            }
+            
+            updateUI();
+        }
+
+        async function updateUserData() {
+            if (!currentUser) return;
+            const userRef = ref(database, 'users/' + currentUser.uid);
+            await update(userRef, userData);
+            updateUI();
+        }
+
+        window.showLogin = function() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('signupForm').classList.add('hidden');
         };
+
+        window.showSignup = function() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.remove('hidden');
+        };
+
+        window.signup = async function() {
+            const username = document.getElementById('signupUsername').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupPasswordConfirm').value;
+            const errorEl = document.getElementById('signupError');
+            const successEl = document.getElementById('signupSuccess');
+            
+            errorEl.classList.add('hidden');
+            successEl.classList.add('hidden');
+            
+            if (!username || !password) {
+                errorEl.textContent = 'Please fill in all fields';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            
+            if (password.length < 6) {
+                errorEl.textContent = 'Password must be at least 6 characters';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                errorEl.textContent = 'Passwords do not match';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            
+            try {
+                const email = username + '@goldbbschallenge.local';
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                successEl.textContent = 'Account created! Logging you in...';
+                successEl.classList.remove('hidden');
+            } catch (error) {
+                errorEl.textContent = error.message.includes('already-in-use') ? 'Username already taken' : error.message;
+                errorEl.classList.remove('hidden');
+            }
+        };
+
+        window.login = async function() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+            
+            errorEl.classList.add('hidden');
+            
+            if (!username || !password) {
+                errorEl.textContent = 'Please fill in all fields';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            
+            try {
+                const email = username + '@goldbbschallenge.local';
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                errorEl.textContent = 'Invalid username or password';
+                errorEl.classList.remove('hidden');
+            }
+        };
+
+        window.logout = async function() {
+            await signOut(auth);
+        };
+
+        function showAuth() {
+            document.getElementById('authContainer').classList.remove('hidden');
+            document.getElementById('gameContainer').classList.add('hidden');
+        }
+
+        function showGame() {
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('gameContainer').classList.remove('hidden');
+            document.getElementById('displayUsername').textContent = userData.username;
+            initBoard();
+        }
+
+        function updateUI() {
+            if (!userData) return;
+            
+            // Update gold rims display
+            for (let i = 1; i <= 4; i++) {
+                const rimEl = document.querySelector(`[data-rim="${i}"]`);
+                if (i <= userData.goldRims) {
+                    rimEl.textContent = '🏆';
+                    rimEl.classList.add('earned');
+                } else {
+                    rimEl.textContent = '🔘';
+                    rimEl.classList.remove('earned');
+                }
+            }
+            
+            // Update stats
+            document.getElementById('consecutiveWins').textContent = userData.consecutiveWins;
+            
+            // Show secrets unlocked message
+            if (userData.secretsUnlocked) {
+                document.getElementById('secretsMessage').classList.remove('hidden');
+            } else {
+                document.getElementById('secretsMessage').classList.add('hidden');
+            }
+        }
         
         function initBoard() {
             board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
@@ -260,7 +571,7 @@
             updateStats();
         }
         
-        function dropPiece(col) {
+        async function dropPiece(col) {
             if (gameOver || currentPlayer === 2) return; // Prevent player moves during AI turn
             
             // Find the lowest empty row in this column
@@ -284,30 +595,45 @@
             // Check for win
             if (checkWin(row, col)) {
                 gameOver = true;
-                const winner = currentPlayer === 1 ? 'You Win' : 'J4RV1S Wins';
-                document.getElementById('status').textContent = `${winner}! 🎉`;
-                document.getElementById('status').className = 'status winner';
-                
-                // Update stats
                 if (currentPlayer === 1) {
-                    stats.redWins++;
-                    localStorage.setItem('connect4RedWins', stats.redWins);
+                    // Player wins!
+                    userData.consecutiveWins++;
+                    userData.totalWins++;
+                    
+                    // Award gold rim for each win
+                    if (userData.goldRims < 4) {
+                        userData.goldRims++;
+                        document.getElementById('status').textContent = `You Win! 🎉 Gold BBs Tire Rim #${userData.goldRims} Earned! �`;
+                    } else {
+                        document.getElementById('status').textContent = `You Win! 🎉`;
+                    }
+                    
+                    // Check if all 4 rims collected
+                    if (userData.goldRims >= 4 && !userData.secretsUnlocked) {
+                        userData.secretsUnlocked = true;
+                        setTimeout(() => {
+                            alert('🎉 CONGRATULATIONS! 🎉\n\nYou\'ve collected all 4 Gold BBs Tire Rims!\n\nALL SECRETS HAVE BEEN UNLOCKED!\n\nCheck the game screen for your reward...');
+                        }, 500);
+                    }
+                    
+                    await updateUserData();
                 } else {
-                    stats.blueWins++;
-                    localStorage.setItem('connect4BlueWins', stats.blueWins);
+                    // J4RV1S wins - reset consecutive wins
+                    userData.consecutiveWins = 0;
+                    await updateUserData();
+                    document.getElementById('status').textContent = 'J4RV1S Wins! 🎉';
                 }
-                updateStats();
+                document.getElementById('status').className = 'status winner';
                 return;
             }
             
             // Check for draw
             if (checkDraw()) {
                 gameOver = true;
+                userData.consecutiveWins = 0;
+                await updateUserData();
                 document.getElementById('status').textContent = "It's a Draw! 🤝";
                 document.getElementById('status').className = 'status draw';
-                stats.draws++;
-                localStorage.setItem('connect4Draws', stats.draws);
-                updateStats();
                 return;
             }
             
@@ -321,7 +647,7 @@
             }
         }
         
-        function aiMove() {
+        async function aiMove() {
             if (gameOver) return;
             
             // AI strategy: prioritize winning, then blocking, then center, then random
@@ -376,22 +702,20 @@
                     // Check for AI win
                     if (checkWin(row, bestCol)) {
                         gameOver = true;
+                        userData.consecutiveWins = 0;
+                        await updateUserData();
                         document.getElementById('status').textContent = 'J4RV1S Wins! 🎉';
                         document.getElementById('status').className = 'status winner';
-                        stats.blueWins++;
-                        localStorage.setItem('connect4BlueWins', stats.blueWins);
-                        updateStats();
                         return;
                     }
                     
                     // Check for draw
                     if (checkDraw()) {
                         gameOver = true;
+                        userData.consecutiveWins = 0;
+                        await updateUserData();
                         document.getElementById('status').textContent = "It's a Draw! 🤝";
                         document.getElementById('status').className = 'status draw';
-                        stats.draws++;
-                        localStorage.setItem('connect4Draws', stats.draws);
-                        updateStats();
                         return;
                     }
                     
@@ -496,19 +820,10 @@
                 status.className = 'status player2-turn';
             }
         }
-        
-        function updateStats() {
-            document.getElementById('redWins').textContent = stats.redWins;
-            document.getElementById('blueWins').textContent = stats.blueWins;
-            document.getElementById('draws').textContent = stats.draws;
-        }
-        
-        function resetGame() {
+
+        window.resetGame = function() {
             initBoard();
-        }
-        
-        // Initialize game on load
-        initBoard();
+        };
     </script>
 </body>
 </html>
