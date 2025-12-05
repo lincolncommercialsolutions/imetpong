@@ -139,8 +139,8 @@
     <h1>🦥 Sloth's Leaf Sanctuary 🍃</h1>
     <p>Welcome to the mystical forest! Choose your control mode to begin your journey.</p>
     <div>
-        <button class="mode-btn" onclick="startGame('desktop')">🖥️ Desktop Mode</button>
-        <button class="mode-btn" onclick="startGame('mobile')">📱 Mobile Mode</button>
+        <button class="mode-btn" id="desktopBtn">🖥️ Desktop Mode</button>
+        <button class="mode-btn" id="mobileBtn">📱 Mobile Mode</button>
     </div>
 </div>
 
@@ -192,7 +192,8 @@
     let gameMode = null;
     
     // Start game function
-    window.startGame = function(mode) {
+    function startGame(mode) {
+        console.log('Starting game in', mode, 'mode');
         gameMode = mode;
         document.getElementById('startScreen').style.display = 'none';
         
@@ -203,9 +204,14 @@
         
         // Start the game
         initGame();
-    };
+    }
+
+    // Attach event listeners to buttons
+    document.getElementById('desktopBtn').addEventListener('click', () => startGame('desktop'));
+    document.getElementById('mobileBtn').addEventListener('click', () => startGame('mobile'));
 
     function initGame() {
+    console.log('Initializing game...');
     const canvas = document.getElementById('gameCanvas');
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87CEEB);
@@ -937,6 +943,7 @@
 
     updateUI();
     animate();
+    console.log('Game initialized successfully!');
     } // End of initGame function
 </script>
 </body>
