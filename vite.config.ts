@@ -14,6 +14,7 @@ export default defineConfig({
         konkarne: './konkarne.html',
         birdbench: './birdbench.html',
         bob: './bob.html',
+        sloth: './sloth.html',
         comingSoon: './games/coming-soon.html'
       }
     }
