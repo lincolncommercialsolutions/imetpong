@@ -206,9 +206,17 @@
         initGame();
     }
 
-    // Attach event listeners to buttons
-    document.getElementById('desktopBtn').addEventListener('click', () => startGame('desktop'));
-    document.getElementById('mobileBtn').addEventListener('click', () => startGame('mobile'));
+    // Wait for DOM to be ready, then attach event listeners
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('desktopBtn').addEventListener('click', () => startGame('desktop'));
+            document.getElementById('mobileBtn').addEventListener('click', () => startGame('mobile'));
+        });
+    } else {
+        // DOM already loaded
+        document.getElementById('desktopBtn').addEventListener('click', () => startGame('desktop'));
+        document.getElementById('mobileBtn').addEventListener('click', () => startGame('mobile'));
+    }
 
     function initGame() {
     console.log('Initializing game...');
