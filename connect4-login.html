@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Gold BBs Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        h2 {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        input {
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            padding: 15px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            color: white;
+            background: #27ae60;
+        }
+        
+        button:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        p {
+            color: #666;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h1>🏆 Gold BBs Challenge</h1>
+        <h2>Login</h2>
+        
+        <div class="auth-form">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button id="loginBtn">🔑 Login</button>
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+        
+        <p>Don't have an account? <a href="/connect4-signup.html">Sign up</a></p>
+        <p><a href="/">← Back to Home</a></p>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDw4hAhNsUR3ibuVQlTmBKecum4twW-IEA",
+            authDomain: "connect4-7e1de.firebaseapp.com",
+            projectId: "connect4-7e1de",
+            storageBucket: "connect4-7e1de.firebasestorage.app",
+            messagingSenderId: "39611957628",
+            appId: "1:39611957628:web:39611957628",
+            databaseURL: "https://connect4-7e1de-default-rtdb.firebaseio.com/"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Check if already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('User already logged in, redirecting to game...');
+                window.location.href = '/connect4.html';
+            }
+        });
+
+        const loginBtn = document.getElementById('loginBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('errorMessage');
+
+        async function login() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            
+            errorMessage.classList.remove('show');
+            
+            if (!username || !password) {
+                errorMessage.textContent = 'Please fill in all fields';
+                errorMessage.classList.add('show');
+                return;
+            }
+            
+            try {
+                const email = username + '@goldbbschallenge.local';
+                console.log('Attempting login...');
+                await signInWithEmailAndPassword(auth, email, password);
+                console.log('Login successful! Redirecting...');
+                window.location.href = '/connect4.html';
+            } catch (error) {
+                console.error('Login error:', error);
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage.textContent = 'Username not found';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage.textContent = 'Incorrect password';
+                } else {
+                    errorMessage.textContent = 'Login failed: ' + error.message;
+                }
+                errorMessage.classList.add('show');
+            }
+        }
+
+        loginBtn.addEventListener('click', login);
+        usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+    </script>
+</body>
+</html>

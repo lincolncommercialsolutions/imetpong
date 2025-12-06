@@ -15,6 +15,8 @@ export default defineConfig({
         birdbench: './birdbench.html',
         bob: './bob.html',
         connect4: './connect4.html',
+        connect4Login: './connect4-login.html',
+        connect4Signup: './connect4-signup.html',
         comingSoon: './games/coming-soon.html'
       }
     }

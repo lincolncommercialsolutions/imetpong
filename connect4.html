@@ -21,21 +21,13 @@
             padding: 20px;
         }
         
-        .auth-container, .game-container {
+        .game-container {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             text-align: center;
             max-width: 600px;
-        }
-        
-        .auth-container {
-            max-width: 400px;
-        }
-        
-        .hidden {
-            display: none !important;
         }
         
         h1 {
@@ -48,38 +40,6 @@
             color: #555;
             margin-bottom: 20px;
             font-size: 1.8em;
-        }
-        
-        .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        input {
-            padding: 12px;
-            font-size: 1em;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            transition: border-color 0.3s;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .error-message {
-            color: #e74c3c;
-            font-size: 0.9em;
-            margin: 10px 0;
-        }
-        
-        .success-message {
-            color: #27ae60;
-            font-size: 0.9em;
-            margin: 10px 0;
         }
         
         .user-info {
@@ -282,37 +242,8 @@
     </style>
 </head>
 <body>
-    <!-- Auth Container -->
-    <div class="auth-container" id="authContainer">
-        <h1>🏆 Gold BBs Challenge 🏆</h1>
-        <h2>Connect 4 vs J4RV1S</h2>
-        <p style="color: #666; margin: 20px 0;">Beat J4RV1S 4 times to collect all 4 Gold BBs Tire Rims and unlock ALL the secrets!</p>
-        
-        <div id="loginForm">
-            <div class="auth-form">
-                <input type="text" id="loginUsername" placeholder="Username" required>
-                <input type="password" id="loginPassword" placeholder="Password" required>
-                <button class="reset-btn" type="button">🔑 Login</button>
-                <div class="error-message hidden" id="loginError"></div>
-            </div>
-            <p style="color: #666;">Don't have an account? <a href="#" onclick="window.showSignup(); return false;" style="color: #667eea;">Sign up</a></p>
-        </div>
-        
-        <div id="signupForm" class="hidden">
-            <div class="auth-form">
-                <input type="text" id="signupUsername" placeholder="Username" required>
-                <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required>
-                <input type="password" id="signupPasswordConfirm" placeholder="Confirm Password" required>
-                <button class="reset-btn" type="button">🎮 Sign Up</button>
-                <div class="error-message hidden" id="signupError"></div>
-                <div class="success-message hidden" id="signupSuccess"></div>
-            </div>
-            <p style="color: #666;">Already have an account? <a href="#" onclick="window.showLogin(); return false;" style="color: #667eea;">Login</a></p>
-        </div>
-    </div>
-
     <!-- Game Container -->
-    <div class="game-container hidden" id="gameContainer">
+    <div class="game-container" id="gameContainer">
         <div class="user-info">
             <h3>Welcome, <span id="displayUsername"></span>! �</h3>
             <button class="home-btn" onclick="logout()" style="margin: 10px 5px;">🚪 Logout</button>
@@ -401,8 +332,8 @@
             } else {
                 currentUser = null;
                 userData = null;
-                console.log('No user, showing auth...');
-                showAuth();
+                console.log('No user, redirecting to login...');
+                window.location.href = '/connect4-login.html';
             }
         });
 
@@ -434,172 +365,12 @@
             updateUI();
         }
 
-        window.showLogin = function() {
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('signupForm').classList.add('hidden');
-        };
-
-        window.showSignup = function() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('signupForm').classList.remove('hidden');
-        };
-
-        // Attach event listeners after DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, attaching event listeners...');
-            
-            const loginBtn = document.querySelector('#loginForm button');
-            const signupBtn = document.querySelector('#signupForm button');
-            
-            if (loginBtn) {
-                console.log('Login button found, attaching click handler');
-                loginBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    console.log('Login button clicked via event listener!');
-                    window.login();
-                });
-            } else {
-                console.error('Login button not found!');
-            }
-            
-            if (signupBtn) {
-                console.log('Signup button found, attaching click handler');
-                signupBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    console.log('Signup button clicked via event listener!');
-                    window.signup();
-                });
-            } else {
-                console.error('Signup button not found!');
-            }
-            
-            // Enter key handlers
-            document.getElementById('loginUsername')?.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') window.login();
-            });
-            document.getElementById('loginPassword')?.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') window.login();
-            });
-            document.getElementById('signupUsername')?.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') window.signup();
-            });
-            document.getElementById('signupPassword')?.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') window.signup();
-            });
-            document.getElementById('signupPasswordConfirm')?.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') window.signup();
-            });
-        });
-
-        window.signup = async function() {
-            const username = document.getElementById('signupUsername').value.trim();
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupPasswordConfirm').value;
-            const errorEl = document.getElementById('signupError');
-            const successEl = document.getElementById('signupSuccess');
-            
-            errorEl.classList.add('hidden');
-            successEl.classList.add('hidden');
-            
-            if (!username || !password) {
-                errorEl.textContent = 'Please fill in all fields';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-            
-            if (password.length < 6) {
-                errorEl.textContent = 'Password must be at least 6 characters';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                errorEl.textContent = 'Passwords do not match';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-            
-            try {
-                const email = username + '@goldbbschallenge.local';
-                console.log('Attempting signup for:', username);
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                console.log('Signup successful! User:', userCredential.user.uid);
-                successEl.textContent = 'Account created! Logging you in...';
-                successEl.classList.remove('hidden');
-                // onAuthStateChanged will handle the transition to game
-            } catch (error) {
-                console.error('Signup error:', error);
-                if (error.code === 'auth/operation-not-allowed') {
-                    errorEl.textContent = '⚠️ Firebase Setup Required: Enable Email/Password authentication in Firebase Console > Authentication > Sign-in method';
-                } else if (error.message.includes('already-in-use')) {
-                    errorEl.textContent = 'Username already taken';
-                } else {
-                    errorEl.textContent = error.message;
-                }
-                errorEl.classList.remove('hidden');
-            }
-        };
-
-        window.login = async function() {
-            console.log('Login function called!');
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const errorEl = document.getElementById('loginError');
-            
-            console.log('Login attempt for:', username, 'password length:', password.length);
-            errorEl.classList.add('hidden');
-            
-            if (!username || !password) {
-                console.log('Missing username or password');
-                errorEl.textContent = 'Please fill in all fields';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-            
-            try {
-                const email = username + '@goldbbschallenge.local';
-                console.log('Attempting login with email:', email);
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log('Login successful! User:', userCredential.user.uid);
-                // onAuthStateChanged will handle the transition to game
-            } catch (error) {
-                console.error('Login error:', error);
-                if (error.code === 'auth/operation-not-allowed') {
-                    errorEl.textContent = '⚠️ Firebase Setup Required: Enable Email/Password authentication in Firebase Console';
-                } else if (error.code === 'auth/user-not-found') {
-                    errorEl.textContent = 'Username not found';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorEl.textContent = 'Incorrect password';
-                } else {
-                    errorEl.textContent = 'Login failed: ' + error.message;
-                }
-                errorEl.classList.remove('hidden');
-            }
-        };
 
         window.logout = async function() {
             await signOut(auth);
         };
 
-        function showAuth() {
-            document.getElementById('authContainer').classList.remove('hidden');
-            document.getElementById('gameContainer').classList.add('hidden');
-        }
-
         function showGame() {
-            console.log('showGame() called');
-            const authContainer = document.getElementById('authContainer');
-            const gameContainer = document.getElementById('gameContainer');
-            
-            console.log('Auth container:', authContainer);
-            console.log('Game container:', gameContainer);
-            
-            authContainer.classList.add('hidden');
-            gameContainer.classList.remove('hidden');
-            
-            console.log('Auth container hidden:', authContainer.classList.contains('hidden'));
-            console.log('Game container visible:', !gameContainer.classList.contains('hidden'));
-            
             if (userData && userData.username) {
                 document.getElementById('displayUsername').textContent = userData.username;
             }

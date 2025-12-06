@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sloth's Leaf Sanctuary - Realistic Edition</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            background: #0b1e2e;
+            touch-action: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        #gameCanvas { display: block; }
+        #ui {
+            position: absolute; top: 20px; left: 20px; color: #e8f5e9;
+            font-size: 28px; font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            z-index: 10; background: rgba(0,0,0,0.4); padding: 15px 25px; border-radius: 15px;
+            border: 2px solid rgba(100,150,100,0.6);
+        }
+        #stats {
+            position: absolute; top: 110px; left: 20px; color: #e8f5e9;
+            font-size: 16px; text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            z-index: 10; background: rgba(0,0,0,0.4); padding: 10px 20px; border-radius: 10px;
+            border: 2px solid rgba(100,150,100,0.4);
+        }
+        #instructions {
+            position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5);
+            color: #e8f5e9; padding: 15px; border-radius: 10px; font-size: 15px; max-width: 280px;
+            border-left: 4px solid #8BC34A;
+        }
+        #controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10; }
+        button {
+            margin: 0 15px; padding: 14px 28px; font-size: 18px; background: #2E7D32;
+            color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: all 0.3s;
+        }
+        button:hover:not(:disabled) { background: #388E3C; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+        button:active:not(:disabled) { transform: translateY(-1px); }
+        button:disabled { background: #666; cursor: not-allowed; transform: none; opacity: 0.5; }
+        #modal {
+            display: none; position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); background: rgba(30,50,30,0.98);
+            padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            z-index: 100; max-width: 600px; text-align: center; color: #e8f5e9;
+            border: 3px solid #8BC34A;
+        }
+        .answer-btn {
+            display: block; width: 100%; margin: 12px 0; padding: 16px;
+            background: #1B5E20; color: white; border: none; border-radius: 10px;
+            cursor: pointer; font-size: 18px; transition: all 0.3s;
+        }
+        .answer-btn:hover { background: #2E7D32; transform: scale(1.03); }
+        
+        /* Mobile control button styles */
+        .mobile-btn-active {
+            background: rgba(76,175,80,1) !important;
+            transform: scale(0.9) !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.7) !important;
+        }
+        
+        #mobileControls {
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        #mobileControls button {
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.1s ease;
+        }
+        
+        /* Start screen */
+        #startScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a4d1a 0%, #0b1e2e 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #e8f5e9;
+        }
+        
+        #startScreen h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(139,195,74,0.8);
+        }
+        
+        #startScreen p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .mode-btn {
+            margin: 15px;
+            padding: 20px 50px;
+            font-size: 24px;
+            background: #2E7D32;
+            color: white;
+            border: 3px solid #8BC34A;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+        }
+        
+        .mode-btn:hover {
+            background: #388E3C;
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(139,195,74,0.6);
+        }
+        
+        .mode-btn:active {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div id="startScreen">
+    <h1>🦥 Sloth's Leaf Sanctuary 🍃</h1>
+    <p>Welcome to the mystical forest! Choose your control mode to begin your journey.</p>
+    <div>
+        <button class="mode-btn" onclick="window.startGame('desktop')">🖥️ Desktop Mode</button>
+        <button class="mode-btn" onclick="window.startGame('mobile')">📱 Mobile Mode</button>
+    </div>
+</div>
+
+<div id="ui">🍃 Leaves: <span id="leafCount">0.00</span></div>
+
+<div id="stats">
+    📍 Position: <span id="posDisplay">0, 0</span><br>
+    🎯 Distance to Sloth: <span id="distDisplay">0</span>m
+</div>
+
+    <div id="instructions">
+    <strong>Sloth's Leaf Sanctuary</strong><br><br>
+    Controls:<br>
+    W — Forward<br>
+    S — Backward<br>
+    A — Left<br>
+    D — Right<br>
+    Mouse — Look around<br><br>
+    Collect floating leaves. Each leaf = 0.5🍃. Get 13.5+ to talk to the sloth!
+</div>
+
+<div id="mobileControls" style="display: none; position: fixed; bottom: 30px; left: 30px; z-index: 20;">
+    <div style="position: relative; width: 200px; height: 200px;">
+        <button id="btnUp" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 60px; height: 60px; border-radius: 50%; background: rgba(46,125,50,0.9); color: white; border: 3px solid rgba(255,255,255,0.8); font-size: 26px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); font-weight: bold;">▲</button>
+        <button id="btnDown" style="position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 60px; height: 60px; border-radius: 50%; background: rgba(46,125,50,0.9); color: white; border: 3px solid rgba(255,255,255,0.8); font-size: 26px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); font-weight: bold;">▼</button>
+        <button id="btnLeft" style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; border-radius: 50%; background: rgba(46,125,50,0.9); color: white; border: 3px solid rgba(255,255,255,0.8); font-size: 26px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); font-weight: bold;">◄</button>
+        <button id="btnRight" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; border-radius: 50%; background: rgba(46,125,50,0.9); color: white; border: 3px solid rgba(255,255,255,0.8); font-size: 26px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); font-weight: bold;">►</button>
+        <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 35px; height: 35px; border-radius: 50%; background: rgba(46,125,50,0.5); border: 2px solid rgba(255,255,255,0.4);"></div>
+    </div>
+</div><canvas id="gameCanvas"></canvas>
+
+<div id="controls">
+    <button id="hintBtn" disabled>💡 Hint from Sloth (-13.5 🍃)</button>
+    <button id="riddleBtn" disabled>❓ Ask Riddle (-13.5 🍃)</button>
+</div>
+
+<div id="modal">
+    <h2 id="modalTitle" style="color:#A5D6A7;">🦥 The Ancient Sloth Speaks...</h2>
+    <p id="modalText" style="font-size:20px; margin:25px 0;"></p>
+    <div id="answerButtons"></div>
+    <button id="closeModal" style="margin-top:20px; padding:12px 30px; background:#D32F2F;">Close</button>
+</div>
+
+<script>
+    // Pre-define startGame to queue calls until module loads
+    let gameInitialized = false;
+    let pendingMode = null;
+    
+    window.startGame = function(mode) {
+        console.log('startGame called with mode:', mode);
+        if (gameInitialized) {
+            window.actualStartGame(mode);
+        } else {
+            pendingMode = mode;
+        }
+    };
+</script>
+
+<script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/loaders/GLTFLoader.js';
+
+    // Global game mode
+    let gameMode = null;
+    
+    // Start game function
+    window.actualStartGame = function(mode) {
+        console.log('Starting game in', mode, 'mode');
+        gameMode = mode;
+        document.getElementById('startScreen').style.display = 'none';
+        
+        // Show mobile controls if mobile mode selected
+        if (mode === 'mobile') {
+            document.getElementById('mobileControls').style.display = 'block';
+        }
+        
+        // Start the game
+        initGame();
+    };
+    
+    // Mark as initialized and check for pending calls
+    gameInitialized = true;
+    if (pendingMode) {
+        window.actualStartGame(pendingMode);
+        pendingMode = null;
+    }
+
+    function initGame() {
+    console.log('Initializing game...');
+    const canvas = document.getElementById('gameCanvas');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB);
+    scene.fog = new THREE.FogExp2(0x87CEEB, 0.002);
+
+    // Add clouds to the sky
+    const cloudMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0xffffff, 
+        transparent: true, 
+        opacity: 0.6 
+    });
+    for (let i = 0; i < 15; i++) {
+        const cloud = new THREE.Mesh(
+            new THREE.SphereGeometry(8 + Math.random() * 5, 8, 8),
+            cloudMaterial
+        );
+        cloud.position.set(
+            (Math.random() - 0.5) * 200,
+            40 + Math.random() * 30,
+            (Math.random() - 0.5) * 200
+        );
+        cloud.scale.x = 1.5 + Math.random();
+        scene.add(cloud);
+    }
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+    // Lighting
+    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambient);
+    const sun = new THREE.DirectionalLight(0xffffe4, 1.2);
+    sun.position.set(30, 60, 40);
+    sun.castShadow = true;
+    sun.shadow.mapSize.width = 2048;
+    sun.shadow.mapSize.height = 2048;
+    scene.add(sun);
+
+    // Ground with grass texture
+    const groundGeometry = new THREE.PlaneGeometry(300, 300);
+    const groundMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x4a7c3a,
+        roughness: 0.9,
+        metalness: 0.1
+    });
+    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    // Player (red sphere body - visible)
+    const playerGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+    const playerMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0xff0000,
+        roughness: 0.7,
+        metalness: 0.3,
+        emissive: 0x330000,
+        emissiveIntensity: 0.3
+    });
+    const player = new THREE.Mesh(playerGeometry, playerMaterial);
+    player.position.y = 0.5;
+    player.castShadow = true;
+    scene.add(player);
+    camera.position.set(0, 4, 8);
+
+    // Create a detailed sloth hanging in the tree
+    let sloth = null;
+    const slothGroup = new THREE.Group();
+    
+    const furMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x8B7355, 
+        roughness: 0.9,
+        metalness: 0.1
+    });
+    
+    // Body (hanging upside down)
+    const body = new THREE.Mesh(
+        new THREE.SphereGeometry(0.8, 16, 16),
+        furMaterial
+    );
+    body.scale.set(1, 1.3, 0.9);
+    body.position.y = 8.5;
+    body.castShadow = true;
+    slothGroup.add(body);
+
+    // Head (hanging down)
+    const head = new THREE.Mesh(
+        new THREE.SphereGeometry(0.55, 16, 16),
+        furMaterial
+    );
+    head.position.set(0, 7.5, 0.2);
+    head.scale.set(1, 0.9, 1);
+    head.castShadow = true;
+    slothGroup.add(head);
+
+    // Face patch (lighter color)
+    const facePatch = new THREE.Mesh(
+        new THREE.CircleGeometry(0.35, 16),
+        new THREE.MeshStandardMaterial({ color: 0xD4A574 })
+    );
+    facePatch.position.set(0, 7.5, 0.55);
+    slothGroup.add(facePatch);
+
+    // Eyes
+    const eyeGeometry = new THREE.SphereGeometry(0.08, 12, 12);
+    const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+    const eyeL = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    eyeL.position.set(-0.15, 7.55, 0.52);
+    slothGroup.add(eyeL);
+    const eyeR = eyeL.clone();
+    eyeR.position.x = 0.15;
+    slothGroup.add(eyeR);
+
+    // Nose
+    const nose = new THREE.Mesh(
+        new THREE.SphereGeometry(0.06, 8, 8),
+        new THREE.MeshStandardMaterial({ color: 0x000000 })
+    );
+    nose.position.set(0, 7.4, 0.56);
+    slothGroup.add(nose);
+
+    // Arms (hanging up to grip branch)
+    const armGeometry = new THREE.CylinderGeometry(0.12, 0.1, 1.2, 12);
+    const armL = new THREE.Mesh(armGeometry, furMaterial);
+    armL.position.set(-0.5, 9.2, 0);
+    armL.rotation.z = -Math.PI / 8;
+    armL.castShadow = true;
+    slothGroup.add(armL);
+
+    const armR = new THREE.Mesh(armGeometry, furMaterial);
+    armR.position.set(0.5, 9.2, 0);
+    armR.rotation.z = Math.PI / 8;
+    armR.castShadow = true;
+    slothGroup.add(armR);
+
+    // Claws/hands
+    const clawMaterial = new THREE.MeshStandardMaterial({ color: 0x6B5345 });
+    const clawL = new THREE.Mesh(
+        new THREE.SphereGeometry(0.15, 8, 8),
+        clawMaterial
+    );
+    clawL.position.set(-0.6, 9.8, 0);
+    clawL.scale.set(1, 0.5, 0.7);
+    slothGroup.add(clawL);
+    const clawR = clawL.clone();
+    clawR.position.x = 0.6;
+    slothGroup.add(clawR);
+
+    // Legs
+    const legGeometry = new THREE.CylinderGeometry(0.12, 0.1, 1, 12);
+    const legL = new THREE.Mesh(legGeometry, furMaterial);
+    legL.position.set(-0.35, 7.9, 0);
+    legL.rotation.z = -Math.PI / 12;
+    legL.castShadow = true;
+    slothGroup.add(legL);
+
+    const legR = new THREE.Mesh(legGeometry, furMaterial);
+    legR.position.set(0.35, 7.9, 0);
+    legR.rotation.z = Math.PI / 12;
+    legR.castShadow = true;
+    slothGroup.add(legR);
+
+    scene.add(slothGroup);
+    sloth = slothGroup;
+    sloth.position.y = 0;
+
+    // Ground sloth - more realistic, sitting at base of tree
+    const groundSlothGroup = new THREE.Group();
+    
+    const groundFurMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x9B8B7A, 
+        roughness: 0.95,
+        metalness: 0.05
+    });
+    
+    // Body - sitting position
+    const groundBody = new THREE.Mesh(
+        new THREE.SphereGeometry(0.9, 20, 20),
+        groundFurMaterial
+    );
+    groundBody.scale.set(1.2, 1.4, 1);
+    groundBody.position.set(0, 0.8, 0);
+    groundBody.castShadow = true;
+    groundSlothGroup.add(groundBody);
+
+    // Head - looking up slightly
+    const groundHead = new THREE.Mesh(
+        new THREE.SphereGeometry(0.6, 16, 16),
+        groundFurMaterial
+    );
+    groundHead.position.set(0, 1.8, 0.3);
+    groundHead.scale.set(0.9, 1, 1.1);
+    groundHead.castShadow = true;
+    groundSlothGroup.add(groundHead);
+
+    // Snout
+    const snout = new THREE.Mesh(
+        new THREE.SphereGeometry(0.25, 12, 12),
+        new THREE.MeshStandardMaterial({ color: 0xB5A594 })
+    );
+    snout.position.set(0, 1.75, 0.75);
+    snout.scale.set(0.8, 0.7, 1.2);
+    groundSlothGroup.add(snout);
+
+    // Eyes
+    const groundEyeGeometry = new THREE.SphereGeometry(0.12, 12, 12);
+    const groundEyeMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+    const groundEyeL = new THREE.Mesh(groundEyeGeometry, groundEyeMaterial);
+    groundEyeL.position.set(-0.25, 1.9, 0.65);
+    groundSlothGroup.add(groundEyeL);
+    const groundEyeR = groundEyeL.clone();
+    groundEyeR.position.x = 0.25;
+    groundSlothGroup.add(groundEyeR);
+
+    // Eye highlights
+    const eyeShine = new THREE.Mesh(
+        new THREE.SphereGeometry(0.04, 8, 8),
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
+    );
+    eyeShine.position.set(-0.22, 1.95, 0.7);
+    groundSlothGroup.add(eyeShine);
+    const eyeShine2 = eyeShine.clone();
+    eyeShine2.position.x = 0.28;
+    groundSlothGroup.add(eyeShine2);
+
+    // Nose
+    const groundNose = new THREE.Mesh(
+        new THREE.SphereGeometry(0.08, 10, 10),
+        new THREE.MeshStandardMaterial({ color: 0x000000 })
+    );
+    groundNose.position.set(0, 1.7, 0.95);
+    groundSlothGroup.add(groundNose);
+
+    // Smile
+    const smileCurve = new THREE.EllipseCurve(0, 0, 0.15, 0.08, 0, Math.PI, false, 0);
+    const smilePoints = smileCurve.getPoints(20);
+    const smileGeometry = new THREE.BufferGeometry().setFromPoints(smilePoints);
+    const smileLine = new THREE.Line(
+        smileGeometry,
+        new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 })
+    );
+    smileLine.position.set(0, 1.62, 0.92);
+    smileLine.rotation.x = -Math.PI / 2;
+    groundSlothGroup.add(smileLine);
+
+    // Arms - relaxed at sides
+    const groundArmGeometry = new THREE.CylinderGeometry(0.15, 0.12, 1.3, 12);
+    const groundArmL = new THREE.Mesh(groundArmGeometry, groundFurMaterial);
+    groundArmL.position.set(-0.85, 0.9, 0.2);
+    groundArmL.rotation.z = Math.PI / 3;
+    groundArmL.castShadow = true;
+    groundSlothGroup.add(groundArmL);
+
+    const groundArmR = new THREE.Mesh(groundArmGeometry, groundFurMaterial);
+    groundArmR.position.set(0.85, 0.9, 0.2);
+    groundArmR.rotation.z = -Math.PI / 3;
+    groundArmR.castShadow = true;
+    groundSlothGroup.add(groundArmR);
+
+    // Claws
+    const groundClawMaterial = new THREE.MeshStandardMaterial({ color: 0x4a3f35 });
+    const groundClawL = new THREE.Mesh(
+        new THREE.SphereGeometry(0.18, 10, 10),
+        groundClawMaterial
+    );
+    groundClawL.position.set(-1.15, 0.35, 0.4);
+    groundClawL.scale.set(1.1, 0.6, 0.8);
+    groundSlothGroup.add(groundClawL);
+    const groundClawR = groundClawL.clone();
+    groundClawR.position.x = 1.15;
+    groundSlothGroup.add(groundClawR);
+
+    // Legs - sitting
+    const groundLegGeometry = new THREE.CylinderGeometry(0.18, 0.16, 0.8, 12);
+    const groundLegL = new THREE.Mesh(groundLegGeometry, groundFurMaterial);
+    groundLegL.position.set(-0.5, 0.3, 0.3);
+    groundLegL.rotation.z = Math.PI / 8;
+    groundLegL.castShadow = true;
+    groundSlothGroup.add(groundLegL);
+
+    const groundLegR = new THREE.Mesh(groundLegGeometry, groundFurMaterial);
+    groundLegR.position.set(0.5, 0.3, 0.3);
+    groundLegR.rotation.z = -Math.PI / 8;
+    groundLegR.castShadow = true;
+    groundSlothGroup.add(groundLegR);
+
+    // Feet
+    const groundFootL = new THREE.Mesh(
+        new THREE.SphereGeometry(0.22, 10, 10),
+        groundClawMaterial
+    );
+    groundFootL.position.set(-0.65, 0.1, 0.5);
+    groundFootL.scale.set(0.9, 0.5, 1.2);
+    groundSlothGroup.add(groundFootL);
+    const groundFootR = groundFootL.clone();
+    groundFootR.position.x = 0.65;
+    groundSlothGroup.add(groundFootR);
+
+    // Position ground sloth at base of tree, slightly to the side
+    groundSlothGroup.position.set(2.5, 0, -1);
+    groundSlothGroup.rotation.y = -Math.PI / 6;
+    scene.add(groundSlothGroup);
+
+    // Tree
+    const trunk = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.8, 1, 10, 12),
+        new THREE.MeshStandardMaterial({ color: 0x5D4037, roughness: 1 })
+    );
+    trunk.position.y = 5;
+    trunk.castShadow = true;
+    scene.add(trunk);
+
+    // Foliage
+    const foliageMat = new THREE.MeshStandardMaterial({
+        color: 0x2d5016,
+        roughness: 0.8,
+        metalness: 0.1
+    });
+    for (let i = 0; i < 8; i++) {
+        const foliage = new THREE.Mesh(
+            new THREE.SphereGeometry(4 + Math.random() * 2, 8, 6),
+            foliageMat
+        );
+        foliage.position.set(
+            (Math.random() - 0.5) * 4,
+            8 + Math.random() * 3,
+            (Math.random() - 0.5) * 4
+        );
+        foliage.castShadow = true;
+        foliage.receiveShadow = true;
+        scene.add(foliage);
+    }
+
+    // Realistic leaves (yellow color)
+    const leafMaterial = new THREE.MeshStandardMaterial({
+        color: 0xFFEB3B,
+        transparent: true,
+        side: THREE.DoubleSide,
+        opacity: 0.95,
+        roughness: 0.8,
+        metalness: 0.1,
+        emissive: 0xFDD835,
+        emissiveIntensity: 0.4
+    });
+
+    const leaves = [];
+    function createRealisticLeaf(x, z) {
+        // Create leaf shape
+        const leafShape = new THREE.Shape();
+        leafShape.moveTo(0, 0);
+        leafShape.quadraticCurveTo(0.4, 0.3, 0.5, 0.6);
+        leafShape.quadraticCurveTo(0.3, 0.8, 0, 1);
+        leafShape.quadraticCurveTo(-0.3, 0.8, -0.5, 0.6);
+        leafShape.quadraticCurveTo(-0.4, 0.3, 0, 0);
+        
+        const leafGeometry = new THREE.ShapeGeometry(leafShape);
+        const leaf = new THREE.Mesh(leafGeometry, leafMaterial);
+        
+        leaf.position.set(x, 0.6 + Math.random() * 0.4, z);
+        leaf.rotation.set(
+            Math.random() * Math.PI * 0.3 - Math.PI * 0.15,
+            Math.random() * Math.PI * 2,
+            Math.random() * Math.PI * 0.3 - Math.PI * 0.15
+        );
+        leaf.castShadow = true;
+        leaf.userData = { 
+            float: Math.random() * Math.PI,
+            rotSpeed: (Math.random() - 0.5) * 0.02
+        };
+        scene.add(leaf);
+        leaves.push(leaf);
+    }
+
+    // Spawn leaves
+    for (let i = 0; i < 30; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 10 + Math.random() * 60;
+        createRealisticLeaf(Math.cos(angle) * dist, Math.sin(angle) * dist);
+    }
+
+    // Falling leaves effect
+    setInterval(() => {
+        if (Math.random() < 0.5 && leaves.length < 50) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 20 + Math.random() * 40;
+            createRealisticLeaf(
+                player.position.x + Math.cos(angle) * dist,
+                player.position.z + Math.sin(angle) * dist
+            );
+        }
+    }, 2500);
+
+    // Game state
+    let leafCount = 0;
+    let totalCollected = 0;
+    const leafCountEl = document.getElementById('leafCount');
+    const posDisplay = document.getElementById('posDisplay');
+    const distDisplay = document.getElementById('distDisplay');
+    const hintBtn = document.getElementById('hintBtn');
+    const riddleBtn = document.getElementById('riddleBtn');
+
+    const hints = [
+        "The sloth whispers: 'Strange balls of energy drift where reality bends...'",
+        "It yawns: 'The tiger at the map's edge knows secrets beyond the border...'",
+        "A sleepy smile: 'ANGELZ see what mortals cannot... look between the shadows.'",
+        "The sloth stretches: 'In Queens, the cards know more than the players...'",
+        "A gentle whisper: '254 is not just a number... it's a doorway.'",
+        "The sloth blinks: 'Time and clocks lie to those who listen too closely...'",
+        "It mumbles: 'Billie Jean knew the truth about moonwalking through dimensions...'",
+        "A knowing gaze: 'Frogs croak the old ways... bread feeds more than the body.'",
+        "The sloth sighs: 'In the 90s, gravity was optional for those who believed...'",
+        "A cryptic smile: 'Iron hearts beat strongest when protected by purpose...'"
+    ];
+
+    const riddles = [
+        { q: "Strange balls roll through the forest, neither sports nor toys. What power do these mysterious spheres hold?", a: ["Energy Orbs","Bowling Balls","Crystal Balls","Dragon Balls"], c: 0 },
+        { q: "Billie Jean is not my lover, but she dances in moonlight. Who walks backwards while moving forward?", a: ["Michael Jackson","A Moonwalker","The King of Pop","Time Traveler"], c: 0 },
+        { q: "A tiger prowls beyond the boundaries, where maps end and legends begin. What beast guards the edge of reality?", a: ["The Guardian Tiger","A Map Error","The Border Beast","The Edge Walker"], c: 0 },
+        { q: "Frogs neither hop nor swim here, yet they croak with wisdom. What amphibian truth lies beneath?", a: ["Ancient Knowledge","Pepe Memes","Frog Philosophy","Wednesday Feelings"], c: 0 },
+        { q: "Bread rises not from ovens but from meaning. What sustenance feeds the soul?", a: ["Money/Dough","Spiritual Bread","Life's Purpose","Daily Bread"], c: 0 },
+        { q: "In the 90s, a man flew without wings, wore 23, and conquered courts. Who defied gravity?", a: ["Michael Jordan","Air Jordan","MJ","The GOAT"], c: 0 },
+        { q: "A man of iron with a heart of light. What armor protects the vulnerable within?", a: ["Iron Man","Tony Stark","The Arc Reactor","Courage"], c: 1 },
+        { q: "Cards shuffle in Queens NYC, faces hide truths, chips stack like towers. What game mirrors life's bluff?", a: ["Life's Gamble","Poker","Street Games","The Hustle"], c: 1 },
+        { q: "The number 254 whispers through dimensions. What code unlocks the hidden realm?", a: ["A Portal Code","Area Code","The Answer","A Secret Number"], c: 2 },
+        { q: "Time flows yet stands still. We chase it but can never catch it. What is time but an illusion?", a: ["A Construct","Time Itself","A River","An Illusion"], c: 3 },
+        { q: "Clocks tick backwards in dreams, forwards in nightmares. When do they tell the truth?", a: ["Never","Always","At Midnight","In The Present"], c: 0 },
+        { q: "ANGELZ watch from above, neither heaven nor earth. Where do the watchers dwell?", a: ["In Between","The Clouds","Our Hearts","The Shadows"], c: 0 }
+    ];
+
+    let currentRiddle = null;
+
+    document.getElementById('hintBtn').onclick = () => {
+        if (leafCount >= 13.5) {
+            leafCount -= 13.5;
+            const randomHint = hints[Math.floor(Math.random() * hints.length)];
+            showModal("🦥 Sloth's Wisdom", randomHint, false);
+            updateUI();
+            console.log("Hint given! Leaves remaining:", leafCount);
+        } else {
+            showModal("🦥 Not Enough Leaves", "The sloth yawns sleepily... You need at least 13.5 leaves for a hint.", false);
+        }
+    };
+
+    document.getElementById('riddleBtn').onclick = () => {
+        if (leafCount >= 13.5) {
+            leafCount -= 13.5;
+            currentRiddle = riddles[Math.floor(Math.random() * riddles.length)];
+            showModal("🦥 Riddle of the Ancients", currentRiddle.q, true, currentRiddle);
+            updateUI();
+            console.log("Riddle asked! Leaves remaining:", leafCount);
+        } else {
+            showModal("🦥 Not Enough Leaves", "The sloth slowly shakes its head... You need at least 13.5 leaves to ask a riddle.", false);
+        }
+    };
+
+    function showModal(title, text, isRiddle = false, data = null) {
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalText').textContent = text;
+        const btns = document.getElementById('answerButtons');
+        btns.innerHTML = '';
+        if (isRiddle) {
+            document.getElementById('closeModal').style.display = 'none';
+            data.a.forEach((ans, i) => {
+                const b = document.createElement('button');
+                b.className = 'answer-btn';
+                b.textContent = ans;
+                b.onclick = () => {
+                    if (i === data.c) {
+                        leafCount += 15;
+                        showModal("Correct! 🌟", "The sloth nods approvingly. +15 leaves!");
+                    } else {
+                        leafCount = Math.max(0, leafCount - 20);
+                        showModal("Wrong...", "The sloth looks disappointed. -20 leaves.");
+                    }
+                    updateUI();
+                };
+                btns.appendChild(b);
+            });
+        } else {
+            document.getElementById('closeModal').style.display = 'block';
+        }
+        document.getElementById('modal').style.display = 'block';
+    }
+
+    document.getElementById('closeModal').onclick = () => {
+        document.getElementById('modal').style.display = 'none';
+    };
+
+    function updateUI() {
+        leafCountEl.textContent = leafCount.toFixed(2);
+        const enoughForRiddle = leafCount >= 13.5;
+        const enoughForHint = leafCount >= 13.5;
+        
+        hintBtn.disabled = !enoughForHint;
+        riddleBtn.disabled = !enoughForRiddle;
+        
+        // Visual feedback
+        if (enoughForHint) {
+            hintBtn.style.opacity = '1';
+            hintBtn.style.cursor = 'pointer';
+        } else {
+            hintBtn.style.opacity = '0.5';
+            hintBtn.style.cursor = 'not-allowed';
+        }
+        
+        if (enoughForRiddle) {
+            riddleBtn.style.opacity = '1';
+            riddleBtn.style.cursor = 'pointer';
+        } else {
+            riddleBtn.style.opacity = '0.5';
+            riddleBtn.style.cursor = 'not-allowed';
+        }
+    }
+
+    // Controls
+    const keys = {};
+    window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+    window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+    
+    let mouseX = 0;
+    let targetMouseX = 0;
+    
+    document.addEventListener('mousemove', e => {
+        // Normalize mouse position: -1 (left) to 1 (right)
+        targetMouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    });
+
+    // Smooth mouse movement
+    function updateMousePosition() {
+        mouseX += (targetMouseX - mouseX) * 0.1;
+    }
+
+    // Mobile controls are shown/hidden based on game mode selection
+    // (handled in startGame function)
+
+    // Mobile touch controls
+    const touchKeys = { up: false, down: false, left: false, right: false };
+    
+    const setupTouchButton = (id, key) => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            // Prevent default touch behavior to avoid conflicts
+            btn.style.touchAction = 'none';
+            btn.style.userSelect = 'none';
+            
+            // Touch events
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                touchKeys[key] = true;
+                btn.classList.add('mobile-btn-active');
+            }, { passive: false });
+            
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                touchKeys[key] = false;
+                btn.classList.remove('mobile-btn-active');
+            }, { passive: false });
+            
+            btn.addEventListener('touchcancel', (e) => {
+                e.preventDefault();
+                touchKeys[key] = false;
+                btn.classList.remove('mobile-btn-active');
+            }, { passive: false });
+            
+            // Mouse events (for desktop testing)
+            btn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                touchKeys[key] = true;
+                btn.classList.add('mobile-btn-active');
+            });
+            
+            btn.addEventListener('mouseup', (e) => {
+                e.preventDefault();
+                touchKeys[key] = false;
+                btn.classList.remove('mobile-btn-active');
+            });
+            
+            btn.addEventListener('mouseleave', (e) => {
+                touchKeys[key] = false;
+                btn.classList.remove('mobile-btn-active');
+            });
+            
+            // Prevent context menu on long press
+            btn.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+            });
+        }
+    };
+
+    setupTouchButton('btnUp', 'up');
+    setupTouchButton('btnDown', 'down');
+    setupTouchButton('btnLeft', 'left');
+    setupTouchButton('btnRight', 'right');
+
+    // Animation loop
+    let cameraAngle = 0;
+    
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // Update smooth mouse position
+        updateMousePosition();
+
+        const speed = 0.18;
+        const move = new THREE.Vector3();
+        
+        // Update camera angle: mouse right = look right (positive angle)
+        cameraAngle = -mouseX * Math.PI;
+        
+        // Keyboard controls: W=forward, S=backward, A=left, D=right (relative to camera)
+        if (keys['w']) {
+            move.x -= Math.sin(cameraAngle) * speed;
+            move.z -= Math.cos(cameraAngle) * speed;
+        }
+        if (keys['s']) {
+            move.x += Math.sin(cameraAngle) * speed;
+            move.z += Math.cos(cameraAngle) * speed;
+        }
+        if (keys['a']) {
+            move.x -= Math.cos(cameraAngle) * speed;
+            move.z += Math.sin(cameraAngle) * speed;
+        }
+        if (keys['d']) {
+            move.x += Math.cos(cameraAngle) * speed;
+            move.z -= Math.sin(cameraAngle) * speed;
+        }
+        
+        // Mobile touch controls: absolute directions (up=forward/north, down=back/south, etc.)
+        if (touchKeys.up) {
+            move.z -= speed;  // Forward (north)
+        }
+        if (touchKeys.down) {
+            move.z += speed;  // Backward (south)
+        }
+        if (touchKeys.left) {
+            move.x -= speed;  // Left (west)
+        }
+        if (touchKeys.right) {
+            move.x += speed;  // Right (east)
+        }
+        
+        player.position.add(move);
+
+        // Floating & rotating leaves
+        leaves.forEach((leaf, i) => {
+            leaf.rotation.y += leaf.userData.rotSpeed;
+            leaf.rotation.z += 0.005;
+            leaf.position.y += Math.sin(Date.now() * 0.001 + leaf.userData.float) * 0.004;
+
+            const distance = player.position.distanceTo(leaf.position);
+            if (distance < 1.2) {
+                scene.remove(leaf);
+                leaves.splice(i, 1);
+                leafCount += 0.5;  // Each leaf is worth 0.5
+                totalCollected += 1;
+                updateUI();
+
+                // Particle effect on collection
+                for (let j = 0; j < 5; j++) {
+                    const particle = new THREE.Mesh(
+                        new THREE.SphereGeometry(0.05),
+                        new THREE.MeshBasicMaterial({ color: 0xFFEB3B })
+                    );
+                    particle.position.copy(leaf.position);
+                    particle.userData.velocity = new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.1,
+                        Math.random() * 0.15,
+                        (Math.random() - 0.5) * 0.1
+                    );
+                    scene.add(particle);
+                    setTimeout(() => scene.remove(particle), 500);
+                }
+
+                // Occasionally spawn more far away
+                if (Math.random() < 0.4 && leaves.length < 50) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 30 + Math.random() * 50;
+                    createRealisticLeaf(
+                        player.position.x + Math.cos(angle) * dist, 
+                        player.position.z + Math.sin(angle) * dist
+                    );
+                }
+            }
+        });
+
+        // Update stats display
+        posDisplay.textContent = `${Math.round(player.position.x)}, ${Math.round(player.position.z)}`;
+        const distToSloth = Math.sqrt(player.position.x ** 2 + player.position.z ** 2);
+        distDisplay.textContent = Math.round(distToSloth);
+
+        // Gentle sloth animation (tree sloth)
+        if (sloth) {
+            sloth.position.y = Math.sin(Date.now() * 0.0005) * 0.15;
+            sloth.rotation.y = Math.sin(Date.now() * 0.0003) * 0.1;
+        }
+
+        // Animate ground sloth - subtle breathing and blinking
+        if (groundSlothGroup) {
+            // Gentle breathing
+            groundSlothGroup.children[0].scale.y = 1.4 + Math.sin(Date.now() * 0.001) * 0.05;
+            // Slight head movement
+            groundSlothGroup.children[1].rotation.y = Math.sin(Date.now() * 0.0004) * 0.15;
+            groundSlothGroup.children[1].rotation.x = Math.sin(Date.now() * 0.0003) * 0.1;
+        }
+
+        // Third-person camera following player
+        const idealOffset = new THREE.Vector3(
+            Math.sin(cameraAngle) * 9,
+            5,
+            Math.cos(cameraAngle) * 9
+        );
+        camera.position.lerp(player.position.clone().add(idealOffset), 0.1);
+        camera.lookAt(player.position.x, player.position.y + 1.5, player.position.z);
+
+        renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    updateUI();
+    animate();
+    console.log('Game initialized successfully!');
+    } // End of initGame function
+</script>
+</body>
+</html>
